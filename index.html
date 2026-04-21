@@ -77,10 +77,71 @@ button, select {
    <div class="course-wrap">
     <img src="atlashole-1.png">
     <div id="ball"></div>
+<div class="player-logic-section" style="max-width: 1000px; margin: 30px auto 0 auto; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; padding: 24px; text-align: left;">
+        <h2 style="text-align:center; margin-top:0;">36-Handicapper Driver Profile — Parkland Tee Shot Logic</h2>
+
+        <p>
+            This player profile represents a 36-handicap golfer using the <strong>OmniAtlas Virtual Reality Steel 4 Driver</strong> from the tee on a parkland course.
+        </p>
+
+        <p>
+            Average driving distance is approximately <strong>119–130 yards total</strong>, with an average <strong>carry distance of 110–120 yards</strong>.
+            On parkland courses, softer fairways reduce roll, so total distance tends to settle closer to the lower end of the range.
+        </p>
+
+        <p>
+            While this golfer may occasionally hit a strong drive of <strong>160+ yards</strong>, those longer results are not the normal playing average.
+            Mishits, weak strikes, and directional misses reduce real on-course consistency.
+        </p>
+
+        <h3>Stored Logic Profile</h3>
+        <ul style="line-height:1.8;">
+            <li><strong>Player Level:</strong> 36-handicapper</li>
+            <li><strong>Club:</strong> OmniAtlas Virtual Reality Steel 4 Driver</li>
+            <li><strong>Lie:</strong> Tee</li>
+            <li><strong>Course Type:</strong> Parkland</li>
+            <li><strong>Average Carry:</strong> 110–120 yards</li>
+            <li><strong>Average Total Distance:</strong> 119–130 yards</li>
+            <li><strong>Typical Good Drive Ceiling:</strong> 160+ yards occasionally</li>
+            <li><strong>Ground Conditions:</strong> Softer turf, reduced roll-out</li>
+        </ul>
+
+        <p style="margin-bottom:0;">
+            This profile can later be used as the baseline for player-written shot commands, probability boxes, and random outcome selection.
+        </p>
+    </div>
+
 </div>
 
-    <p id="distance">Distance Remaining: 380</p>
-    <p id="shots">Shots Taken: 0</p>
+<script>
+let distance = 380;
+let shots = 0;
+
+const playerProfiles = {
+    handicap36: {
+        name: "36-Handicapper",
+        clubSet: "OmniAtlas Virtual Reality Steel 4 Piece Golf Carry Bag Starter Package Set",
+        driver: {
+            clubName: "OmniAtlas Virtual Reality Steel 4 Driver",
+            lie: "tee",
+            courseType: "parkland",
+            carryDistanceMin: 110,
+            carryDistanceMax: 120,
+            totalDistanceMin: 119,
+            totalDistanceMax: 130,
+            occasionalGoodDrive: 160,
+            turfFirmness: "soft",
+            rolloutLevel: "low",
+            consistency: "variable",
+            notes: [
+                "Parkland fairways reduce roll-out compared with firmer links ground.",
+                "Most likely results should cluster around 119 to 130 yards total.",
+                "Longer drives above 160 yards should be treated as less common outcomes.",
+                "Mishits and weak strikes should remain common for this player level."
+            ]
+        }
+    }
+};
 
     <div class="equipment-section" style="max-width: 1000px; margin: 40px auto 0 auto; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; padding: 24px; text-align: left;">
         <h2 style="text-align:center; margin-top:0;">Player Profiles & Equipment</h2>
