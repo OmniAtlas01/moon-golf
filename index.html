@@ -100,14 +100,6 @@ ul {
     line-height: 1.8;
 }
 
-.tip-block {
-    margin-bottom: 16px;
-}
-
-.tip-block:last-child {
-    margin-bottom: 0;
-}
-
 .hidden {
     display: none;
 }
@@ -155,6 +147,17 @@ ul {
     font-size: 14px;
     opacity: 0.9;
 }
+
+.caddie-live-box {
+    background: rgba(0,0,0,0.28);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.caddie-live-box p {
+    margin: 10px 0;
+}
 </style>
 </head>
 
@@ -183,6 +186,20 @@ ul {
 
     <p id="distance">Distance Remaining: 380</p>
     <p id="shots">Shots Taken: 0</p>
+
+    <div id="liveCaddiePanel" class="info-panel">
+        <h2 style="text-align:center;">Live Caddie Advice</h2>
+
+        <div id="liveCaddieContent" class="caddie-live-box">
+            <h3 id="liveCaddieTitle">First Tee Advice</h3>
+            <div id="liveCaddieBody">
+                <p>Based upon your Golf Range practise I advise that you command no more than <strong>170-yards, straight down the fairway</strong>.</p>
+                <p>However trying to hit <strong>170-yards</strong> with your handicap and the OmniAtlas starter driver comes with high risks, including out of bounds.</p>
+                <p>Your safer option may be to command a maximum of <strong>130-yards straight down the fairway</strong>.</p>
+                <p>You may even reduce your command further, in exchange for a higher likelihood of accuracy.</p>
+            </div>
+        </div>
+    </div>
 
     <div class="info-panel">
         <h2 style="text-align:center;">Player Command Format</h2>
@@ -239,26 +256,6 @@ Message: Aim 1-foot to right of pin, carry distance 5-yards only"></textarea>
             <p class="note-text" style="margin-bottom:0;">
                 Accepted command stored. Outcome logic can now use this command later.
             </p>
-        </div>
-    </div>
-
-    <div id="caddie-panel" class="info-panel">
-        <h2 style="text-align:center;">Caddie Tips</h2>
-
-        <div id="tee-caddie-tip" class="tip-block">
-            <h3>First Tee Advice</h3>
-            <p>Based upon your Golf Range practise I advise that you command no more than <strong>170-yards, straight down the fairway</strong>.</p>
-            <p>However trying to hit <strong>170-yards</strong> with your handicap and the OmniAtlas starter driver comes with high risks, including out of bounds.</p>
-            <p>Your safer option may be to command a maximum of <strong>130-yards straight down the fairway</strong>.</p>
-            <p>You may even reduce your command further, in exchange for a higher likelihood of accuracy.</p>
-        </div>
-
-        <div id="fairway-caddie-tip" class="tip-block hidden">
-            <h3>First Fairway Shot Advice</h3>
-            <p>Based upon your Golfing Range practise, using this OmniAtlas Starter driver from the fairway, I strongly advise that you command no more than <strong>150-yards</strong> with your handicap.</p>
-            <p>A 150-yard fairway driver is possible, but the odds should be extremely stacked against it and heavily in favour of a severe mishit.</p>
-            <p>Perhaps you should consider making a safer command, such as <strong>110-yards</strong>, meaning a greater chance of accuracy.</p>
-            <p>You might also consider using a 3-wood, or 5-wood, or even an iron, for less risky results.</p>
         </div>
     </div>
 
@@ -461,19 +458,69 @@ const shotLogicData = {
     }
 };
 
-const caddieState = {
-    teeTipAlreadyShown: true,
-    firstFairwayTipShown: false
+const caddieAdvice = {
+    firstTee: {
+        title: "First Tee Advice",
+        paragraphs: [
+            "Based upon your Golf Range practise I advise that you command no more than 170-yards, straight down the fairway.",
+            "However trying to hit 170-yards with your handicap and the OmniAtlas starter driver comes with high risks, including out of bounds.",
+            "Your safer option may be to command a maximum of 130-yards straight down the fairway.",
+            "You may even reduce your command further, in exchange for a higher likelihood of accuracy."
+        ]
+    },
+    firstFairway: {
+        title: "First Fairway Shot Advice",
+        paragraphs: [
+            "Based upon your Golfing Range practise, using this OmniAtlas Starter driver from the fairway, I strongly advise that you command no more than 150-yards with your handicap.",
+            "A 150-yard fairway driver is possible, but the odds should be extremely stacked against it and heavily in favour of a severe mishit.",
+            "Perhaps you should consider making a safer command, such as 110-yards, meaning a greater chance of accuracy.",
+            "You might also consider using a 3-wood, or 5-wood, or even an iron, for less risky results."
+        ]
+    }
 };
 
-function revealFirstFairwayCaddieTip() {
-    if (!caddieState.firstFairwayTipShown) {
-        const fairwayTip = document.getElementById("fairway-caddie-tip");
-        if (fairwayTip) {
-            fairwayTip.classList.remove("hidden");
-        }
-        caddieState.firstFairwayTipShown = true;
+const caddieState = {
+    firstTeeShown: true,
+    firstFairwayShown: false,
+    firstFairwayExpired: false
+};
+
+function showLiveCaddieAdvice(adviceKey) {
+    const advice = caddieAdvice[adviceKey];
+    if (!advice) return;
+
+    const titleElement = document.getElementById("liveCaddieTitle");
+    const bodyElement = document.getElementById("liveCaddieBody");
+
+    titleElement.innerText = advice.title;
+    bodyElement.innerHTML = "";
+
+    advice.paragraphs.forEach(function(paragraph) {
+        const p = document.createElement("p");
+        p.textContent = paragraph;
+        bodyElement.appendChild(p);
+    });
+
+    document.getElementById("liveCaddiePanel").classList.remove("hidden");
+}
+
+function hideLiveCaddieAdvice() {
+    document.getElementById("liveCaddiePanel").classList.add("hidden");
+}
+
+function updateCaddieForCurrentPlayState() {
+    if (shots === 0) {
+        showLiveCaddieAdvice("firstTee");
+        return;
     }
+
+    if (shots === 1 && !caddieState.firstFairwayExpired) {
+        caddieState.firstFairwayShown = true;
+        showLiveCaddieAdvice("firstFairway");
+        return;
+    }
+
+    hideLiveCaddieAdvice();
 }
 
 function parsePlayerCommand(rawText) {
@@ -565,10 +612,14 @@ function takeShot() {
     document.getElementById("shots").innerText =
         "Shots Taken: " + shots;
 
-    if (shots === 1) {
-        revealFirstFairwayCaddieTip();
+    if (shots >= 2) {
+        caddieState.firstFairwayExpired = true;
     }
+
+    updateCaddieForCurrentPlayState();
 }
+
+updateCaddieForCurrentPlayState();
 </script>
 
 </body>
