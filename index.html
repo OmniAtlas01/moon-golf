@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -25,7 +25,7 @@ h1 {
     margin: 20px 0;
 }
 
-button, select {
+button, select, textarea {
     padding: 8px 12px;
     font-size: 16px;
 }
@@ -111,6 +111,50 @@ ul {
 .hidden {
     display: none;
 }
+
+.command-box {
+    width: 100%;
+    min-height: 170px;
+    box-sizing: border-box;
+    resize: vertical;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.28);
+    color: white;
+    font-family: Consolas, Monaco, monospace;
+    line-height: 1.6;
+}
+
+.command-actions {
+    margin-top: 14px;
+    text-align: center;
+}
+
+.command-example {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 14px;
+    font-family: monospace;
+    white-space: pre-line;
+}
+
+.accepted-command {
+    margin-top: 16px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.accepted-command p {
+    margin: 8px 0;
+}
+
+.note-text {
+    font-size: 14px;
+    opacity: 0.9;
+}
 </style>
 </head>
 
@@ -140,7 +184,7 @@ ul {
     <p id="distance">Distance Remaining: 380</p>
     <p id="shots">Shots Taken: 0</p>
 
-     <div class="info-panel">
+    <div class="info-panel">
         <h2 style="text-align:center;">Player Command Format</h2>
 
         <p>
@@ -157,17 +201,45 @@ ul {
         </ul>
 
         <h3>Example Player Command</h3>
-        <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 14px; font-family: monospace; white-space: pre-line;">
-Club: Driver
+        <div class="command-example">Club: Driver
 Distance: 170-yards
 Direction: Straight up the fairway
 Type: Drive
-Message: Aim 1-foot to right of pin, carry distance 5-yards only
-        </div>
+Message: Aim 1-foot to right of pin, carry distance 5-yards only</div>
 
         <p style="margin-top:14px; margin-bottom:0;">
             The player message expresses intent only. It does not guarantee the result. Player skill, lie, club, course conditions, and weighted probability still decide the final outcome.
         </p>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Player Command Entry</h2>
+
+        <p>
+            Enter the command exactly in the five-line format below. Invalid commands are ignored.
+        </p>
+
+        <textarea id="playerCommand" class="command-box" placeholder="Club: Driver
+Distance: 170-yards
+Direction: Straight up the fairway
+Type: Drive
+Message: Aim 1-foot to right of pin, carry distance 5-yards only"></textarea>
+
+        <div class="command-actions">
+            <button onclick="submitPlayerCommand()">Submit Command</button>
+        </div>
+
+        <div id="acceptedCommandPanel" class="accepted-command hidden">
+            <h3 style="margin-top:0;">Last Accepted Command</h3>
+            <p><strong>Club:</strong> <span id="acceptedClub"></span></p>
+            <p><strong>Distance:</strong> <span id="acceptedDistance"></span></p>
+            <p><strong>Direction:</strong> <span id="acceptedDirection"></span></p>
+            <p><strong>Type:</strong> <span id="acceptedType"></span></p>
+            <p><strong>Message:</strong> <span id="acceptedMessage"></span></p>
+            <p class="note-text" style="margin-bottom:0;">
+                Accepted command stored. Outcome logic can now use this command later.
+            </p>
+        </div>
     </div>
 
     <div id="caddie-panel" class="info-panel">
@@ -312,6 +384,34 @@ Message: Aim 1-foot to right of pin, carry distance 5-yards only
 let distance = 380;
 let shots = 0;
 
+let lastAcceptedCommand = null;
+
+const allowedCommandData = {
+    clubs: [
+        "Driver",
+        "3-wood",
+        "5-wood",
+        "7-iron",
+        "Pitching Wedge",
+        "Putter"
+    ],
+    directions: [
+        "Straight up the fairway",
+        "Left up the fairway",
+        "Right up the fairway",
+        "Towards the green",
+        "Towards the pin"
+    ],
+    types: [
+        "Drive",
+        "Fairway strike",
+        "Lay-up",
+        "Chip",
+        "Pitch",
+        "Putt"
+    ]
+};
+
 const shotLogicData = {
     handicap36: {
         name: "36-Handicapper",
@@ -374,6 +474,76 @@ function revealFirstFairwayCaddieTip() {
         }
         caddieState.firstFairwayTipShown = true;
     }
+}
+
+function parsePlayerCommand(rawText) {
+    const lines = rawText
+        .split("\n")
+        .map(line => line.trim())
+        .filter(line => line !== "");
+
+    if (lines.length !== 5) {
+        return null;
+    }
+
+    const clubMatch = lines[0].match(/^Club:\s*(.+)$/i);
+    const distanceMatch = lines[1].match(/^Distance:\s*(.+)$/i);
+    const directionMatch = lines[2].match(/^Direction:\s*(.+)$/i);
+    const typeMatch = lines[3].match(/^Type:\s*(.+)$/i);
+    const messageMatch = lines[4].match(/^Message:\s*(.*)$/i);
+
+    if (!clubMatch || !distanceMatch || !directionMatch || !typeMatch || !messageMatch) {
+        return null;
+    }
+
+    const club = clubMatch[1].trim();
+    const distance = distanceMatch[1].trim();
+    const direction = directionMatch[1].trim();
+    const type = typeMatch[1].trim();
+    const message = messageMatch[1].trim();
+
+    if (!allowedCommandData.clubs.includes(club)) {
+        return null;
+    }
+
+    if (!/^\d+-yards$/i.test(distance)) {
+        return null;
+    }
+
+    if (!allowedCommandData.directions.includes(direction)) {
+        return null;
+    }
+
+    if (!allowedCommandData.types.includes(type)) {
+        return null;
+    }
+
+    return {
+        club: club,
+        distance: distance,
+        direction: direction,
+        type: type,
+        message: message
+    };
+}
+
+function submitPlayerCommand() {
+    const commandBox = document.getElementById("playerCommand");
+    const parsedCommand = parsePlayerCommand(commandBox.value);
+
+    if (!parsedCommand) {
+        return;
+    }
+
+    lastAcceptedCommand = parsedCommand;
+
+    document.getElementById("acceptedClub").innerText = parsedCommand.club;
+    document.getElementById("acceptedDistance").innerText = parsedCommand.distance;
+    document.getElementById("acceptedDirection").innerText = parsedCommand.direction;
+    document.getElementById("acceptedType").innerText = parsedCommand.type;
+    document.getElementById("acceptedMessage").innerText = parsedCommand.message === "" ? "(No message)" : parsedCommand.message;
+
+    document.getElementById("acceptedCommandPanel").classList.remove("hidden");
 }
 
 function takeShot() {
