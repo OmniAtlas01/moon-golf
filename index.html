@@ -140,6 +140,36 @@ ul {
     <p id="distance">Distance Remaining: 380</p>
     <p id="shots">Shots Taken: 0</p>
 
+     <div class="info-panel">
+        <h2 style="text-align:center;">Player Command Format</h2>
+
+        <p>
+            All player shots must follow the official Moon Golf command structure. If a command is written incorrectly, then nothing happens.
+        </p>
+
+        <h3>Official Command Fields</h3>
+        <ul>
+            <li><strong>Club:</strong> Driver</li>
+            <li><strong>Distance:</strong> 170-yards</li>
+            <li><strong>Direction:</strong> Straight up the fairway</li>
+            <li><strong>Type:</strong> Drive</li>
+            <li><strong>Message:</strong> Aim 1-foot to right of pin, carry distance 5-yards only</li>
+        </ul>
+
+        <h3>Example Player Command</h3>
+        <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 14px; font-family: monospace; white-space: pre-line;">
+Club: Driver
+Distance: 170-yards
+Direction: Straight up the fairway
+Type: Drive
+Message: Aim 1-foot to right of pin, carry distance 5-yards only
+        </div>
+
+        <p style="margin-top:14px; margin-bottom:0;">
+            The player message expresses intent only. It does not guarantee the result. Player skill, lie, club, course conditions, and weighted probability still decide the final outcome.
+        </p>
+    </div>
+
     <div id="caddie-panel" class="info-panel">
         <h2 style="text-align:center;">Caddie Tips</h2>
 
