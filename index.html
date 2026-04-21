@@ -380,7 +380,6 @@ Message: Aim 1-foot to right of pin, carry distance 5-yards only"></textarea>
 <script>
 let distance = 380;
 let shots = 0;
-
 let lastAcceptedCommand = null;
 
 const allowedCommandData = {
@@ -479,12 +478,6 @@ const caddieAdvice = {
     }
 };
 
-const caddieState = {
-    firstTeeShown: true,
-    firstFairwayShown: false,
-    firstFairwayExpired: false
-};
-
 function showLiveCaddieAdvice(adviceKey) {
     const advice = caddieAdvice[adviceKey];
     if (!advice) return;
@@ -514,8 +507,7 @@ function updateCaddieForCurrentPlayState() {
         return;
     }
 
-    if (shots === 1 && !caddieState.firstFairwayExpired) {
-        caddieState.firstFairwayShown = true;
+    if (shots === 1) {
         showLiveCaddieAdvice("firstFairway");
         return;
     }
@@ -611,10 +603,6 @@ function takeShot() {
 
     document.getElementById("shots").innerText =
         "Shots Taken: " + shots;
-
-    if (shots >= 2) {
-        caddieState.firstFairwayExpired = true;
-    }
 
     updateCaddieForCurrentPlayState();
 }
