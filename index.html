@@ -1,4 +1,97 @@
-   let shotDistance = 0;
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Moon Golf V2</title>
+
+<style>
+body {
+    background-color: #061a3a;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+}
+
+.container {
+    padding: 30px;
+}
+
+h1 {
+    margin-bottom: 5px;
+}
+
+.controls {
+    margin: 20px 0;
+}
+
+button, select {
+    padding: 8px 12px;
+    font-size: 16px;
+}
+
+.course-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+.course-wrap img {
+    width: 80%;
+    max-width: 900px;
+    display: block;
+    margin: 20px auto;
+    border-radius: 12px;
+}
+
+#ball {
+    position: absolute;
+    bottom: 12%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
+    transform: translateX(-50%);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Moon Golf V2</h1>
+    <h2>Hole 1 — Par 4 — 380 Yards</h2>
+    <p>Fairway ends at 240 yards | Bunkers at 250 yards</p>
+
+    <div class="controls">
+        <select id="power">
+            <option value="50">50%</option>
+            <option value="75" selected>75%</option>
+            <option value="100">100%</option>
+        </select>
+
+        <button onclick="takeShot()">Take Shot</button>
+    </div>
+
+    <div class="course-wrap">
+        <img src="hole1real.png">
+        <div id="ball"></div>
+    </div>
+
+    <p id="distance">Distance Remaining: 380</p>
+    <p id="shots">Shots Taken: 0</p>
+
+</div>
+
+<script>
+let distance = 380;
+let shots = 0;
+
+function takeShot() {
+    let power = document.getElementById("power").value;
+
+    let shotDistance = 0;
 
     if (power == 50) shotDistance = 120;
     if (power == 75) shotDistance = 180;
