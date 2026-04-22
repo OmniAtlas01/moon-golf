@@ -311,6 +311,37 @@ ul {
     </div>
 
     <div class="info-panel">
+        <h2 style="text-align:center;">OmniAtlas L1 Driver Baseline — 36 Handicap</h2>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Driver Baseline Profile</h3>
+                <p><strong>Club:</strong> OmniAtlas L1 Adjustable Golf Driver</p>
+                <p><strong>Primary use:</strong> tee shots and aggressive distance play</p>
+                <p><strong>Average carry distance:</strong> 120 to 145 yards</p>
+                <p><strong>Average total distance:</strong> 135 to 166 yards</p>
+                <p><strong>Best force zone:</strong> 90% to 100% for full driver intent</p>
+                <p><strong>Important rule:</strong> lower force may improve control, but greatly reduces distance potential</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Driver Force Interpretation</h3>
+                <p><strong>1%–25%</strong> — very weak advancing strike, little useful driver distance</p>
+                <p><strong>26%–49%</strong> — short advancing shot, limited driver value</p>
+                <p><strong>50%–74%</strong> — moderate playable strike, but below full driver potential</p>
+                <p><strong>75%–89%</strong> — strong practical driver use</p>
+                <p><strong>90%–100%</strong> — highest distance potential, but increased mishit and dispersion risk</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Tee-1 Parkland Caddie Tip</h3>
+                <p>Accuracy over power. At this level, keeping the ball in play is more beneficial than attempting maximum distance, which can lead to high scores.</p>
+                <p>You may consider trying a lower force rate in return for more focus on accuracy.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
         <h2 style="text-align:center;">Player Command Format</h2>
 
         <p>
@@ -511,6 +542,84 @@ const allowedCommandData = {
 
 const shotLogicData = {};
 
+const clubPerformanceProfiles = {
+    driver36Handicap: {
+        clubName: "OmniAtlas L1 Adjustable Golf Driver",
+        handicapBand: 36,
+        baseline: {
+            averageCarryMin: 120,
+            averageCarryMax: 145,
+            averageTotalMin: 135,
+            averageTotalMax: 166,
+            recommendedFullUseForceMin: 90,
+            recommendedFullUseForceMax: 100
+        },
+        forceBands: [
+            {
+                min: 1,
+                max: 25,
+                label: "Very weak advancing strike",
+                distanceNote: "Little useful driver distance",
+                carryFactorMin: 0.10,
+                carryFactorMax: 0.22,
+                totalFactorMin: 0.10,
+                totalFactorMax: 0.22,
+                riskLevel: "Low"
+            },
+            {
+                min: 26,
+                max: 49,
+                label: "Short advancing shot",
+                distanceNote: "Limited driver value",
+                carryFactorMin: 0.23,
+                carryFactorMax: 0.42,
+                totalFactorMin: 0.23,
+                totalFactorMax: 0.42,
+                riskLevel: "Low to Moderate"
+            },
+            {
+                min: 50,
+                max: 74,
+                label: "Moderate playable strike",
+                distanceNote: "Below full driver potential",
+                carryFactorMin: 0.43,
+                carryFactorMax: 0.68,
+                totalFactorMin: 0.43,
+                totalFactorMax: 0.68,
+                riskLevel: "Moderate"
+            },
+            {
+                min: 75,
+                max: 89,
+                label: "Strong practical driver use",
+                distanceNote: "Useful distance with manageable risk",
+                carryFactorMin: 0.69,
+                carryFactorMax: 0.88,
+                totalFactorMin: 0.69,
+                totalFactorMax: 0.88,
+                riskLevel: "Moderate to High"
+            },
+            {
+                min: 90,
+                max: 100,
+                label: "Full driver intent",
+                distanceNote: "Highest distance potential with increased mishit and dispersion risk",
+                carryFactorMin: 0.89,
+                carryFactorMax: 1.00,
+                totalFactorMin: 0.89,
+                totalFactorMax: 1.00,
+                riskLevel: "High"
+            }
+        ],
+        notes: [
+            "Final distance is influenced by force, contact quality, lie, clothing, caddie support, course type, ball type, shoe type, equipment condition, and weighted probability.",
+            "Average total distance depends on rollout, so soft or stopping conditions can hold the shot closer to carry distance.",
+            "At 36 handicap, accuracy often matters more than chasing maximum distance."
+        ],
+        caddieTipParklandTee1: "Accuracy over power. At this level, keeping the ball in play is more beneficial than attempting maximum distance, which can lead to high scores. You may consider trying a lower force rate in return for more focus on accuracy."
+    }
+};
+
 const caddieAdvice = {
     placeholder: {
         title: "Caddie Waiting",
@@ -537,6 +646,9 @@ const caddieAdvice = {
         title: "L1 Driver Advice",
         paragraphs: [
             "The OmniAtlas L1 driver is built for maximum distance and the greatest risk-reward profile.",
+            "For a 36-handicap player from the tee, average carry is broadly 120 to 145 yards and average total distance is broadly 135 to 166 yards under stronger force use and normal driver conditions.",
+            "Tee-1 Parkland tip: Accuracy over power. At this level, keeping the ball in play is more beneficial than attempting maximum distance, which can lead to high scores.",
+            "You may consider trying a lower force rate in return for more focus on accuracy.",
             "Current driver setting is locked for the round under official rules."
         ]
     },
@@ -572,6 +684,10 @@ function hideLiveCaddieAdvice() {
     document.getElementById("liveCaddiePanel").classList.add("hidden");
 }
 
+function getForceNumber(forceText) {
+    return parseInt(String(forceText).replace("%", ""), 10);
+}
+
 function getAdviceKeyForAcceptedCommand() {
     if (!lastAcceptedCommand) {
         return roundState.clubSettingsLocked ? "lockedRound" : "placeholder";
@@ -597,8 +713,72 @@ function getAdviceKeyForAcceptedCommand() {
     return roundState.clubSettingsLocked ? "lockedRound" : "placeholder";
 }
 
+function getDriver36ForceBand(forceValue) {
+    return clubPerformanceProfiles.driver36Handicap.forceBands.find(function(band) {
+        return forceValue >= band.min && forceValue <= band.max;
+    }) || null;
+}
+
+function getDriver36HandicapSummary(forceValue) {
+    const profile = clubPerformanceProfiles.driver36Handicap;
+    const band = getDriver36ForceBand(forceValue);
+
+    if (!band) {
+        return null;
+    }
+
+    const carryMin = Math.round(profile.baseline.averageCarryMin * band.carryFactorMin);
+    const carryMax = Math.round(profile.baseline.averageCarryMax * band.carryFactorMax);
+    const totalMin = Math.round(profile.baseline.averageTotalMin * band.totalFactorMin);
+    const totalMax = Math.round(profile.baseline.averageTotalMax * band.totalFactorMax);
+
+    return {
+        bandLabel: band.label,
+        distanceNote: band.distanceNote,
+        riskLevel: band.riskLevel,
+        carryMin: carryMin,
+        carryMax: carryMax,
+        totalMin: totalMin,
+        totalMax: totalMax
+    };
+}
+
 function updateCaddieForCurrentPlayState() {
-    showLiveCaddieAdvice(getAdviceKeyForAcceptedCommand());
+    const adviceKey = getAdviceKeyForAcceptedCommand();
+
+    if (
+        lastAcceptedCommand &&
+        lastAcceptedCommand.club === "OmniAtlas L1 Adjustable Golf Driver"
+    ) {
+        const forceValue = getForceNumber(lastAcceptedCommand.force);
+        const summary = getDriver36HandicapSummary(forceValue);
+
+        if (summary) {
+            const titleElement = document.getElementById("liveCaddieTitle");
+            const bodyElement = document.getElementById("liveCaddieBody");
+
+            titleElement.innerText = "L1 Driver Advice";
+            bodyElement.innerHTML = "";
+
+            [
+                "Driver force band: " + summary.bandLabel + ".",
+                "Estimated 36-handicap carry range here: " + summary.carryMin + " to " + summary.carryMax + " yards.",
+                "Estimated 36-handicap total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
+                "Distance note: " + summary.distanceNote + ".",
+                "Risk level: " + summary.riskLevel + ".",
+                clubPerformanceProfiles.driver36Handicap.caddieTipParklandTee1
+            ].forEach(function(paragraph) {
+                const p = document.createElement("p");
+                p.textContent = paragraph;
+                bodyElement.appendChild(p);
+            });
+
+            document.getElementById("liveCaddiePanel").classList.remove("hidden");
+            return;
+        }
+    }
+
+    showLiveCaddieAdvice(adviceKey);
 }
 
 function parsePlayerCommand(rawText) {
@@ -725,13 +905,118 @@ function markRoundStartedIfNeeded() {
     }
 }
 
-function takeShot() {
+function getRandomInt(min, max) {
+    return Math.round(min + Math.random() * (max - min));
+}
+
+function getClub1ShotDistance(clubMode, forceValue) {
+    const modeRanges = {
+        "04° Putter": { min: 3, max: 18 },
+        "12° Stinger": { min: 60, max: 115 },
+        "20° Hybrid": { min: 85, max: 135 },
+        "28° 6 Iron": { min: 70, max: 115 },
+        "36° 8 Iron": { min: 55, max: 95 },
+        "44° Wedge": { min: 35, max: 70 },
+        "52° Sand": { min: 15, max: 40 },
+        "60° Lob": { min: 10, max: 32 }
+    };
+
+    const range = modeRanges[clubMode];
+    if (!range) return 0;
+
+    const factor = Math.max(0.05, forceValue / 100);
+    const rawMin = Math.round(range.min * factor);
+    const rawMax = Math.round(range.max * factor);
+
+    return getRandomInt(rawMin, rawMax);
+}
+
+function getClub2ShotDistance(forceValue) {
+    const setting = moonGolfClubData.club2.currentSetting;
+
+    const settingRanges = {
+        "Low Flight": { min: 95, max: 140 },
+        "Neutral": { min: 100, max: 150 },
+        "High Launch": { min: 90, max: 138 }
+    };
+
+    const range = settingRanges[setting] || settingRanges["Neutral"];
+    const factor = Math.max(0.08, forceValue / 100);
+
+    return getRandomInt(
+        Math.round(range.min * factor),
+        Math.round(range.max * factor)
+    );
+}
+
+function getClub3ShotDistance(forceValue) {
+    const summary = getDriver36HandicapSummary(forceValue);
+
+    if (!summary) {
+        return 0;
+    }
+
+    const driverSetting = moonGolfClubData.club3.currentSetting;
+    let min = summary.totalMin;
+    let max = summary.totalMax;
+
+    if (driverSetting === "Low Loft (Distance)") {
+        min += 4;
+        max += 8;
+    }
+
+    if (driverSetting === "High Loft (Control)") {
+        min -= 4;
+        max -= 6;
+    }
+
+    return getRandomInt(min, max);
+}
+
+function getLegacyPowerDistance() {
     let power = document.getElementById("power").value;
     let shotDistance = 0;
 
     if (power == 50) shotDistance = 120;
     if (power == 75) shotDistance = 180;
     if (power == 100) shotDistance = 240;
+
+    return shotDistance;
+}
+
+function getShotDistanceFromAcceptedCommand() {
+    if (!lastAcceptedCommand) {
+        return null;
+    }
+
+    const forceValue = getForceNumber(lastAcceptedCommand.force);
+    const club = lastAcceptedCommand.club;
+
+    if (club === "OmniAtlas L1 Adjustable Golf Driver") {
+        return getClub3ShotDistance(forceValue);
+    }
+
+    if (club === "OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood") {
+        return getClub2ShotDistance(forceValue);
+    }
+
+    if (club === "OmniAtlas L1 Adjustable Loft Golf Club") {
+        return getClub1ShotDistance("28° 6 Iron", forceValue);
+    }
+
+    if (moonGolfClubData.club1.playableModes.includes(club)) {
+        return getClub1ShotDistance(club, forceValue);
+    }
+
+    return null;
+}
+
+function takeShot() {
+    let shotDistance = getShotDistanceFromAcceptedCommand();
+
+    if (shotDistance === null) {
+        shotDistance = getLegacyPowerDistance();
+    }
 
     distance -= shotDistance;
     shots++;
