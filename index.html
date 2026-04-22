@@ -206,6 +206,11 @@ ul {
     <p>Fairway ends at 240 yards | Bunkers at 250 yards</p>
 
     <div class="controls">
+        <select id="courseType" onchange="updateCaddieForCurrentPlayState()">
+            <option value="Parkland" selected>Parkland</option>
+            <option value="Moon">Moon Course</option>
+        </select>
+
         <select id="power">
             <option value="50">50%</option>
             <option value="75" selected>75%</option>
@@ -315,7 +320,7 @@ ul {
 
         <div class="club-grid">
             <div class="club-card">
-                <h3>Driver Baseline Profile</h3>
+                <h3>Parkland / Earth Baseline</h3>
                 <p><strong>Club:</strong> OmniAtlas L1 Adjustable Golf Driver</p>
                 <p><strong>Primary use:</strong> tee shots and aggressive distance play</p>
                 <p><strong>Average carry distance:</strong> 120 to 145 yards</p>
@@ -337,6 +342,35 @@ ul {
                 <h3>Tee-1 Parkland Caddie Tip</h3>
                 <p>Accuracy over power. At this level, keeping the ball in play is more beneficial than attempting maximum distance, which can lead to high scores.</p>
                 <p>You may consider trying a lower force rate in return for more focus on accuracy.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Moon Course — OmniAtlas L1 Adjustable Driver</h2>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Moon Course Baseline</h3>
+                <p><strong>Player:</strong> 36-handicap baseline</p>
+                <p><strong>Environment:</strong> shot launched from an atmospheric chamber toward lunar play conditions</p>
+                <p><strong>Best-case clean strike:</strong> may approach or exceed 1,000 yards</p>
+                <p><strong>Gameplay rule:</strong> extreme distance potential comes with extreme directional punishment</p>
+                <p><strong>Landing rule:</strong> the ball may strike the lunar surface at high velocity and behave more like a projectile bounce than a normal Earth roll</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Moon Course Behaviour</h3>
+                <p>Low gravity and near-vacuum conditions massively increase distance potential.</p>
+                <p>Hooks and slices become dramatically worse over very long travel distances.</p>
+                <p>Whiffs and off-centre contact remain possible because control is harder, not easier.</p>
+                <p>Best-case monster outcomes are possible, but they should not happen every time.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Moon Course Caddie Tip</h3>
+                <p>As you are in an atmospheric chamber, you can utilise full force, which could see you potentially hit many times farther than you would on Earth.</p>
+                <p>However, this also means hooks and slices are far worse. You may consider less force, in favour of more control.</p>
             </div>
         </div>
     </div>
@@ -543,80 +577,40 @@ const allowedCommandData = {
 const shotLogicData = {};
 
 const clubPerformanceProfiles = {
-    driver36Handicap: {
+    driver36HandicapEarth: {
         clubName: "OmniAtlas L1 Adjustable Golf Driver",
         handicapBand: 36,
         baseline: {
             averageCarryMin: 120,
             averageCarryMax: 145,
             averageTotalMin: 135,
-            averageTotalMax: 166,
-            recommendedFullUseForceMin: 90,
-            recommendedFullUseForceMax: 100
+            averageTotalMax: 166
         },
         forceBands: [
-            {
-                min: 1,
-                max: 25,
-                label: "Very weak advancing strike",
-                distanceNote: "Little useful driver distance",
-                carryFactorMin: 0.10,
-                carryFactorMax: 0.22,
-                totalFactorMin: 0.10,
-                totalFactorMax: 0.22,
-                riskLevel: "Low"
-            },
-            {
-                min: 26,
-                max: 49,
-                label: "Short advancing shot",
-                distanceNote: "Limited driver value",
-                carryFactorMin: 0.23,
-                carryFactorMax: 0.42,
-                totalFactorMin: 0.23,
-                totalFactorMax: 0.42,
-                riskLevel: "Low to Moderate"
-            },
-            {
-                min: 50,
-                max: 74,
-                label: "Moderate playable strike",
-                distanceNote: "Below full driver potential",
-                carryFactorMin: 0.43,
-                carryFactorMax: 0.68,
-                totalFactorMin: 0.43,
-                totalFactorMax: 0.68,
-                riskLevel: "Moderate"
-            },
-            {
-                min: 75,
-                max: 89,
-                label: "Strong practical driver use",
-                distanceNote: "Useful distance with manageable risk",
-                carryFactorMin: 0.69,
-                carryFactorMax: 0.88,
-                totalFactorMin: 0.69,
-                totalFactorMax: 0.88,
-                riskLevel: "Moderate to High"
-            },
-            {
-                min: 90,
-                max: 100,
-                label: "Full driver intent",
-                distanceNote: "Highest distance potential with increased mishit and dispersion risk",
-                carryFactorMin: 0.89,
-                carryFactorMax: 1.00,
-                totalFactorMin: 0.89,
-                totalFactorMax: 1.00,
-                riskLevel: "High"
-            }
+            { min: 1, max: 25, label: "Very weak advancing strike", carryFactorMin: 0.10, carryFactorMax: 0.22, totalFactorMin: 0.10, totalFactorMax: 0.22, riskLevel: "Low", distanceNote: "Little useful driver distance" },
+            { min: 26, max: 49, label: "Short advancing shot", carryFactorMin: 0.23, carryFactorMax: 0.42, totalFactorMin: 0.23, totalFactorMax: 0.42, riskLevel: "Low to Moderate", distanceNote: "Limited driver value" },
+            { min: 50, max: 74, label: "Moderate playable strike", carryFactorMin: 0.43, carryFactorMax: 0.68, totalFactorMin: 0.43, totalFactorMax: 0.68, riskLevel: "Moderate", distanceNote: "Below full driver potential" },
+            { min: 75, max: 89, label: "Strong practical driver use", carryFactorMin: 0.69, carryFactorMax: 0.88, totalFactorMin: 0.69, totalFactorMax: 0.88, riskLevel: "Moderate to High", distanceNote: "Useful distance with manageable risk" },
+            { min: 90, max: 100, label: "Full driver intent", carryFactorMin: 0.89, carryFactorMax: 1.00, totalFactorMin: 0.89, totalFactorMax: 1.00, riskLevel: "High", distanceNote: "Highest distance potential with increased mishit and dispersion risk" }
         ],
-        notes: [
-            "Final distance is influenced by force, contact quality, lie, clothing, caddie support, course type, ball type, shoe type, equipment condition, and weighted probability.",
-            "Average total distance depends on rollout, so soft or stopping conditions can hold the shot closer to carry distance.",
-            "At 36 handicap, accuracy often matters more than chasing maximum distance."
+        caddieTip: "Accuracy over power. At this level, keeping the ball in play is more beneficial than attempting maximum distance, which can lead to high scores. You may consider trying a lower force rate in return for more focus on accuracy."
+    },
+    driver36HandicapMoon: {
+        clubName: "OmniAtlas L1 Adjustable Golf Driver",
+        handicapBand: 36,
+        baseline: {
+            averageTotalMin: 780,
+            averageTotalMax: 1000,
+            bestCaseTotalMax: 1150
+        },
+        forceBands: [
+            { min: 1, max: 25, label: "Controlled lunar advance", totalFactorMin: 0.10, totalFactorMax: 0.22, riskLevel: "Low", distanceNote: "Still long compared with Earth, but controlled" },
+            { min: 26, max: 49, label: "Short moon drive", totalFactorMin: 0.23, totalFactorMax: 0.42, riskLevel: "Moderate", distanceNote: "Distance increases quickly in lunar play" },
+            { min: 50, max: 74, label: "Medium moon launch", totalFactorMin: 0.43, totalFactorMax: 0.68, riskLevel: "Moderate to High", distanceNote: "Large travel distance with rising error punishment" },
+            { min: 75, max: 89, label: "Strong moon drive", totalFactorMin: 0.69, totalFactorMax: 0.88, riskLevel: "High", distanceNote: "Hooks and slices can become severe over long travel" },
+            { min: 90, max: 100, label: "Full lunar blast", totalFactorMin: 0.89, totalFactorMax: 1.00, riskLevel: "Very High", distanceNote: "Monster distance possible, but dispersion becomes extreme" }
         ],
-        caddieTipParklandTee1: "Accuracy over power. At this level, keeping the ball in play is more beneficial than attempting maximum distance, which can lead to high scores. You may consider trying a lower force rate in return for more focus on accuracy."
+        caddieTip: "As you are in an atmospheric chamber, you can utilise full force, which could see you potentially hit many times farther than you would on Earth. However, this also means hooks and slices are far worse. You may consider less force, in favour of more control."
     }
 };
 
@@ -646,9 +640,6 @@ const caddieAdvice = {
         title: "L1 Driver Advice",
         paragraphs: [
             "The OmniAtlas L1 driver is built for maximum distance and the greatest risk-reward profile.",
-            "For a 36-handicap player from the tee, average carry is broadly 120 to 145 yards and average total distance is broadly 135 to 166 yards under stronger force use and normal driver conditions.",
-            "Tee-1 Parkland tip: Accuracy over power. At this level, keeping the ball in play is more beneficial than attempting maximum distance, which can lead to high scores.",
-            "You may consider trying a lower force rate in return for more focus on accuracy.",
             "Current driver setting is locked for the round under official rules."
         ]
     },
@@ -684,6 +675,10 @@ function hideLiveCaddieAdvice() {
     document.getElementById("liveCaddiePanel").classList.add("hidden");
 }
 
+function getCourseType() {
+    return document.getElementById("courseType").value;
+}
+
 function getForceNumber(forceText) {
     return parseInt(String(forceText).replace("%", ""), 10);
 }
@@ -713,68 +708,110 @@ function getAdviceKeyForAcceptedCommand() {
     return roundState.clubSettingsLocked ? "lockedRound" : "placeholder";
 }
 
-function getDriver36ForceBand(forceValue) {
-    return clubPerformanceProfiles.driver36Handicap.forceBands.find(function(band) {
+function getDriverEarthForceBand(forceValue) {
+    return clubPerformanceProfiles.driver36HandicapEarth.forceBands.find(function(band) {
         return forceValue >= band.min && forceValue <= band.max;
     }) || null;
 }
 
-function getDriver36HandicapSummary(forceValue) {
-    const profile = clubPerformanceProfiles.driver36Handicap;
-    const band = getDriver36ForceBand(forceValue);
+function getDriverMoonForceBand(forceValue) {
+    return clubPerformanceProfiles.driver36HandicapMoon.forceBands.find(function(band) {
+        return forceValue >= band.min && forceValue <= band.max;
+    }) || null;
+}
 
-    if (!band) {
-        return null;
-    }
+function getDriverEarthSummary(forceValue) {
+    const profile = clubPerformanceProfiles.driver36HandicapEarth;
+    const band = getDriverEarthForceBand(forceValue);
 
-    const carryMin = Math.round(profile.baseline.averageCarryMin * band.carryFactorMin);
-    const carryMax = Math.round(profile.baseline.averageCarryMax * band.carryFactorMax);
-    const totalMin = Math.round(profile.baseline.averageTotalMin * band.totalFactorMin);
-    const totalMax = Math.round(profile.baseline.averageTotalMax * band.totalFactorMax);
+    if (!band) return null;
 
     return {
         bandLabel: band.label,
         distanceNote: band.distanceNote,
         riskLevel: band.riskLevel,
-        carryMin: carryMin,
-        carryMax: carryMax,
-        totalMin: totalMin,
-        totalMax: totalMax
+        carryMin: Math.round(profile.baseline.averageCarryMin * band.carryFactorMin),
+        carryMax: Math.round(profile.baseline.averageCarryMax * band.carryFactorMax),
+        totalMin: Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
+        totalMax: Math.round(profile.baseline.averageTotalMax * band.totalFactorMax),
+        caddieTip: profile.caddieTip
+    };
+}
+
+function getDriverMoonSummary(forceValue) {
+    const profile = clubPerformanceProfiles.driver36HandicapMoon;
+    const band = getDriverMoonForceBand(forceValue);
+
+    if (!band) return null;
+
+    return {
+        bandLabel: band.label,
+        distanceNote: band.distanceNote,
+        riskLevel: band.riskLevel,
+        totalMin: Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
+        totalMax: Math.round(profile.baseline.averageTotalMax * band.totalFactorMax),
+        bestCaseTotalMax: profile.baseline.bestCaseTotalMax,
+        caddieTip: profile.caddieTip
     };
 }
 
 function updateCaddieForCurrentPlayState() {
     const adviceKey = getAdviceKeyForAcceptedCommand();
+    const courseType = getCourseType();
 
     if (
         lastAcceptedCommand &&
         lastAcceptedCommand.club === "OmniAtlas L1 Adjustable Golf Driver"
     ) {
         const forceValue = getForceNumber(lastAcceptedCommand.force);
-        const summary = getDriver36HandicapSummary(forceValue);
+        const titleElement = document.getElementById("liveCaddieTitle");
+        const bodyElement = document.getElementById("liveCaddieBody");
 
-        if (summary) {
-            const titleElement = document.getElementById("liveCaddieTitle");
-            const bodyElement = document.getElementById("liveCaddieBody");
+        titleElement.innerText = "L1 Driver Advice";
+        bodyElement.innerHTML = "";
 
-            titleElement.innerText = "L1 Driver Advice";
-            bodyElement.innerHTML = "";
+        if (courseType === "Moon") {
+            const summary = getDriverMoonSummary(forceValue);
 
-            [
-                "Driver force band: " + summary.bandLabel + ".",
-                "Estimated 36-handicap carry range here: " + summary.carryMin + " to " + summary.carryMax + " yards.",
-                "Estimated 36-handicap total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
-                "Distance note: " + summary.distanceNote + ".",
-                "Risk level: " + summary.riskLevel + ".",
-                clubPerformanceProfiles.driver36Handicap.caddieTipParklandTee1
-            ].forEach(function(paragraph) {
-                const p = document.createElement("p");
-                p.textContent = paragraph;
-                bodyElement.appendChild(p);
-            });
+            if (summary) {
+                [
+                    "Course type: Moon Course.",
+                    "Driver force band: " + summary.bandLabel + ".",
+                    "Estimated Moon total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
+                    "Upper-end clean-contact outcome can rise beyond 1,000 yards in this mode.",
+                    "Distance note: " + summary.distanceNote + ".",
+                    "Risk level: " + summary.riskLevel + ".",
+                    summary.caddieTip
+                ].forEach(function(paragraph) {
+                    const p = document.createElement("p");
+                    p.textContent = paragraph;
+                    bodyElement.appendChild(p);
+                });
 
-            document.getElementById("liveCaddiePanel").classList.remove("hidden");
-            return;
+                document.getElementById("liveCaddiePanel").classList.remove("hidden");
+                return;
+            }
+        } else {
+            const summary = getDriverEarthSummary(forceValue);
+
+            if (summary) {
+                [
+                    "Course type: Parkland.",
+                    "Driver force band: " + summary.bandLabel + ".",
+                    "Estimated 36-handicap carry range here: " + summary.carryMin + " to " + summary.carryMax + " yards.",
+                    "Estimated 36-handicap total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
+                    "Distance note: " + summary.distanceNote + ".",
+                    "Risk level: " + summary.riskLevel + ".",
+                    summary.caddieTip
+                ].forEach(function(paragraph) {
+                    const p = document.createElement("p");
+                    p.textContent = paragraph;
+                    bodyElement.appendChild(p);
+                });
+
+                document.getElementById("liveCaddiePanel").classList.remove("hidden");
+                return;
+            }
         }
     }
 
@@ -925,10 +962,11 @@ function getClub1ShotDistance(clubMode, forceValue) {
     if (!range) return 0;
 
     const factor = Math.max(0.05, forceValue / 100);
-    const rawMin = Math.round(range.min * factor);
-    const rawMax = Math.round(range.max * factor);
 
-    return getRandomInt(rawMin, rawMax);
+    return getRandomInt(
+        Math.round(range.min * factor),
+        Math.round(range.max * factor)
+    );
 }
 
 function getClub2ShotDistance(forceValue) {
@@ -949,12 +987,9 @@ function getClub2ShotDistance(forceValue) {
     );
 }
 
-function getClub3ShotDistance(forceValue) {
-    const summary = getDriver36HandicapSummary(forceValue);
-
-    if (!summary) {
-        return 0;
-    }
+function getClub3EarthShotDistance(forceValue) {
+    const summary = getDriverEarthSummary(forceValue);
+    if (!summary) return 0;
 
     const driverSetting = moonGolfClubData.club3.currentSetting;
     let min = summary.totalMin;
@@ -968,6 +1003,32 @@ function getClub3ShotDistance(forceValue) {
     if (driverSetting === "High Loft (Control)") {
         min -= 4;
         max -= 6;
+    }
+
+    return getRandomInt(min, max);
+}
+
+function getClub3MoonShotDistance(forceValue) {
+    const summary = getDriverMoonSummary(forceValue);
+    if (!summary) return 0;
+
+    const driverSetting = moonGolfClubData.club3.currentSetting;
+    let min = summary.totalMin;
+    let max = summary.totalMax;
+
+    if (driverSetting === "Low Loft (Distance)") {
+        min += 35;
+        max += 80;
+    }
+
+    if (driverSetting === "High Loft (Control)") {
+        min -= 30;
+        max -= 60;
+    }
+
+    if (Math.random() < 0.08 && forceValue >= 90) {
+        max = Math.max(max, 1050);
+        min = Math.max(min, 920);
     }
 
     return getRandomInt(min, max);
@@ -991,9 +1052,12 @@ function getShotDistanceFromAcceptedCommand() {
 
     const forceValue = getForceNumber(lastAcceptedCommand.force);
     const club = lastAcceptedCommand.club;
+    const courseType = getCourseType();
 
     if (club === "OmniAtlas L1 Adjustable Golf Driver") {
-        return getClub3ShotDistance(forceValue);
+        return courseType === "Moon"
+            ? getClub3MoonShotDistance(forceValue)
+            : getClub3EarthShotDistance(forceValue);
     }
 
     if (club === "OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood") {
@@ -1023,11 +1087,8 @@ function takeShot() {
 
     if (distance < 0) distance = 0;
 
-    document.getElementById("distance").innerText =
-        "Distance Remaining: " + distance;
-
-    document.getElementById("shots").innerText =
-        "Shots Taken: " + shots;
+    document.getElementById("distance").innerText = "Distance Remaining: " + distance;
+    document.getElementById("shots").innerText = "Shots Taken: " + shots;
 
     markRoundStartedIfNeeded();
     updateCaddieForCurrentPlayState();
