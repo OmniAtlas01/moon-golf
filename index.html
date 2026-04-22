@@ -132,6 +132,68 @@ ul {
 .caddie-live-box p {
     margin: 10px 0;
 }
+
+.club-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+
+.club-card {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.club-card h3 {
+    margin-bottom: 8px;
+}
+
+.setup-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.setup-row label {
+    min-width: 230px;
+    font-weight: bold;
+}
+
+.setup-status {
+    margin-top: 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.rule-box {
+    background: rgba(0,0,0,0.28);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.small-muted {
+    font-size: 14px;
+    opacity: 0.92;
+}
+
+.status-good {
+    color: #9cff9c;
+}
+
+.status-warn {
+    color: #ffd27f;
+}
+
+.status-bad {
+    color: #ff9898;
+}
 </style>
 </head>
 
@@ -174,6 +236,81 @@ ul {
     </div>
 
     <div class="info-panel">
+        <h2 style="text-align:center;">L1 Club Rules — Official Round Lock</h2>
+
+        <div class="rule-box">
+            <p><strong>Official rule now active:</strong> adjustable club settings are locked for the stipulated round once the round begins.</p>
+            <p>Club 2 and Club 3 may be configured before the round starts, but not changed during the round.</p>
+            <p>Club 1 remains the OmniAtlas L1 all-in-one playing club with 8 live playable loft settings as part of its normal shot-use design.</p>
+            <p>If a club becomes broken later, replacement logic may be allowed under the broken-club pathway.</p>
+            <p class="small-muted" style="margin-bottom:0;">Current build status: round-lock rules are active, broken replacement tracking is prepared, full break / replacement gameplay can be expanded next.</p>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Pre-Round L1 Club Setup</h2>
+
+        <p>Set Club 2 and Club 3 before the round begins. Once the round starts, these settings are locked under official rules.</p>
+
+        <div class="setup-row">
+            <label for="club2Setting">Club 2 — OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood</label>
+            <select id="club2Setting">
+                <option value="Low Flight">Low Flight</option>
+                <option value="Neutral" selected>Neutral</option>
+                <option value="High Launch">High Launch</option>
+            </select>
+        </div>
+
+        <div class="setup-row">
+            <label for="club3Setting">Club 3 — OmniAtlas L1 Adjustable Golf Driver</label>
+            <select id="club3Setting">
+                <option value="Low Loft (Distance)">Low Loft (Distance)</option>
+                <option value="Neutral" selected>Neutral</option>
+                <option value="High Loft (Control)">High Loft (Control)</option>
+            </select>
+        </div>
+
+        <div class="command-actions">
+            <button onclick="lockRoundClubSettings()">Lock Club Settings For Round</button>
+        </div>
+
+        <div id="roundLockStatus" class="setup-status">
+            <p><strong>Round Status:</strong> <span id="roundStatusText">Pre-round setup open</span></p>
+            <p><strong>Club 2 Setting:</strong> <span id="club2LockedDisplay">Neutral</span></p>
+            <p><strong>Club 3 Setting:</strong> <span id="club3LockedDisplay">Neutral</span></p>
+            <p class="note-text" style="margin-bottom:0;">These settings become locked for the round after confirmation.</p>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">OmniAtlas L1 Club Data</h2>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Club 1 — OmniAtlas L1 Adjustable Loft Golf Club</h3>
+                <p><strong>Role:</strong> all-in-one precision and utility club</p>
+                <p><strong>Playable settings:</strong> 04° Putter, 12° Stinger, 20° Hybrid, 28° 6 Iron, 36° 8 Iron, 44° Wedge, 52° Sand, 60° Lob</p>
+                <p><strong>Use:</strong> putting, chipping, approach play, bunker use, controlled recovery, lower-flight and higher-flight options</p>
+                <p><strong>Design note:</strong> treated as the live all-in-one playing club for Moon Golf</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Club 2 — OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood</h3>
+                <p><strong>Role:</strong> controlled distance and safer long play</p>
+                <p><strong>Round-lock settings:</strong> Low Flight, Neutral, High Launch</p>
+                <p><strong>Use:</strong> long fairway strikes, safer tee use, longer approaches, lower-risk distance</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Club 3 — OmniAtlas L1 Adjustable Golf Driver</h3>
+                <p><strong>Role:</strong> maximum distance and highest tee aggression</p>
+                <p><strong>Round-lock settings:</strong> Low Loft (Distance), Neutral, High Loft (Control)</p>
+                <p><strong>Use:</strong> tee shots, aggressive long play, distance-priority situations</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
         <h2 style="text-align:center;">Player Command Format</h2>
 
         <p>
@@ -182,7 +319,7 @@ ul {
 
         <h3>Official Command Fields</h3>
         <ul>
-            <li><strong>Club:</strong> Driver</li>
+            <li><strong>Club:</strong> OmniAtlas L1 Adjustable Golf Driver</li>
             <li><strong>Lie:</strong> Fairway</li>
             <li><strong>Force:</strong> 75%</li>
             <li><strong>Direction:</strong> Straight up the fairway</li>
@@ -191,7 +328,7 @@ ul {
         </ul>
 
         <h3>Example Player Command</h3>
-        <div class="command-example">Club: Driver
+        <div class="command-example">Club: OmniAtlas L1 Adjustable Golf Driver
 Lie: Fairway
 Force: 75%
 Direction: Straight up the fairway
@@ -210,7 +347,7 @@ Message: Aim slightly right and favour clean contact</div>
             Enter the command exactly in the six-line format below. Invalid commands are ignored.
         </p>
 
-        <textarea id="playerCommand" class="command-box" placeholder="Club: Driver
+        <textarea id="playerCommand" class="command-box" placeholder="Club: OmniAtlas L1 Adjustable Golf Driver
 Lie: Fairway
 Force: 75%
 Direction: Straight up the fairway
@@ -235,12 +372,95 @@ Message: Aim slightly right and favour clean contact"></textarea>
         </div>
     </div>
 
+    <div class="info-panel">
+        <h2 style="text-align:center;">L1 Round Equipment Status</h2>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Club 1 Status</h3>
+                <p><strong>Name:</strong> OmniAtlas L1 Adjustable Loft Golf Club</p>
+                <p><strong>Condition:</strong> <span id="club1Condition" class="status-good">Excellent</span></p>
+                <p><strong>Broken:</strong> <span id="club1Broken">No</span></p>
+                <p><strong>Replacement Allowed If Broken:</strong> Yes</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Club 2 Status</h3>
+                <p><strong>Name:</strong> OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood</p>
+                <p><strong>Condition:</strong> <span id="club2Condition" class="status-good">Excellent</span></p>
+                <p><strong>Broken:</strong> <span id="club2Broken">No</span></p>
+                <p><strong>Locked Setting:</strong> <span id="club2StatusSetting">Neutral</span></p>
+            </div>
+
+            <div class="club-card">
+                <h3>Club 3 Status</h3>
+                <p><strong>Name:</strong> OmniAtlas L1 Adjustable Golf Driver</p>
+                <p><strong>Condition:</strong> <span id="club3Condition" class="status-good">Excellent</span></p>
+                <p><strong>Broken:</strong> <span id="club3Broken">No</span></p>
+                <p><strong>Locked Setting:</strong> <span id="club3StatusSetting">Neutral</span></p>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
 let distance = 380;
 let shots = 0;
 let lastAcceptedCommand = null;
+
+const moonGolfClubData = {
+    club1: {
+        name: "OmniAtlas L1 Adjustable Loft Golf Club",
+        shortName: "Club 1",
+        type: "all_in_one",
+        condition: "Excellent",
+        broken: false,
+        playableModes: [
+            "04° Putter",
+            "12° Stinger",
+            "20° Hybrid",
+            "28° 6 Iron",
+            "36° 8 Iron",
+            "44° Wedge",
+            "52° Sand",
+            "60° Lob"
+        ]
+    },
+    club2: {
+        name: "OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood",
+        shortName: "Club 2",
+        type: "adjustable_fairway_wood",
+        condition: "Excellent",
+        broken: false,
+        allowedSettings: [
+            "Low Flight",
+            "Neutral",
+            "High Launch"
+        ],
+        currentSetting: "Neutral"
+    },
+    club3: {
+        name: "OmniAtlas L1 Adjustable Golf Driver",
+        shortName: "Club 3",
+        type: "adjustable_driver",
+        condition: "Excellent",
+        broken: false,
+        allowedSettings: [
+            "Low Loft (Distance)",
+            "Neutral",
+            "High Loft (Control)"
+        ],
+        currentSetting: "Neutral"
+    }
+};
+
+const roundState = {
+    started: false,
+    clubSettingsLocked: false,
+    lockedClub2Setting: "Neutral",
+    lockedClub3Setting: "Neutral"
+};
 
 const allowedCommandData = {
     clubs: [
@@ -249,7 +469,18 @@ const allowedCommandData = {
         "5-wood",
         "7-iron",
         "Pitching Wedge",
-        "Putter"
+        "Putter",
+        "OmniAtlas L1 Adjustable Loft Golf Club",
+        "OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood",
+        "OmniAtlas L1 Adjustable Golf Driver",
+        "04° Putter",
+        "12° Stinger",
+        "20° Hybrid",
+        "28° 6 Iron",
+        "36° 8 Iron",
+        "44° Wedge",
+        "52° Sand",
+        "60° Lob"
     ],
     lies: [
         "Tee",
@@ -287,6 +518,34 @@ const caddieAdvice = {
             "No club-specific caddie advice is currently loaded.",
             "The live caddie system remains active and ready for the next ruleset."
         ]
+    },
+    club1: {
+        title: "L1 Loft Club Advice",
+        paragraphs: [
+            "The OmniAtlas L1 adjustable loft club is your all-in-one precision option.",
+            "Use it for putts, chips, approaches, bunker play, controlled recovery, and versatile loft-based play."
+        ]
+    },
+    club2: {
+        title: "L1 Fairway Wood Advice",
+        paragraphs: [
+            "The OmniAtlas 3-in-1 fairway wood is your safer long-distance option.",
+            "Current round setting is locked before the round and should be used for controlled long play."
+        ]
+    },
+    club3: {
+        title: "L1 Driver Advice",
+        paragraphs: [
+            "The OmniAtlas L1 driver is built for maximum distance and the greatest risk-reward profile.",
+            "Current driver setting is locked for the round under official rules."
+        ]
+    },
+    lockedRound: {
+        title: "Round Lock Active",
+        paragraphs: [
+            "Club 2 and Club 3 settings are now locked for the round.",
+            "Official rules are active: no changing adjustable settings during the round unless broken-club replacement rules are triggered."
+        ]
     }
 };
 
@@ -313,8 +572,33 @@ function hideLiveCaddieAdvice() {
     document.getElementById("liveCaddiePanel").classList.add("hidden");
 }
 
+function getAdviceKeyForAcceptedCommand() {
+    if (!lastAcceptedCommand) {
+        return roundState.clubSettingsLocked ? "lockedRound" : "placeholder";
+    }
+
+    const club = lastAcceptedCommand.club;
+
+    if (
+        club === "OmniAtlas L1 Adjustable Loft Golf Club" ||
+        moonGolfClubData.club1.playableModes.includes(club)
+    ) {
+        return "club1";
+    }
+
+    if (club === "OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood") {
+        return "club2";
+    }
+
+    if (club === "OmniAtlas L1 Adjustable Golf Driver") {
+        return "club3";
+    }
+
+    return roundState.clubSettingsLocked ? "lockedRound" : "placeholder";
+}
+
 function updateCaddieForCurrentPlayState() {
-    showLiveCaddieAdvice("placeholder");
+    showLiveCaddieAdvice(getAdviceKeyForAcceptedCommand());
 }
 
 function parsePlayerCommand(rawText) {
@@ -365,6 +649,10 @@ function parsePlayerCommand(rawText) {
         return null;
     }
 
+    if (message.split(/\s+/).filter(Boolean).length > 10) {
+        return null;
+    }
+
     return {
         club: club,
         lie: lie,
@@ -393,6 +681,48 @@ function submitPlayerCommand() {
     document.getElementById("acceptedMessage").innerText = parsedCommand.message === "" ? "(No message)" : parsedCommand.message;
 
     document.getElementById("acceptedCommandPanel").classList.remove("hidden");
+    updateCaddieForCurrentPlayState();
+}
+
+function lockRoundClubSettings() {
+    if (roundState.started) {
+        return;
+    }
+
+    const club2Selection = document.getElementById("club2Setting").value;
+    const club3Selection = document.getElementById("club3Setting").value;
+
+    if (!moonGolfClubData.club2.allowedSettings.includes(club2Selection)) {
+        return;
+    }
+
+    if (!moonGolfClubData.club3.allowedSettings.includes(club3Selection)) {
+        return;
+    }
+
+    roundState.clubSettingsLocked = true;
+    roundState.lockedClub2Setting = club2Selection;
+    roundState.lockedClub3Setting = club3Selection;
+
+    moonGolfClubData.club2.currentSetting = club2Selection;
+    moonGolfClubData.club3.currentSetting = club3Selection;
+
+    document.getElementById("club2LockedDisplay").innerText = club2Selection;
+    document.getElementById("club3LockedDisplay").innerText = club3Selection;
+    document.getElementById("club2StatusSetting").innerText = club2Selection;
+    document.getElementById("club3StatusSetting").innerText = club3Selection;
+    document.getElementById("roundStatusText").innerText = "Pre-round setup locked";
+
+    updateCaddieForCurrentPlayState();
+}
+
+function markRoundStartedIfNeeded() {
+    if (!roundState.started) {
+        roundState.started = true;
+        document.getElementById("roundStatusText").innerText = roundState.clubSettingsLocked
+            ? "Round in progress — settings locked"
+            : "Round in progress — no pre-round lock used";
+    }
 }
 
 function takeShot() {
@@ -414,6 +744,7 @@ function takeShot() {
     document.getElementById("shots").innerText =
         "Shots Taken: " + shots;
 
+    markRoundStartedIfNeeded();
     updateCaddieForCurrentPlayState();
 }
 
