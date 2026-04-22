@@ -211,6 +211,13 @@ ul {
             <option value="Moon">Moon Course</option>
         </select>
 
+        <select id="caddieLevel" onchange="updateCaddieForCurrentPlayState()">
+            <option value="none" selected>No Caddie</option>
+            <option value="cheap">Cheap Caddie</option>
+            <option value="mid">Mid Caddie</option>
+            <option value="elite">Elite Caddie</option>
+        </select>
+
         <select id="power">
             <option value="50">50%</option>
             <option value="75" selected>75%</option>
@@ -236,6 +243,45 @@ ul {
             <div id="liveCaddieBody">
                 <p>No club-specific caddie advice is currently loaded.</p>
                 <p>The live caddie system remains active and ready for the next ruleset.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Scientific Caddie Rules</h2>
+
+        <div class="rule-box">
+            <p><strong>Scientific rule now active:</strong> caddies do not alter physics, move the ball, or create impossible outcomes.</p>
+            <p>Caddie effects are modelled through improved decision quality, better consistency, tighter dispersion, and fewer extreme mishits.</p>
+            <p>Higher caddie levels improve the player's statistical consistency, especially in the short game, but do not guarantee results.</p>
+            <p class="small-muted" style="margin-bottom:0;">This keeps all caddie effects within scientifically possible golf behaviour.</p>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Caddie Effect Levels</h2>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>No Caddie</h3>
+                <p>Raw player randomness. Wider distance spread. Greater chance of poor outcomes and larger variance.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Cheap Caddie</h3>
+                <p>Small consistency improvement. Slightly tighter distance range. Slight reduction in extreme errors.</p>
+                <p><strong>Typical effect:</strong> subtle enough that it may feel like ordinary better advice.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Mid Caddie</h3>
+                <p>Noticeable consistency improvement. Better shot-shape discipline and fewer poor misses.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Elite Caddie</h3>
+                <p>Strongest consistency gain. Narrower variance, fewer disasters, and stronger short-game steadiness.</p>
+                <p><strong>Important:</strong> still no impossible physics and no guaranteed outcomes.</p>
             </div>
         </div>
     </div>
@@ -340,7 +386,7 @@ ul {
 
             <div class="club-card">
                 <h3>Parkland / Earth 1st Cut Baseline</h3>
-                <p><strong>Lie:</strong> 1st cut rough</p>
+                <p><strong>Lie:</strong> First cut rough</p>
                 <p><strong>36-handicap high-force total distance:</strong> 135 to 150 yards</p>
                 <p><strong>1st cut effect:</strong> generally playable, but slightly less efficient and less consistent than the fairway</p>
                 <p><strong>Practical note:</strong> a Hybrid will often give more consistency from this lie</p>
@@ -603,6 +649,33 @@ const allowedCommandData = {
 
 const shotLogicData = {};
 
+const caddieProfiles = {
+    none: {
+        label: "No Caddie",
+        varianceMultiplier: 1.00,
+        floorPull: 0.00,
+        ceilingTrim: 0.00
+    },
+    cheap: {
+        label: "Cheap Caddie",
+        varianceMultiplier: 0.93,
+        floorPull: 0.02,
+        ceilingTrim: 0.02
+    },
+    mid: {
+        label: "Mid Caddie",
+        varianceMultiplier: 0.86,
+        floorPull: 0.04,
+        ceilingTrim: 0.04
+    },
+    elite: {
+        label: "Elite Caddie",
+        varianceMultiplier: 0.78,
+        floorPull: 0.06,
+        ceilingTrim: 0.06
+    }
+};
+
 const clubPerformanceProfiles = {
     driver36HandicapEarthTee: {
         baseline: {
@@ -722,12 +795,13 @@ function showLiveCaddieAdvice(adviceKey) {
     document.getElementById("liveCaddiePanel").classList.remove("hidden");
 }
 
-function hideLiveCaddieAdvice() {
-    document.getElementById("liveCaddiePanel").classList.add("hidden");
-}
-
 function getCourseType() {
     return document.getElementById("courseType").value;
+}
+
+function getSelectedCaddieProfile() {
+    const level = document.getElementById("caddieLevel").value;
+    return caddieProfiles[level] || caddieProfiles.none;
 }
 
 function getForceNumber(forceText) {
@@ -765,20 +839,61 @@ function findForceBand(profile, forceValue) {
     }) || null;
 }
 
+function applyCaddieRangeAdjustment(min, max) {
+    const caddie = getSelectedCaddieProfile();
+
+    let adjustedMin = min;
+    let adjustedMax = max;
+
+    const spread = max - min;
+    const tightenedSpread = spread * caddie.varianceMultiplier;
+    const midpoint = (min + max) / 2;
+
+    adjustedMin = midpoint - (tightenedSpread / 2);
+    adjustedMax = midpoint + (tightenedSpread / 2);
+
+    adjustedMin = adjustedMin + (spread * caddie.floorPull);
+    adjustedMax = adjustedMax - (spread * caddie.ceilingTrim);
+
+    adjustedMin = Math.round(adjustedMin);
+    adjustedMax = Math.round(adjustedMax);
+
+    if (adjustedMax < adjustedMin) {
+        adjustedMax = adjustedMin;
+    }
+
+    return {
+        min: adjustedMin,
+        max: adjustedMax,
+        label: caddie.label
+    };
+}
+
 function getDriverEarthTeeSummary(forceValue) {
     const profile = clubPerformanceProfiles.driver36HandicapEarthTee;
     const band = findForceBand(profile, forceValue);
     if (!band) return null;
 
+    const adjustedCarry = applyCaddieRangeAdjustment(
+        Math.round(profile.baseline.averageCarryMin * band.carryFactorMin),
+        Math.round(profile.baseline.averageCarryMax * band.carryFactorMax)
+    );
+
+    const adjustedTotal = applyCaddieRangeAdjustment(
+        Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
+        Math.round(profile.baseline.averageTotalMax * band.totalFactorMax)
+    );
+
     return {
         bandLabel: band.label,
         distanceNote: band.distanceNote,
         riskLevel: band.riskLevel,
-        carryMin: Math.round(profile.baseline.averageCarryMin * band.carryFactorMin),
-        carryMax: Math.round(profile.baseline.averageCarryMax * band.carryFactorMax),
-        totalMin: Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
-        totalMax: Math.round(profile.baseline.averageTotalMax * band.totalFactorMax),
-        caddieTip: profile.caddieTip
+        carryMin: adjustedCarry.min,
+        carryMax: adjustedCarry.max,
+        totalMin: adjustedTotal.min,
+        totalMax: adjustedTotal.max,
+        caddieTip: profile.caddieTip,
+        caddieLabel: adjustedCarry.label
     };
 }
 
@@ -787,13 +902,19 @@ function getDriverEarthFairwaySummary(forceValue) {
     const band = findForceBand(profile, forceValue);
     if (!band) return null;
 
+    const adjustedTotal = applyCaddieRangeAdjustment(
+        Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
+        Math.round(profile.baseline.averageTotalMax * band.totalFactorMax)
+    );
+
     return {
         bandLabel: band.label,
         distanceNote: band.distanceNote,
         riskLevel: band.riskLevel,
-        totalMin: Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
-        totalMax: Math.round(profile.baseline.averageTotalMax * band.totalFactorMax),
-        caddieTip: profile.caddieTip
+        totalMin: adjustedTotal.min,
+        totalMax: adjustedTotal.max,
+        caddieTip: profile.caddieTip,
+        caddieLabel: adjustedTotal.label
     };
 }
 
@@ -802,13 +923,19 @@ function getDriverEarthFirstCutSummary(forceValue) {
     const band = findForceBand(profile, forceValue);
     if (!band) return null;
 
+    const adjustedTotal = applyCaddieRangeAdjustment(
+        Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
+        Math.round(profile.baseline.averageTotalMax * band.totalFactorMax)
+    );
+
     return {
         bandLabel: band.label,
         distanceNote: band.distanceNote,
         riskLevel: band.riskLevel,
-        totalMin: Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
-        totalMax: Math.round(profile.baseline.averageTotalMax * band.totalFactorMax),
-        caddieTip: profile.caddieTip
+        totalMin: adjustedTotal.min,
+        totalMax: adjustedTotal.max,
+        caddieTip: profile.caddieTip,
+        caddieLabel: adjustedTotal.label
     };
 }
 
@@ -817,20 +944,27 @@ function getDriverMoonSummary(forceValue) {
     const band = findForceBand(profile, forceValue);
     if (!band) return null;
 
+    const adjustedTotal = applyCaddieRangeAdjustment(
+        Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
+        Math.round(profile.baseline.averageTotalMax * band.totalFactorMax)
+    );
+
     return {
         bandLabel: band.label,
         distanceNote: band.distanceNote,
         riskLevel: band.riskLevel,
-        totalMin: Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
-        totalMax: Math.round(profile.baseline.averageTotalMax * band.totalFactorMax),
+        totalMin: adjustedTotal.min,
+        totalMax: adjustedTotal.max,
         bestCaseTotalMax: profile.baseline.bestCaseTotalMax,
-        caddieTip: profile.caddieTip
+        caddieTip: profile.caddieTip,
+        caddieLabel: adjustedTotal.label
     };
 }
 
 function updateCaddieForCurrentPlayState() {
     const adviceKey = getAdviceKeyForAcceptedCommand();
     const courseType = getCourseType();
+    const caddie = getSelectedCaddieProfile();
 
     if (
         lastAcceptedCommand &&
@@ -850,11 +984,13 @@ function updateCaddieForCurrentPlayState() {
             if (summary) {
                 [
                     "Course type: Moon Course.",
+                    "Caddie level: " + caddie.label + ".",
                     "Driver force band: " + summary.bandLabel + ".",
                     "Estimated Moon total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
                     "Upper-end clean-contact outcome can rise beyond 1,000 yards in this mode.",
                     "Distance note: " + summary.distanceNote + ".",
                     "Risk level: " + summary.riskLevel + ".",
+                    "Scientific caddie effect: tighter variance, not altered physics.",
                     summary.caddieTip
                 ].forEach(function(paragraph) {
                     const p = document.createElement("p");
@@ -872,11 +1008,13 @@ function updateCaddieForCurrentPlayState() {
                 if (summary) {
                     [
                         "Course type: Parkland.",
-                        "Lie: 1st cut rough.",
+                        "Lie: First cut rough.",
+                        "Caddie level: " + caddie.label + ".",
                         "Driver force band: " + summary.bandLabel + ".",
                         "Estimated 36-handicap 1st-cut-driver total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
                         "Distance note: " + summary.distanceNote + ".",
                         "Risk level: " + summary.riskLevel + ".",
+                        "Scientific caddie effect: better consistency and fewer extreme misses.",
                         summary.caddieTip
                     ].forEach(function(paragraph) {
                         const p = document.createElement("p");
@@ -894,10 +1032,12 @@ function updateCaddieForCurrentPlayState() {
                     [
                         "Course type: Parkland.",
                         "Lie: Fairway.",
+                        "Caddie level: " + caddie.label + ".",
                         "Driver force band: " + summary.bandLabel + ".",
                         "Estimated 36-handicap fairway-driver total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
                         "Distance note: " + summary.distanceNote + ".",
                         "Risk level: " + summary.riskLevel + ".",
+                        "Scientific caddie effect: reduced variance, not extra hidden power.",
                         summary.caddieTip
                     ].forEach(function(paragraph) {
                         const p = document.createElement("p");
@@ -915,11 +1055,13 @@ function updateCaddieForCurrentPlayState() {
                     [
                         "Course type: Parkland.",
                         "Lie: " + lie + ".",
+                        "Caddie level: " + caddie.label + ".",
                         "Driver force band: " + summary.bandLabel + ".",
                         "Estimated 36-handicap carry range here: " + summary.carryMin + " to " + summary.carryMax + " yards.",
                         "Estimated 36-handicap total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
                         "Distance note: " + summary.distanceNote + ".",
                         "Risk level: " + summary.riskLevel + ".",
+                        "Scientific caddie effect: improved consistency, not impossible distance gains.",
                         summary.caddieTip
                     ].forEach(function(paragraph) {
                         const p = document.createElement("p");
@@ -1065,6 +1207,11 @@ function getRandomInt(min, max) {
     return Math.round(min + Math.random() * (max - min));
 }
 
+function getRandomIntWithCaddie(min, max) {
+    const adjusted = applyCaddieRangeAdjustment(min, max);
+    return getRandomInt(adjusted.min, adjusted.max);
+}
+
 function getClub1ShotDistance(clubMode, forceValue) {
     const modeRanges = {
         "04° Putter": { min: 3, max: 18 },
@@ -1082,7 +1229,7 @@ function getClub1ShotDistance(clubMode, forceValue) {
 
     const factor = Math.max(0.05, forceValue / 100);
 
-    return getRandomInt(
+    return getRandomIntWithCaddie(
         Math.round(range.min * factor),
         Math.round(range.max * factor)
     );
@@ -1100,7 +1247,7 @@ function getClub2ShotDistance(forceValue) {
     const range = settingRanges[setting] || settingRanges["Neutral"];
     const factor = Math.max(0.08, forceValue / 100);
 
-    return getRandomInt(
+    return getRandomIntWithCaddie(
         Math.round(range.min * factor),
         Math.round(range.max * factor)
     );
@@ -1124,7 +1271,7 @@ function getClub3EarthTeeShotDistance(forceValue) {
         max -= 6;
     }
 
-    return getRandomInt(min, max);
+    return getRandomIntWithCaddie(min, max);
 }
 
 function getClub3EarthFairwayShotDistance(forceValue) {
@@ -1145,7 +1292,7 @@ function getClub3EarthFairwayShotDistance(forceValue) {
         max -= 5;
     }
 
-    return getRandomInt(min, max);
+    return getRandomIntWithCaddie(min, max);
 }
 
 function getClub3EarthFirstCutShotDistance(forceValue) {
@@ -1166,7 +1313,7 @@ function getClub3EarthFirstCutShotDistance(forceValue) {
         max -= 4;
     }
 
-    return getRandomInt(min, max);
+    return getRandomIntWithCaddie(min, max);
 }
 
 function getClub3MoonShotDistance(forceValue) {
@@ -1192,7 +1339,7 @@ function getClub3MoonShotDistance(forceValue) {
         min = Math.max(min, 920);
     }
 
-    return getRandomInt(min, max);
+    return getRandomIntWithCaddie(min, max);
 }
 
 function getLegacyPowerDistance() {
