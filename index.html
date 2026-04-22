@@ -214,7 +214,7 @@ ul {
         <select id="caddieLevel" onchange="updateCaddieForCurrentPlayState()">
             <option value="none" selected>No Caddie</option>
             <option value="cheap">Cheap Caddie</option>
-            <option value="mid">Mid Caddie</option>
+            <option value="mid">Average Caddie</option>
             <option value="elite">Elite Caddie</option>
         </select>
 
@@ -252,8 +252,8 @@ ul {
 
         <div class="rule-box">
             <p><strong>Scientific rule now active:</strong> caddies do not alter physics, move the ball, or create impossible outcomes.</p>
-            <p>Caddie effects are modelled through improved decision quality, better consistency, tighter dispersion, and fewer extreme mishits.</p>
-            <p>Higher caddie levels improve the player's statistical consistency, especially in the short game, but do not guarantee results.</p>
+            <p>Caddie effects are modelled through improved decision quality, better consistency, tighter dispersion, reduced hook/slice severity, and fewer extreme mishits.</p>
+            <p>Higher caddie levels improve the player's statistical consistency, especially in the short game and directional discipline, but do not guarantee results.</p>
             <p class="small-muted" style="margin-bottom:0;">This keeps all caddie effects within scientifically possible golf behaviour.</p>
         </div>
     </div>
@@ -274,7 +274,7 @@ ul {
             </div>
 
             <div class="club-card">
-                <h3>Mid Caddie</h3>
+                <h3>Average Caddie</h3>
                 <p>Noticeable consistency improvement. Better shot-shape discipline and fewer poor misses.</p>
             </div>
 
@@ -282,6 +282,30 @@ ul {
                 <h3>Elite Caddie</h3>
                 <p>Strongest consistency gain. Narrower variance, fewer disasters, and stronger short-game steadiness.</p>
                 <p><strong>Important:</strong> still no impossible physics and no guaranteed outcomes.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Scientific Hook / Slice Training Model</h2>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Cheap Caddie Training Effect</h3>
+                <p><strong>Hook / slice reduction:</strong> 1% to 8%</p>
+                <p>Represents small improvements in setup, alignment, and face/path discipline.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Average Caddie Training Effect</h3>
+                <p><strong>Hook / slice reduction:</strong> 8% to 20%</p>
+                <p>Represents stronger coaching benefit and better repeatability of swing shape.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Elite Caddie Training Effect</h3>
+                <p><strong>Hook / slice reduction:</strong> 20% to 35%</p>
+                <p><strong>Rare rescue case:</strong> up to 50% only where a standard result would have been a severe miss or near out-of-bounds.</p>
             </div>
         </div>
     </div>
@@ -654,25 +678,37 @@ const caddieProfiles = {
         label: "No Caddie",
         varianceMultiplier: 1.00,
         floorPull: 0.00,
-        ceilingTrim: 0.00
+        ceilingTrim: 0.00,
+        hookSliceReductionMin: 0,
+        hookSliceReductionMax: 0,
+        rescueMax: 0
     },
     cheap: {
         label: "Cheap Caddie",
         varianceMultiplier: 0.93,
         floorPull: 0.02,
-        ceilingTrim: 0.02
+        ceilingTrim: 0.02,
+        hookSliceReductionMin: 1,
+        hookSliceReductionMax: 8,
+        rescueMax: 8
     },
     mid: {
-        label: "Mid Caddie",
+        label: "Average Caddie",
         varianceMultiplier: 0.86,
         floorPull: 0.04,
-        ceilingTrim: 0.04
+        ceilingTrim: 0.04,
+        hookSliceReductionMin: 8,
+        hookSliceReductionMax: 20,
+        rescueMax: 20
     },
     elite: {
         label: "Elite Caddie",
         varianceMultiplier: 0.78,
         floorPull: 0.06,
-        ceilingTrim: 0.06
+        ceilingTrim: 0.06,
+        hookSliceReductionMin: 20,
+        hookSliceReductionMax: 35,
+        rescueMax: 50
     }
 };
 
@@ -869,6 +905,20 @@ function applyCaddieRangeAdjustment(min, max) {
     };
 }
 
+function getHookSliceEffectText() {
+    const caddie = getSelectedCaddieProfile();
+
+    if (caddie.label === "No Caddie") {
+        return "No scientific hook/slice training benefit applied.";
+    }
+
+    if (caddie.label === "Elite Caddie") {
+        return "Training-based hook/slice reduction model: " + caddie.hookSliceReductionMin + "% to " + caddie.hookSliceReductionMax + "%, with rare rescue cases up to " + caddie.rescueMax + "% for severe default misses.";
+    }
+
+    return "Training-based hook/slice reduction model: " + caddie.hookSliceReductionMin + "% to " + caddie.hookSliceReductionMax + "%.";
+}
+
 function getDriverEarthTeeSummary(forceValue) {
     const profile = clubPerformanceProfiles.driver36HandicapEarthTee;
     const band = findForceBand(profile, forceValue);
@@ -892,8 +942,7 @@ function getDriverEarthTeeSummary(forceValue) {
         carryMax: adjustedCarry.max,
         totalMin: adjustedTotal.min,
         totalMax: adjustedTotal.max,
-        caddieTip: profile.caddieTip,
-        caddieLabel: adjustedCarry.label
+        caddieTip: profile.caddieTip
     };
 }
 
@@ -913,8 +962,7 @@ function getDriverEarthFairwaySummary(forceValue) {
         riskLevel: band.riskLevel,
         totalMin: adjustedTotal.min,
         totalMax: adjustedTotal.max,
-        caddieTip: profile.caddieTip,
-        caddieLabel: adjustedTotal.label
+        caddieTip: profile.caddieTip
     };
 }
 
@@ -934,8 +982,7 @@ function getDriverEarthFirstCutSummary(forceValue) {
         riskLevel: band.riskLevel,
         totalMin: adjustedTotal.min,
         totalMax: adjustedTotal.max,
-        caddieTip: profile.caddieTip,
-        caddieLabel: adjustedTotal.label
+        caddieTip: profile.caddieTip
     };
 }
 
@@ -956,8 +1003,7 @@ function getDriverMoonSummary(forceValue) {
         totalMin: adjustedTotal.min,
         totalMax: adjustedTotal.max,
         bestCaseTotalMax: profile.baseline.bestCaseTotalMax,
-        caddieTip: profile.caddieTip,
-        caddieLabel: adjustedTotal.label
+        caddieTip: profile.caddieTip
     };
 }
 
@@ -991,6 +1037,7 @@ function updateCaddieForCurrentPlayState() {
                     "Distance note: " + summary.distanceNote + ".",
                     "Risk level: " + summary.riskLevel + ".",
                     "Scientific caddie effect: tighter variance, not altered physics.",
+                    getHookSliceEffectText(),
                     summary.caddieTip
                 ].forEach(function(paragraph) {
                     const p = document.createElement("p");
@@ -1015,6 +1062,7 @@ function updateCaddieForCurrentPlayState() {
                         "Distance note: " + summary.distanceNote + ".",
                         "Risk level: " + summary.riskLevel + ".",
                         "Scientific caddie effect: better consistency and fewer extreme misses.",
+                        getHookSliceEffectText(),
                         summary.caddieTip
                     ].forEach(function(paragraph) {
                         const p = document.createElement("p");
@@ -1038,6 +1086,7 @@ function updateCaddieForCurrentPlayState() {
                         "Distance note: " + summary.distanceNote + ".",
                         "Risk level: " + summary.riskLevel + ".",
                         "Scientific caddie effect: reduced variance, not extra hidden power.",
+                        getHookSliceEffectText(),
                         summary.caddieTip
                     ].forEach(function(paragraph) {
                         const p = document.createElement("p");
@@ -1062,6 +1111,7 @@ function updateCaddieForCurrentPlayState() {
                         "Distance note: " + summary.distanceNote + ".",
                         "Risk level: " + summary.riskLevel + ".",
                         "Scientific caddie effect: improved consistency, not impossible distance gains.",
+                        getHookSliceEffectText(),
                         summary.caddieTip
                     ].forEach(function(paragraph) {
                         const p = document.createElement("p");
