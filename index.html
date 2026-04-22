@@ -320,7 +320,7 @@ ul {
 
         <div class="club-grid">
             <div class="club-card">
-                <h3>Parkland / Earth Baseline</h3>
+                <h3>Parkland / Earth Tee Baseline</h3>
                 <p><strong>Club:</strong> OmniAtlas L1 Adjustable Golf Driver</p>
                 <p><strong>Primary use:</strong> tee shots and aggressive distance play</p>
                 <p><strong>Average carry distance:</strong> 120 to 145 yards</p>
@@ -330,12 +330,12 @@ ul {
             </div>
 
             <div class="club-card">
-                <h3>Driver Force Interpretation</h3>
-                <p><strong>1%–25%</strong> — very weak advancing strike, little useful driver distance</p>
-                <p><strong>26%–49%</strong> — short advancing shot, limited driver value</p>
-                <p><strong>50%–74%</strong> — moderate playable strike, but below full driver potential</p>
-                <p><strong>75%–89%</strong> — strong practical driver use</p>
-                <p><strong>90%–100%</strong> — highest distance potential, but increased mishit and dispersion risk</p>
+                <h3>Parkland / Earth Fairway Baseline</h3>
+                <p><strong>Lie:</strong> Fairway</p>
+                <p><strong>36-handicap high-force total distance:</strong> 141 to 155 yards</p>
+                <p><strong>Distance type:</strong> mainly total distance, not carry only</p>
+                <p><strong>Gameplay note:</strong> driver from the fairway is more demanding than from the tee</p>
+                <p><strong>Practical note:</strong> a safer club may often be the percentage play</p>
             </div>
 
             <div class="club-card">
@@ -577,9 +577,7 @@ const allowedCommandData = {
 const shotLogicData = {};
 
 const clubPerformanceProfiles = {
-    driver36HandicapEarth: {
-        clubName: "OmniAtlas L1 Adjustable Golf Driver",
-        handicapBand: 36,
+    driver36HandicapEarthTee: {
         baseline: {
             averageCarryMin: 120,
             averageCarryMax: 145,
@@ -595,9 +593,21 @@ const clubPerformanceProfiles = {
         ],
         caddieTip: "Accuracy over power. At this level, keeping the ball in play is more beneficial than attempting maximum distance, which can lead to high scores. You may consider trying a lower force rate in return for more focus on accuracy."
     },
+    driver36HandicapEarthFairway: {
+        baseline: {
+            averageTotalMin: 141,
+            averageTotalMax: 155
+        },
+        forceBands: [
+            { min: 1, max: 25, label: "Very weak fairway driver attempt", totalFactorMin: 0.10, totalFactorMax: 0.22, riskLevel: "Low", distanceNote: "Too little force for useful driver-from-fairway value" },
+            { min: 26, max: 49, label: "Short fairway driver attempt", totalFactorMin: 0.23, totalFactorMax: 0.42, riskLevel: "Low to Moderate", distanceNote: "Limited distance and still not ideal club usage" },
+            { min: 50, max: 74, label: "Moderate fairway driver strike", totalFactorMin: 0.43, totalFactorMax: 0.68, riskLevel: "Moderate", distanceNote: "Playable, but contact quality matters heavily" },
+            { min: 75, max: 89, label: "Strong fairway driver strike", totalFactorMin: 0.69, totalFactorMax: 0.88, riskLevel: "Moderate to High", distanceNote: "Demanding shot with real mishit risk" },
+            { min: 90, max: 100, label: "High-force fairway driver attempt", totalFactorMin: 0.89, totalFactorMax: 1.00, riskLevel: "High", distanceNote: "Potentially useful distance, but often not the percentage play" }
+        ],
+        caddieTip: "Most players in your category gain more from centred contact and control than from forcing maximum swing speed. Reducing force slightly may improve strike quality and produce a better overall result. Alternatively, you may be better using a lesser wood, Stinger, Hybrid or Iron, and just focus on staying on the fairway rather than trying to hit the green."
+    },
     driver36HandicapMoon: {
-        clubName: "OmniAtlas L1 Adjustable Golf Driver",
-        handicapBand: 36,
         baseline: {
             averageTotalMin: 780,
             averageTotalMax: 1000,
@@ -708,22 +718,15 @@ function getAdviceKeyForAcceptedCommand() {
     return roundState.clubSettingsLocked ? "lockedRound" : "placeholder";
 }
 
-function getDriverEarthForceBand(forceValue) {
-    return clubPerformanceProfiles.driver36HandicapEarth.forceBands.find(function(band) {
+function findForceBand(profile, forceValue) {
+    return profile.forceBands.find(function(band) {
         return forceValue >= band.min && forceValue <= band.max;
     }) || null;
 }
 
-function getDriverMoonForceBand(forceValue) {
-    return clubPerformanceProfiles.driver36HandicapMoon.forceBands.find(function(band) {
-        return forceValue >= band.min && forceValue <= band.max;
-    }) || null;
-}
-
-function getDriverEarthSummary(forceValue) {
-    const profile = clubPerformanceProfiles.driver36HandicapEarth;
-    const band = getDriverEarthForceBand(forceValue);
-
+function getDriverEarthTeeSummary(forceValue) {
+    const profile = clubPerformanceProfiles.driver36HandicapEarthTee;
+    const band = findForceBand(profile, forceValue);
     if (!band) return null;
 
     return {
@@ -738,10 +741,24 @@ function getDriverEarthSummary(forceValue) {
     };
 }
 
+function getDriverEarthFairwaySummary(forceValue) {
+    const profile = clubPerformanceProfiles.driver36HandicapEarthFairway;
+    const band = findForceBand(profile, forceValue);
+    if (!band) return null;
+
+    return {
+        bandLabel: band.label,
+        distanceNote: band.distanceNote,
+        riskLevel: band.riskLevel,
+        totalMin: Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
+        totalMax: Math.round(profile.baseline.averageTotalMax * band.totalFactorMax),
+        caddieTip: profile.caddieTip
+    };
+}
+
 function getDriverMoonSummary(forceValue) {
     const profile = clubPerformanceProfiles.driver36HandicapMoon;
-    const band = getDriverMoonForceBand(forceValue);
-
+    const band = findForceBand(profile, forceValue);
     if (!band) return null;
 
     return {
@@ -764,6 +781,7 @@ function updateCaddieForCurrentPlayState() {
         lastAcceptedCommand.club === "OmniAtlas L1 Adjustable Golf Driver"
     ) {
         const forceValue = getForceNumber(lastAcceptedCommand.force);
+        const lie = lastAcceptedCommand.lie;
         const titleElement = document.getElementById("liveCaddieTitle");
         const bodyElement = document.getElementById("liveCaddieBody");
 
@@ -792,25 +810,49 @@ function updateCaddieForCurrentPlayState() {
                 return;
             }
         } else {
-            const summary = getDriverEarthSummary(forceValue);
+            if (lie === "Fairway") {
+                const summary = getDriverEarthFairwaySummary(forceValue);
 
-            if (summary) {
-                [
-                    "Course type: Parkland.",
-                    "Driver force band: " + summary.bandLabel + ".",
-                    "Estimated 36-handicap carry range here: " + summary.carryMin + " to " + summary.carryMax + " yards.",
-                    "Estimated 36-handicap total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
-                    "Distance note: " + summary.distanceNote + ".",
-                    "Risk level: " + summary.riskLevel + ".",
-                    summary.caddieTip
-                ].forEach(function(paragraph) {
-                    const p = document.createElement("p");
-                    p.textContent = paragraph;
-                    bodyElement.appendChild(p);
-                });
+                if (summary) {
+                    [
+                        "Course type: Parkland.",
+                        "Lie: Fairway.",
+                        "Driver force band: " + summary.bandLabel + ".",
+                        "Estimated 36-handicap fairway-driver total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
+                        "Distance note: " + summary.distanceNote + ".",
+                        "Risk level: " + summary.riskLevel + ".",
+                        summary.caddieTip
+                    ].forEach(function(paragraph) {
+                        const p = document.createElement("p");
+                        p.textContent = paragraph;
+                        bodyElement.appendChild(p);
+                    });
 
-                document.getElementById("liveCaddiePanel").classList.remove("hidden");
-                return;
+                    document.getElementById("liveCaddiePanel").classList.remove("hidden");
+                    return;
+                }
+            } else {
+                const summary = getDriverEarthTeeSummary(forceValue);
+
+                if (summary) {
+                    [
+                        "Course type: Parkland.",
+                        "Lie: " + lie + ".",
+                        "Driver force band: " + summary.bandLabel + ".",
+                        "Estimated 36-handicap carry range here: " + summary.carryMin + " to " + summary.carryMax + " yards.",
+                        "Estimated 36-handicap total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
+                        "Distance note: " + summary.distanceNote + ".",
+                        "Risk level: " + summary.riskLevel + ".",
+                        summary.caddieTip
+                    ].forEach(function(paragraph) {
+                        const p = document.createElement("p");
+                        p.textContent = paragraph;
+                        bodyElement.appendChild(p);
+                    });
+
+                    document.getElementById("liveCaddiePanel").classList.remove("hidden");
+                    return;
+                }
             }
         }
     }
@@ -987,8 +1029,8 @@ function getClub2ShotDistance(forceValue) {
     );
 }
 
-function getClub3EarthShotDistance(forceValue) {
-    const summary = getDriverEarthSummary(forceValue);
+function getClub3EarthTeeShotDistance(forceValue) {
+    const summary = getDriverEarthTeeSummary(forceValue);
     if (!summary) return 0;
 
     const driverSetting = moonGolfClubData.club3.currentSetting;
@@ -1003,6 +1045,27 @@ function getClub3EarthShotDistance(forceValue) {
     if (driverSetting === "High Loft (Control)") {
         min -= 4;
         max -= 6;
+    }
+
+    return getRandomInt(min, max);
+}
+
+function getClub3EarthFairwayShotDistance(forceValue) {
+    const summary = getDriverEarthFairwaySummary(forceValue);
+    if (!summary) return 0;
+
+    const driverSetting = moonGolfClubData.club3.currentSetting;
+    let min = summary.totalMin;
+    let max = summary.totalMax;
+
+    if (driverSetting === "Low Loft (Distance)") {
+        min += 2;
+        max += 4;
+    }
+
+    if (driverSetting === "High Loft (Control)") {
+        min -= 3;
+        max -= 5;
     }
 
     return getRandomInt(min, max);
@@ -1052,12 +1115,19 @@ function getShotDistanceFromAcceptedCommand() {
 
     const forceValue = getForceNumber(lastAcceptedCommand.force);
     const club = lastAcceptedCommand.club;
+    const lie = lastAcceptedCommand.lie;
     const courseType = getCourseType();
 
     if (club === "OmniAtlas L1 Adjustable Golf Driver") {
-        return courseType === "Moon"
-            ? getClub3MoonShotDistance(forceValue)
-            : getClub3EarthShotDistance(forceValue);
+        if (courseType === "Moon") {
+            return getClub3MoonShotDistance(forceValue);
+        }
+
+        if (lie === "Fairway") {
+            return getClub3EarthFairwayShotDistance(forceValue);
+        }
+
+        return getClub3EarthTeeShotDistance(forceValue);
     }
 
     if (club === "OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood") {
