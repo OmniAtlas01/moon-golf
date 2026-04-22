@@ -70,32 +70,6 @@ button, select, textarea {
     margin-top: 0;
 }
 
-.equipment-card {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    align-items: flex-start;
-    justify-content: center;
-}
-
-.equipment-image {
-    flex: 1 1 280px;
-    max-width: 320px;
-    text-align: center;
-}
-
-.equipment-image img {
-    width: 100%;
-    max-width: 300px;
-    height: auto;
-    border-radius: 12px;
-    background: #ffffff;
-}
-
-.equipment-details {
-    flex: 2 1 420px;
-}
-
 ul {
     line-height: 1.8;
 }
@@ -191,12 +165,10 @@ ul {
         <h2 style="text-align:center;">Live Caddie Advice</h2>
 
         <div id="liveCaddieContent" class="caddie-live-box">
-            <h3 id="liveCaddieTitle">First Tee Advice</h3>
+            <h3 id="liveCaddieTitle">Caddie Waiting</h3>
             <div id="liveCaddieBody">
-                <p>Based upon your Golf Range practise I advise that you command no more than <strong>75% force</strong> with the OmniAtlas starter driver for your opening shot.</p>
-                <p>However, higher force with your handicap level comes with increased risks, including mishit, slice, hook, or out of bounds.</p>
-                <p>Your safer option may be to command a controlled force level between <strong>50% and 75%</strong> straight up the fairway.</p>
-                <p>You may reduce your force further in exchange for a higher likelihood of clean contact and accuracy.</p>
+                <p>No club-specific caddie advice is currently loaded.</p>
+                <p>The live caddie system remains active and ready for the next ruleset.</p>
             </div>
         </div>
     </div>
@@ -215,7 +187,7 @@ ul {
             <li><strong>Force:</strong> 75%</li>
             <li><strong>Direction:</strong> Straight up the fairway</li>
             <li><strong>Shot type:</strong> Drive</li>
-            <li><strong>Message:</strong> Aim 1-foot to right of pin, carry distance 5-yards only</li>
+            <li><strong>Message:</strong> Aim slightly right and favour clean contact</li>
         </ul>
 
         <h3>Example Player Command</h3>
@@ -224,7 +196,7 @@ Lie: Fairway
 Force: 75%
 Direction: Straight up the fairway
 Shot type: Drive
-Message: Aim 1-foot to right of pin, carry distance 5-yards only</div>
+Message: Aim slightly right and favour clean contact</div>
 
         <p style="margin-top:14px; margin-bottom:0;">
             The player message expresses intent only. It does not guarantee the result. Player skill, lie, club, course conditions, and weighted probability still decide the final outcome.
@@ -243,7 +215,7 @@ Lie: Fairway
 Force: 75%
 Direction: Straight up the fairway
 Shot type: Drive
-Message: Aim 1-foot to right of pin, carry distance 5-yards only"></textarea>
+Message: Aim slightly right and favour clean contact"></textarea>
 
         <div class="command-actions">
             <button onclick="submitPlayerCommand()">Submit Command</button>
@@ -260,187 +232,6 @@ Message: Aim 1-foot to right of pin, carry distance 5-yards only"></textarea>
             <p class="note-text" style="margin-bottom:0;">
                 Accepted command stored. Outcome logic can now use this command later.
             </p>
-        </div>
-    </div>
-
-    <div class="info-panel">
-        <h2 style="text-align:center;">36-Handicapper Driver Profile — Parkland Tee Shot Logic</h2>
-
-        <p>
-            This player profile represents a 36-handicap golfer using the <strong>OmniAtlas Virtual Reality Steel 4 Driver</strong> from the tee on a parkland course.
-        </p>
-
-        <p>
-            Average driving distance is approximately <strong>119–130 yards total</strong>, with an average <strong>carry distance of 110–120 yards</strong>.
-            On parkland courses, softer fairways reduce roll, so total distance tends to settle closer to the lower end of the range.
-        </p>
-
-        <p>
-            While this golfer may occasionally hit a strong drive of <strong>160+ yards</strong>, those longer results are not the normal playing average.
-            Mishits, weak strikes, and directional misses reduce real on-course consistency.
-        </p>
-
-        <h3>Stored Tee Logic Profile</h3>
-        <ul>
-            <li><strong>Player Level:</strong> 36-handicapper</li>
-            <li><strong>Club:</strong> OmniAtlas Virtual Reality Steel 4 Driver</li>
-            <li><strong>Lie:</strong> Tee</li>
-            <li><strong>Course Type:</strong> Parkland</li>
-            <li><strong>Average Carry:</strong> 110–120 yards</li>
-            <li><strong>Average Total Distance:</strong> 119–130 yards</li>
-            <li><strong>Typical Good Drive Ceiling:</strong> 160+ yards occasionally</li>
-            <li><strong>Ground Conditions:</strong> Softer turf, reduced roll-out</li>
-        </ul>
-
-        <p style="margin-bottom:0;">
-            This profile can later be used as the baseline for player-written shot commands, probability boxes, and random outcome selection.
-        </p>
-    </div>
-
-    <div class="info-panel">
-        <h2 style="text-align:center;">36-Handicapper Driver Profile — Parkland Fairway Shot Logic</h2>
-
-        <p>
-            An average golfer with a 36-handicap using the OmniAtlas starter driver would typically hit the driver from the fairway between <strong>110 and 120 yards</strong>.
-        </p>
-
-        <p>
-            Stronger fairway strikes may occasionally travel beyond <strong>120 yards</strong>, with rare top-end outcomes reaching approximately <strong>135–155 yards</strong>. Higher results than this should be treated as highly uncommon from a fairway lie for this golfer.
-        </p>
-
-        <p>
-            On a parkland course, this player runs a substantial risk of hitting the ground first. A heavy mishit can reduce distance by approximately <strong>50 yards</strong> compared with the average outcome.
-        </p>
-
-        <p>
-            On flatter, well-maintained parkland ground, the player is more realistically trying to advance the ball with solid contact rather than maximise distance.
-        </p>
-
-        <h3>Stored Fairway Logic Profile</h3>
-        <ul>
-            <li><strong>Player Level:</strong> 36-handicapper</li>
-            <li><strong>Club:</strong> OmniAtlas Virtual Reality Steel 4 Driver</li>
-            <li><strong>Lie:</strong> Fairway</li>
-            <li><strong>Course Type:</strong> Parkland</li>
-            <li><strong>Typical Total Distance:</strong> 110–120 yards</li>
-            <li><strong>Rare Long Result:</strong> 135–155 yards</li>
-            <li><strong>Heavy Mishit Risk:</strong> High</li>
-            <li><strong>Heavy Mishit Penalty:</strong> Up to 50 yards lost</li>
-        </ul>
-
-        <p style="margin-bottom:0;">
-            This profile is intended for future command-based fairway shot probability logic.
-        </p>
-    </div>
-
-    <div class="info-panel">
-        <h2 style="text-align:center;">36-Handicapper Driver Profile — Parkland First Cut Rough Logic</h2>
-
-        <p>
-            This player profile represents a 36-handicap golfer using the <strong>OmniAtlas starter driver</strong> from the <strong>first cut rough</strong> on a parkland course.
-        </p>
-
-        <p>
-            Compared with a fairway strike, first cut rough will often reduce total distance by approximately <strong>10–15%</strong>. A typical result therefore falls around <strong>95–108 yards</strong>.
-        </p>
-
-        <p>
-            Full-force attempts may occasionally push towards <strong>120 yards</strong>, but the rough increases the chance of poor contact, twisting clubface, and a worsening lie or direction.
-        </p>
-
-        <h3>Stored First Cut Rough Logic Profile</h3>
-        <ul>
-            <li><strong>Player Level:</strong> 36-handicapper</li>
-            <li><strong>Club:</strong> OmniAtlas starter driver</li>
-            <li><strong>Lie:</strong> First cut rough</li>
-            <li><strong>Course Type:</strong> Parkland</li>
-            <li><strong>Distance Reduction vs Fairway:</strong> 10–15%</li>
-            <li><strong>Typical Total Distance:</strong> 95–108 yards</li>
-            <li><strong>Possible Full-Force Ceiling:</strong> About 120 yards</li>
-            <li><strong>Full-Force Risk:</strong> High</li>
-            <li><strong>Safer Alternative:</strong> Reduced force or iron</li>
-        </ul>
-
-        <p style="margin-bottom:0;">
-            This profile is intended to support first-cut rough shot logic, where more controlled force or a safer club choice may produce a better playable result.
-        </p>
-    </div>
-
-    <div class="info-panel">
-        <h2 style="text-align:center;">36-Handicapper 7-Iron Profile — Parkland Fairway Shot Logic</h2>
-
-        <p>
-            This player profile represents a 36-handicap golfer using the <strong>OmniAtlas Starter 7-Iron</strong> from a parkland fairway.
-        </p>
-
-        <p>
-            Typical distance ranges between <strong>70 and 95 yards</strong>, with occasional cleaner strikes reaching approximately <strong>100–105 yards</strong> depending on central face contact.
-        </p>
-
-        <p>
-            Due to inconsistent strike quality at this handicap level, attempting full force often reduces accuracy and increases the likelihood of mishits.
-        </p>
-
-        <h3>Stored Fairway Logic Profile</h3>
-        <ul>
-            <li><strong>Player Level:</strong> 36-handicapper</li>
-            <li><strong>Club:</strong> OmniAtlas Starter 7-Iron</li>
-            <li><strong>Lie:</strong> Fairway</li>
-            <li><strong>Course Type:</strong> Parkland</li>
-            <li><strong>Typical Distance Range:</strong> 70–95 yards</li>
-            <li><strong>Cleaner Strike Ceiling:</strong> 100–105 yards occasionally</li>
-            <li><strong>Full Force Reliability:</strong> Low</li>
-            <li><strong>Recommended Approach:</strong> Controlled force for better contact</li>
-        </ul>
-
-        <p style="margin-bottom:0;">
-            This profile is intended to support command-based shot logic, where lower force percentages may improve strike consistency and playable outcomes.
-        </p>
-    </div>
-
-    <div class="info-panel">
-        <h2 style="text-align:center; margin-top:0;">Player Profiles & Equipment</h2>
-
-        <div class="equipment-card">
-            <div class="equipment-image">
-                <img src="omniatlas-virtual-reality-steel-4-piece-starter-set.jpg" alt="OmniAtlas Virtual Reality Steel 4 Piece Golf Carry Bag Starter Package Set">
-                <p style="margin-top:12px; font-size:18px;"><strong>Shop Price:</strong> £1.49</p>
-                <p style="font-size:16px;"><strong>Player Level:</strong> Beginner Set for 36-Handicappers</p>
-            </div>
-
-            <div class="equipment-details">
-                <h3>OmniAtlas Virtual Reality Steel 4 Piece Golf Carry Bag Starter Package Set</h3>
-                <p>
-                    A beginner-friendly starter set designed for consistency and distance, supplied with a stylish carry bag for new Moon Golf players building their first equipment profile.
-                </p>
-
-                <h4>Key Features</h4>
-                <ul>
-                    <li>Oversized Driver</li>
-                    <li>Oversize 7 & PW Stainless Steel Irons (2 in Total)</li>
-                    <li>Mallet Putter</li>
-                    <li>Matching Headcovers</li>
-                    <li>Carry Bag</li>
-                    <li>Performance Shafts</li>
-                    <li>Soft Feel Grips</li>
-                    <li>1-Year Guarantee</li>
-                </ul>
-
-                <h4>Oversized Driver</h4>
-                <p>
-                    The driver benefits from an oversized 460cc forged hyper titanium 10.5 driver, built to be durable for golfers of all swing speeds.
-                </p>
-
-                <h4>Mallet Putter</h4>
-                <p>
-                    The set includes a fang-style mallet putter for stability and balance, complete with a milled face insert for improved ball roll and a contrasting alignment line to help guide putts towards the intended target.
-                </p>
-
-                <h4>Carry Bag</h4>
-                <p>
-                    The package includes a premium golf bag with a graphite-friendly separator top and integrated lift handle. It also includes numerous pockets, a single shoulder strap, towel ring, Velcro glove attachment, and a matching rain hood.
-                </p>
-            </div>
         </div>
     </div>
 
@@ -464,6 +255,7 @@ const allowedCommandData = {
         "Tee",
         "Fairway",
         "First cut rough",
+        "Second cut rough",
         "Rough",
         "Bunker",
         "Fringe",
@@ -486,133 +278,16 @@ const allowedCommandData = {
     ]
 };
 
-const shotLogicData = {
-    handicap36: {
-        name: "36-Handicapper",
-        clubSet: "OmniAtlas Virtual Reality Steel 4 Piece Golf Carry Bag Starter Package Set",
-        driver: {
-            tee: {
-                clubName: "OmniAtlas Virtual Reality Steel 4 Driver",
-                lie: "tee",
-                courseType: "parkland",
-                carryDistanceMin: 110,
-                carryDistanceMax: 120,
-                totalDistanceMin: 119,
-                totalDistanceMax: 130,
-                rareLongDriveMin: 150,
-                rareLongDriveMax: 170,
-                occasionalGoodDrive: 160,
-                turfFirmness: "soft",
-                rolloutLevel: "low",
-                consistency: "variable",
-                notes: [
-                    "Parkland fairways reduce roll-out compared with firmer links ground.",
-                    "Most tee-shot results should cluster around 119 to 130 yards total.",
-                    "Longer tee shots should exist, but as less common outcomes.",
-                    "Mishits and weak strikes should remain common for this player level."
-                ]
-            },
-            fairway: {
-                clubName: "OmniAtlas Virtual Reality Steel 4 Driver",
-                lie: "fairway",
-                courseType: "parkland",
-                totalDistanceMin: 110,
-                totalDistanceMax: 120,
-                rareLongDriveMin: 135,
-                rareLongDriveMax: 155,
-                heavyMishitPenaltyYards: 50,
-                turfRisk: "high",
-                rolloutLevel: "low",
-                consistency: "variable",
-                notes: [
-                    "A 36-handicapper using the OmniAtlas starter driver from the fairway is likely to lose distance compared with tee shots.",
-                    "Lower launch, weaker strike quality, and poor turf contact reduce total distance.",
-                    "There is a substantial risk of hitting the ground first.",
-                    "A severe mishit can reduce outcome distance by as much as 50 yards from the average result."
-                ]
-            },
-            firstCutRough: {
-                clubName: "OmniAtlas starter driver",
-                lie: "first cut rough",
-                courseType: "parkland",
-                distanceReductionVsFairwayMinPercent: 10,
-                distanceReductionVsFairwayMaxPercent: 15,
-                totalDistanceMin: 95,
-                totalDistanceMax: 108,
-                possibleFullForceCeiling: 120,
-                fullForceRisk: "high",
-                consistency: "variable",
-                notes: [
-                    "First cut rough often reduces distance by around 10 to 15 percent compared with a fairway strike.",
-                    "Full-force attempts can worsen strike quality and directional control.",
-                    "Reduced force or a safer club may produce a more playable result."
-                ]
-            }
-        },
-        sevenIron: {
-            fairway: {
-                clubName: "OmniAtlas Starter 7-Iron",
-                lie: "fairway",
-                courseType: "parkland",
-                totalDistanceMin: 70,
-                totalDistanceMax: 95,
-                rareCleanStrikeMin: 100,
-                rareCleanStrikeMax: 105,
-                fullForceReliability: "low",
-                consistency: "variable",
-                notes: [
-                    "Controlled force provides the best chance of clean contact.",
-                    "Full force reduces accuracy and increases mishit risk.",
-                    "Cleaner strikes beyond the normal range should be less common outcomes."
-                ]
-            }
-        }
-    }
-};
+const shotLogicData = {};
 
 const caddieAdvice = {
-    firstTee: {
-        title: "First Tee Advice",
+    placeholder: {
+        title: "Caddie Waiting",
         paragraphs: [
-            "Based upon your Golf Range practise I advise that you command no more than 75% force with the OmniAtlas starter driver for your opening shot.",
-            "However, higher force with your handicap level comes with increased risks, including mishit, slice, hook, or out of bounds.",
-            "Your safer option may be to command a controlled force level between 50% and 75% straight up the fairway.",
-            "You may reduce your force further in exchange for a higher likelihood of clean contact and accuracy."
-        ]
-    },
-    firstFairway: {
-        title: "First Fairway Shot Advice",
-        paragraphs: [
-            "Based upon your Golfing Range practise, using this OmniAtlas Starter driver from the fairway, I strongly advise that you command no more than 60% force with your handicap.",
-            "Higher force from the fairway comes with a strong chance of a severe mishit, including hitting the ground first.",
-            "Perhaps you should consider a safer force command, such as 40% to 55%, meaning a greater chance of clean contact.",
-            "You might also consider using a 3-wood, or 5-wood, or even an iron, for less risky results."
-        ]
-    },
-    firstFairwaySevenIron: {
-        title: "7-Iron Fairway Advice",
-        paragraphs: [
-            "Based upon your handicap, your starter club, and your Golfing Range practise, I advise you that your central base contact may be too inconsistent to attempt full force.",
-            "A more controlled swing, with a lower force percentage, may give you a better chance of clean contact and a playable result.",
-            "While cleaner strikes can sometimes travel beyond your normal range, they should be treated as less common outcomes.",
-            "A controlled approach is recommended over maximum force with this club."
-        ]
-    },
-    firstCutRoughDriver: {
-        title: "Driver from First Cut Rough Advice",
-        paragraphs: [
-            "Based upon your handicap, starter club, and Golf Range practise, you could possibly hit 120-yards using full force.",
-            "However, with a driver from the first cut at full force there is a high chance you may go from bad to worse.",
-            "You may wish to consider a lower force percentage for a more controlled strike.",
-            "You might also consider using an iron for a safer recovery result."
+            "No club-specific caddie advice is currently loaded.",
+            "The live caddie system remains active and ready for the next ruleset."
         ]
     }
-};
-
-const caddieState = {
-    firstFairwayAdviceShown: false,
-    firstFairwaySevenIronAdviceShown: false,
-    firstCutRoughDriverAdviceShown: false
 };
 
 function showLiveCaddieAdvice(adviceKey) {
@@ -639,42 +314,7 @@ function hideLiveCaddieAdvice() {
 }
 
 function updateCaddieForCurrentPlayState() {
-    if (shots === 0) {
-        showLiveCaddieAdvice("firstTee");
-        return;
-    }
-
-    if (shots === 1) {
-        if (
-            lastAcceptedCommand &&
-            lastAcceptedCommand.club === "Driver" &&
-            lastAcceptedCommand.lie === "First cut rough" &&
-            !caddieState.firstCutRoughDriverAdviceShown
-        ) {
-            caddieState.firstCutRoughDriverAdviceShown = true;
-            showLiveCaddieAdvice("firstCutRoughDriver");
-            return;
-        }
-
-        if (
-            lastAcceptedCommand &&
-            lastAcceptedCommand.club === "7-iron" &&
-            lastAcceptedCommand.lie === "Fairway" &&
-            !caddieState.firstFairwaySevenIronAdviceShown
-        ) {
-            caddieState.firstFairwaySevenIronAdviceShown = true;
-            showLiveCaddieAdvice("firstFairwaySevenIron");
-            return;
-        }
-
-        if (!caddieState.firstFairwayAdviceShown) {
-            caddieState.firstFairwayAdviceShown = true;
-            showLiveCaddieAdvice("firstFairway");
-            return;
-        }
-    }
-
-    hideLiveCaddieAdvice();
+    showLiveCaddieAdvice("placeholder");
 }
 
 function parsePlayerCommand(rawText) {
