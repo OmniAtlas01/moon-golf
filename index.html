@@ -106,7 +106,7 @@ ul {
 
 .command-box {
     width: 100%;
-    min-height: 170px;
+    min-height: 210px;
     box-sizing: border-box;
     resize: vertical;
     border-radius: 10px;
@@ -211,6 +211,7 @@ ul {
         <h3>Official Command Fields</h3>
         <ul>
             <li><strong>Club:</strong> Driver</li>
+            <li><strong>Lie:</strong> Fairway</li>
             <li><strong>Force:</strong> 75%</li>
             <li><strong>Direction:</strong> Straight up the fairway</li>
             <li><strong>Shot type:</strong> Drive</li>
@@ -219,6 +220,7 @@ ul {
 
         <h3>Example Player Command</h3>
         <div class="command-example">Club: Driver
+Lie: Fairway
 Force: 75%
 Direction: Straight up the fairway
 Shot type: Drive
@@ -233,10 +235,11 @@ Message: Aim 1-foot to right of pin, carry distance 5-yards only</div>
         <h2 style="text-align:center;">Player Command Entry</h2>
 
         <p>
-            Enter the command exactly in the five-line format below. Invalid commands are ignored.
+            Enter the command exactly in the six-line format below. Invalid commands are ignored.
         </p>
 
         <textarea id="playerCommand" class="command-box" placeholder="Club: Driver
+Lie: Fairway
 Force: 75%
 Direction: Straight up the fairway
 Shot type: Drive
@@ -249,6 +252,7 @@ Message: Aim 1-foot to right of pin, carry distance 5-yards only"></textarea>
         <div id="acceptedCommandPanel" class="accepted-command hidden">
             <h3 style="margin-top:0;">Last Accepted Command</h3>
             <p><strong>Club:</strong> <span id="acceptedClub"></span></p>
+            <p><strong>Lie:</strong> <span id="acceptedLie"></span></p>
             <p><strong>Force:</strong> <span id="acceptedForce"></span></p>
             <p><strong>Direction:</strong> <span id="acceptedDirection"></span></p>
             <p><strong>Shot type:</strong> <span id="acceptedShotType"></span></p>
@@ -326,6 +330,39 @@ Message: Aim 1-foot to right of pin, carry distance 5-yards only"></textarea>
 
         <p style="margin-bottom:0;">
             This profile is intended for future command-based fairway shot probability logic.
+        </p>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">36-Handicapper Driver Profile — Parkland First Cut Rough Logic</h2>
+
+        <p>
+            This player profile represents a 36-handicap golfer using the <strong>OmniAtlas starter driver</strong> from the <strong>first cut rough</strong> on a parkland course.
+        </p>
+
+        <p>
+            Compared with a fairway strike, first cut rough will often reduce total distance by approximately <strong>10–15%</strong>. A typical result therefore falls around <strong>95–108 yards</strong>.
+        </p>
+
+        <p>
+            Full-force attempts may occasionally push towards <strong>120 yards</strong>, but the rough increases the chance of poor contact, twisting clubface, and a worsening lie or direction.
+        </p>
+
+        <h3>Stored First Cut Rough Logic Profile</h3>
+        <ul>
+            <li><strong>Player Level:</strong> 36-handicapper</li>
+            <li><strong>Club:</strong> OmniAtlas starter driver</li>
+            <li><strong>Lie:</strong> First cut rough</li>
+            <li><strong>Course Type:</strong> Parkland</li>
+            <li><strong>Distance Reduction vs Fairway:</strong> 10–15%</li>
+            <li><strong>Typical Total Distance:</strong> 95–108 yards</li>
+            <li><strong>Possible Full-Force Ceiling:</strong> About 120 yards</li>
+            <li><strong>Full-Force Risk:</strong> High</li>
+            <li><strong>Safer Alternative:</strong> Reduced force or iron</li>
+        </ul>
+
+        <p style="margin-bottom:0;">
+            This profile is intended to support first-cut rough shot logic, where more controlled force or a safer club choice may produce a better playable result.
         </p>
     </div>
 
@@ -423,6 +460,15 @@ const allowedCommandData = {
         "Pitching Wedge",
         "Putter"
     ],
+    lies: [
+        "Tee",
+        "Fairway",
+        "First cut rough",
+        "Rough",
+        "Bunker",
+        "Fringe",
+        "Green"
+    ],
     directions: [
         "Straight up the fairway",
         "Left up the fairway",
@@ -484,6 +530,23 @@ const shotLogicData = {
                     "There is a substantial risk of hitting the ground first.",
                     "A severe mishit can reduce outcome distance by as much as 50 yards from the average result."
                 ]
+            },
+            firstCutRough: {
+                clubName: "OmniAtlas starter driver",
+                lie: "first cut rough",
+                courseType: "parkland",
+                distanceReductionVsFairwayMinPercent: 10,
+                distanceReductionVsFairwayMaxPercent: 15,
+                totalDistanceMin: 95,
+                totalDistanceMax: 108,
+                possibleFullForceCeiling: 120,
+                fullForceRisk: "high",
+                consistency: "variable",
+                notes: [
+                    "First cut rough often reduces distance by around 10 to 15 percent compared with a fairway strike.",
+                    "Full-force attempts can worsen strike quality and directional control.",
+                    "Reduced force or a safer club may produce a more playable result."
+                ]
             }
         },
         sevenIron: {
@@ -534,12 +597,22 @@ const caddieAdvice = {
             "While cleaner strikes can sometimes travel beyond your normal range, they should be treated as less common outcomes.",
             "A controlled approach is recommended over maximum force with this club."
         ]
+    },
+    firstCutRoughDriver: {
+        title: "Driver from First Cut Rough Advice",
+        paragraphs: [
+            "Based upon your handicap, starter club, and Golf Range practise, you could possibly hit 120-yards using full force.",
+            "However, with a driver from the first cut at full force there is a high chance you may go from bad to worse.",
+            "You may wish to consider a lower force percentage for a more controlled strike.",
+            "You might also consider using an iron for a safer recovery result."
+        ]
     }
 };
 
 const caddieState = {
     firstFairwayAdviceShown: false,
-    firstFairwaySevenIronAdviceShown: false
+    firstFairwaySevenIronAdviceShown: false,
+    firstCutRoughDriverAdviceShown: false
 };
 
 function showLiveCaddieAdvice(adviceKey) {
@@ -574,7 +647,19 @@ function updateCaddieForCurrentPlayState() {
     if (shots === 1) {
         if (
             lastAcceptedCommand &&
+            lastAcceptedCommand.club === "Driver" &&
+            lastAcceptedCommand.lie === "First cut rough" &&
+            !caddieState.firstCutRoughDriverAdviceShown
+        ) {
+            caddieState.firstCutRoughDriverAdviceShown = true;
+            showLiveCaddieAdvice("firstCutRoughDriver");
+            return;
+        }
+
+        if (
+            lastAcceptedCommand &&
             lastAcceptedCommand.club === "7-iron" &&
+            lastAcceptedCommand.lie === "Fairway" &&
             !caddieState.firstFairwaySevenIronAdviceShown
         ) {
             caddieState.firstFairwaySevenIronAdviceShown = true;
@@ -598,27 +683,33 @@ function parsePlayerCommand(rawText) {
         .map(line => line.trim())
         .filter(line => line !== "");
 
-    if (lines.length !== 5) {
+    if (lines.length !== 6) {
         return null;
     }
 
     const clubMatch = lines[0].match(/^Club:\s*(.+)$/i);
-    const forceMatch = lines[1].match(/^Force:\s*(.+)$/i);
-    const directionMatch = lines[2].match(/^Direction:\s*(.+)$/i);
-    const shotTypeMatch = lines[3].match(/^Shot type:\s*(.+)$/i);
-    const messageMatch = lines[4].match(/^Message:\s*(.*)$/i);
+    const lieMatch = lines[1].match(/^Lie:\s*(.+)$/i);
+    const forceMatch = lines[2].match(/^Force:\s*(.+)$/i);
+    const directionMatch = lines[3].match(/^Direction:\s*(.+)$/i);
+    const shotTypeMatch = lines[4].match(/^Shot type:\s*(.+)$/i);
+    const messageMatch = lines[5].match(/^Message:\s*(.*)$/i);
 
-    if (!clubMatch || !forceMatch || !directionMatch || !shotTypeMatch || !messageMatch) {
+    if (!clubMatch || !lieMatch || !forceMatch || !directionMatch || !shotTypeMatch || !messageMatch) {
         return null;
     }
 
     const club = clubMatch[1].trim();
+    const lie = lieMatch[1].trim();
     const force = forceMatch[1].trim();
     const direction = directionMatch[1].trim();
     const shotType = shotTypeMatch[1].trim();
     const message = messageMatch[1].trim();
 
     if (!allowedCommandData.clubs.includes(club)) {
+        return null;
+    }
+
+    if (!allowedCommandData.lies.includes(lie)) {
         return null;
     }
 
@@ -636,6 +727,7 @@ function parsePlayerCommand(rawText) {
 
     return {
         club: club,
+        lie: lie,
         force: force,
         direction: direction,
         shotType: shotType,
@@ -654,6 +746,7 @@ function submitPlayerCommand() {
     lastAcceptedCommand = parsedCommand;
 
     document.getElementById("acceptedClub").innerText = parsedCommand.club;
+    document.getElementById("acceptedLie").innerText = parsedCommand.lie;
     document.getElementById("acceptedForce").innerText = parsedCommand.force;
     document.getElementById("acceptedDirection").innerText = parsedCommand.direction;
     document.getElementById("acceptedShotType").innerText = parsedCommand.shotType;
