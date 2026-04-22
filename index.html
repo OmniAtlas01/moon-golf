@@ -339,9 +339,36 @@ ul {
             </div>
 
             <div class="club-card">
+                <h3>Parkland / Earth 1st Cut Baseline</h3>
+                <p><strong>Lie:</strong> 1st cut rough</p>
+                <p><strong>36-handicap high-force total distance:</strong> 135 to 150 yards</p>
+                <p><strong>1st cut effect:</strong> generally playable, but slightly less efficient and less consistent than the fairway</p>
+                <p><strong>Practical note:</strong> a Hybrid will often give more consistency from this lie</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Driver Caddie Strategy Notes</h2>
+
+        <div class="club-grid">
+            <div class="club-card">
                 <h3>Tee-1 Parkland Caddie Tip</h3>
                 <p>Accuracy over power. At this level, keeping the ball in play is more beneficial than attempting maximum distance, which can lead to high scores.</p>
                 <p>You may consider trying a lower force rate in return for more focus on accuracy.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Fairway Driver Caddie Tip</h3>
+                <p>Most players in your category gain more from centred contact and control than from forcing maximum swing speed.</p>
+                <p>Reducing force slightly may improve strike quality and produce a better overall result.</p>
+                <p>Alternatively, you may be better using a lesser wood, Stinger, Hybrid or Iron, and just focus on staying on the fairway rather than trying to hit the green.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>1st Cut Driver Caddie Tip</h3>
+                <p>For a 36-handicap golfer, the 1st cut is generally manageable and similar to a fairway lie, but slightly less consistent.</p>
+                <p>You would likely get more consistency out of a Hybrid.</p>
             </div>
         </div>
     </div>
@@ -607,6 +634,20 @@ const clubPerformanceProfiles = {
         ],
         caddieTip: "Most players in your category gain more from centred contact and control than from forcing maximum swing speed. Reducing force slightly may improve strike quality and produce a better overall result. Alternatively, you may be better using a lesser wood, Stinger, Hybrid or Iron, and just focus on staying on the fairway rather than trying to hit the green."
     },
+    driver36HandicapEarthFirstCut: {
+        baseline: {
+            averageTotalMin: 135,
+            averageTotalMax: 150
+        },
+        forceBands: [
+            { min: 1, max: 25, label: "Very weak 1st-cut driver attempt", totalFactorMin: 0.10, totalFactorMax: 0.22, riskLevel: "Low", distanceNote: "Too little force for worthwhile driver use from the 1st cut" },
+            { min: 26, max: 49, label: "Short 1st-cut driver attempt", totalFactorMin: 0.23, totalFactorMax: 0.42, riskLevel: "Low to Moderate", distanceNote: "Manageable lie, but distance remains modest" },
+            { min: 50, max: 74, label: "Moderate 1st-cut driver strike", totalFactorMin: 0.43, totalFactorMax: 0.68, riskLevel: "Moderate", distanceNote: "Playable, with only a slight penalty compared with fairway" },
+            { min: 75, max: 89, label: "Strong 1st-cut driver strike", totalFactorMin: 0.69, totalFactorMax: 0.88, riskLevel: "Moderate to High", distanceNote: "Generally manageable, but slightly less consistent than fairway" },
+            { min: 90, max: 100, label: "High-force 1st-cut driver attempt", totalFactorMin: 0.89, totalFactorMax: 1.00, riskLevel: "High", distanceNote: "Good distance is possible, but contact and consistency remain slightly reduced" }
+        ],
+        caddieTip: "For a 36-handicap golfer, the 1st cut is generally manageable and similar to a fairway lie, but slightly less consistent. You would likely get more consistency out of a Hybrid."
+    },
     driver36HandicapMoon: {
         baseline: {
             averageTotalMin: 780,
@@ -756,6 +797,21 @@ function getDriverEarthFairwaySummary(forceValue) {
     };
 }
 
+function getDriverEarthFirstCutSummary(forceValue) {
+    const profile = clubPerformanceProfiles.driver36HandicapEarthFirstCut;
+    const band = findForceBand(profile, forceValue);
+    if (!band) return null;
+
+    return {
+        bandLabel: band.label,
+        distanceNote: band.distanceNote,
+        riskLevel: band.riskLevel,
+        totalMin: Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
+        totalMax: Math.round(profile.baseline.averageTotalMax * band.totalFactorMax),
+        caddieTip: profile.caddieTip
+    };
+}
+
 function getDriverMoonSummary(forceValue) {
     const profile = clubPerformanceProfiles.driver36HandicapMoon;
     const band = findForceBand(profile, forceValue);
@@ -810,7 +866,28 @@ function updateCaddieForCurrentPlayState() {
                 return;
             }
         } else {
-            if (lie === "Fairway") {
+            if (lie === "First cut rough") {
+                const summary = getDriverEarthFirstCutSummary(forceValue);
+
+                if (summary) {
+                    [
+                        "Course type: Parkland.",
+                        "Lie: 1st cut rough.",
+                        "Driver force band: " + summary.bandLabel + ".",
+                        "Estimated 36-handicap 1st-cut-driver total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
+                        "Distance note: " + summary.distanceNote + ".",
+                        "Risk level: " + summary.riskLevel + ".",
+                        summary.caddieTip
+                    ].forEach(function(paragraph) {
+                        const p = document.createElement("p");
+                        p.textContent = paragraph;
+                        bodyElement.appendChild(p);
+                    });
+
+                    document.getElementById("liveCaddiePanel").classList.remove("hidden");
+                    return;
+                }
+            } else if (lie === "Fairway") {
                 const summary = getDriverEarthFairwaySummary(forceValue);
 
                 if (summary) {
@@ -1071,6 +1148,27 @@ function getClub3EarthFairwayShotDistance(forceValue) {
     return getRandomInt(min, max);
 }
 
+function getClub3EarthFirstCutShotDistance(forceValue) {
+    const summary = getDriverEarthFirstCutSummary(forceValue);
+    if (!summary) return 0;
+
+    const driverSetting = moonGolfClubData.club3.currentSetting;
+    let min = summary.totalMin;
+    let max = summary.totalMax;
+
+    if (driverSetting === "Low Loft (Distance)") {
+        min += 1;
+        max += 3;
+    }
+
+    if (driverSetting === "High Loft (Control)") {
+        min -= 2;
+        max -= 4;
+    }
+
+    return getRandomInt(min, max);
+}
+
 function getClub3MoonShotDistance(forceValue) {
     const summary = getDriverMoonSummary(forceValue);
     if (!summary) return 0;
@@ -1121,6 +1219,10 @@ function getShotDistanceFromAcceptedCommand() {
     if (club === "OmniAtlas L1 Adjustable Golf Driver") {
         if (courseType === "Moon") {
             return getClub3MoonShotDistance(forceValue);
+        }
+
+        if (lie === "First cut rough") {
+            return getClub3EarthFirstCutShotDistance(forceValue);
         }
 
         if (lie === "Fairway") {
