@@ -194,6 +194,77 @@ ul {
 .status-bad {
     color: #ff9898;
 }
+
+.training-question-box {
+    background: rgba(0,0,0,0.30);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+}
+
+.training-answer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.training-answer-btn {
+    text-align: left;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.06);
+    color: white;
+    cursor: pointer;
+}
+
+.training-answer-btn:hover {
+    background: rgba(255,255,255,0.12);
+}
+
+.training-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.training-result {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.10);
+}
+
+.training-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.training-stat-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+}
+
+.timer-good {
+    color: #9cff9c;
+}
+
+.timer-warn {
+    color: #ffd27f;
+}
+
+.timer-bad {
+    color: #ff9898;
+}
 </style>
 </head>
 
@@ -363,6 +434,57 @@ ul {
                 <p>Improves spin profile and launch compatibility within conforming golf-ball limits.</p>
                 <p>This is equipment fitting, not a cheat mechanism.</p>
             </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Training Academy</h2>
+
+        <div class="rule-box">
+            <p><strong>Training rule:</strong> each correct answer awards <strong>+0.1%</strong> to the relevant category.</p>
+            <p>Each wrong answer or timeout results in <strong>-0.1%</strong> to the relevant category.</p>
+            <p>Standard factual questions allow <strong>15 seconds</strong>. Scenario questions allow <strong>20 seconds</strong>.</p>
+            <p>The correct answer is not shown until the player has answered, or the timer has expired.</p>
+        </div>
+
+        <div class="command-actions">
+            <button onclick="startTrainingQuestion()">Start Training Question</button>
+        </div>
+
+        <div id="trainingQuestionPanel" class="training-question-box hidden">
+            <h3 id="trainingQuestionTitle" style="margin-top:0;">Training Question</h3>
+            <div class="training-meta">
+                <div><strong>Category:</strong> <span id="trainingCategory"></span></div>
+                <div><strong>Type:</strong> <span id="trainingType"></span></div>
+                <div><strong>Time Left:</strong> <span id="trainingTimer" class="timer-good"></span></div>
+            </div>
+
+            <p id="trainingQuestionText" style="margin-top:16px;"></p>
+
+            <div class="training-answer-grid">
+                <button class="training-answer-btn" id="answerA" onclick="answerTrainingQuestion('A')"></button>
+                <button class="training-answer-btn" id="answerB" onclick="answerTrainingQuestion('B')"></button>
+                <button class="training-answer-btn" id="answerC" onclick="answerTrainingQuestion('C')"></button>
+                <button class="training-answer-btn" id="answerD" onclick="answerTrainingQuestion('D')"></button>
+            </div>
+
+            <div id="trainingResultBox" class="training-result hidden"></div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Training Category Progress</h2>
+
+        <div class="training-stats-grid">
+            <div class="training-stat-row"><span>Driving Knowledge</span><span id="statDriving">0.0%</span></div>
+            <div class="training-stat-row"><span>Fairway Knowledge</span><span id="statFairway">0.0%</span></div>
+            <div class="training-stat-row"><span>Rough Recovery</span><span id="statRough">0.0%</span></div>
+            <div class="training-stat-row"><span>Bunker Play</span><span id="statBunker">0.0%</span></div>
+            <div class="training-stat-row"><span>Green Reading</span><span id="statGreenReading">0.0%</span></div>
+            <div class="training-stat-row"><span>Putting</span><span id="statPutting">0.0%</span></div>
+            <div class="training-stat-row"><span>Weather Judgment</span><span id="statWeather">0.0%</span></div>
+            <div class="training-stat-row"><span>Rules Knowledge</span><span id="statRules">0.0%</span></div>
+            <div class="training-stat-row"><span>Course Management</span><span id="statCourseManagement">0.0%</span></div>
         </div>
     </div>
 
@@ -879,6 +1001,308 @@ const clubPerformanceProfiles = {
     }
 };
 
+const trainingState = {
+    currentQuestion: null,
+    timer: null,
+    timeLeft: 0,
+    askedIndexes: [],
+    locked: false,
+    stats: {
+        driving: 0.0,
+        fairway: 0.0,
+        rough: 0.0,
+        bunker: 0.0,
+        greenReading: 0.0,
+        putting: 0.0,
+        weather: 0.0,
+        rules: 0.0,
+        courseManagement: 0.0
+    }
+};
+
+const trainingQuestions = [
+    {
+        categoryKey: "driving",
+        categoryLabel: "Driving Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "A player consistently slices the ball to the right (right-handed). What is the most likely cause?",
+        answers: {
+            A: "Clubface closed at impact",
+            B: "Clubface open relative to swing path",
+            C: "Ball positioned too far back",
+            D: "Swing path too shallow"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "driving",
+        categoryLabel: "Driving Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Which factor has the greatest influence on the initial direction of a drive?",
+        answers: {
+            A: "Swing speed",
+            B: "Clubface angle at impact",
+            C: "Shaft flex",
+            D: "Grip pressure"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "driving",
+        categoryLabel: "Driving Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "Wind is blowing left to right. You already have a slight slice. What is the best adjustment?",
+        answers: {
+            A: "Aim further right",
+            B: "Aim left to compensate",
+            C: "Use more loft",
+            D: "Swing harder"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "From a clean fairway lie, what is the primary goal?",
+        answers: {
+            A: "Maximum spin",
+            B: "Clean contact before turf",
+            C: "Maximum height",
+            D: "Minimal clubhead speed"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You are 150 yards out on flat fairway with no wind. What is the best decision?",
+        answers: {
+            A: "Always use driver",
+            B: "Select a club that matches distance",
+            C: "Swing as hard as possible",
+            D: "Use lowest loft"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "rough",
+        categoryLabel: "Rough Recovery",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What is the main effect of hitting from thick rough?",
+        answers: {
+            A: "Increased backspin",
+            B: "Reduced control over clubface",
+            C: "Increased distance",
+            D: "Cleaner strike"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "rough",
+        categoryLabel: "Rough Recovery",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "Ball is deep in rough. What is the safest play?",
+        answers: {
+            A: "Attempt maximum distance shot",
+            B: "Use higher loft club and escape",
+            C: "Use driver",
+            D: "Try to spin the ball"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "bunker",
+        categoryLabel: "Bunker Play",
+        type: "Factual",
+        timeLimit: 15,
+        question: "In a greenside bunker shot, what should the club strike first?",
+        answers: {
+            A: "The ball",
+            B: "The sand behind the ball",
+            C: "The top of the ball",
+            D: "The ground after the ball"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "bunker",
+        categoryLabel: "Bunker Play",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "Ball is in bunker with high lip in front. What is best approach?",
+        answers: {
+            A: "Low trajectory shot",
+            B: "High lofted shot with open face",
+            C: "Use putter",
+            D: "Hit directly at ball"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "greenReading",
+        categoryLabel: "Green Reading",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What primarily determines how a putt will break?",
+        answers: {
+            A: "Ball colour",
+            B: "Grass length only",
+            C: "Slope of the green",
+            D: "Club weight"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "greenReading",
+        categoryLabel: "Green Reading",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A putt slopes right to left. Where should you aim?",
+        answers: {
+            A: "Right edge",
+            B: "Centre",
+            C: "Left of hole",
+            D: "Directly at hole"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "putting",
+        categoryLabel: "Putting",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What is the most important factor in distance control for putting?",
+        answers: {
+            A: "Grip strength",
+            B: "Stroke length and tempo",
+            C: "Ball brand",
+            D: "Shoe type"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "putting",
+        categoryLabel: "Putting",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "Long putt across flat green. What is the priority?",
+        answers: {
+            A: "Hole it at all costs",
+            B: "Leave ball close to hole",
+            C: "Hit as hard as possible",
+            D: "Add spin"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "weather",
+        categoryLabel: "Weather Judgment",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What effect does a headwind have on a golf ball?",
+        answers: {
+            A: "Increases distance",
+            B: "Reduces distance",
+            C: "No effect",
+            D: "Only affects spin"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "weather",
+        categoryLabel: "Weather Judgment",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "Strong wind into your face. What is best adjustment?",
+        answers: {
+            A: "Use less club",
+            B: "Use more club and lower shot",
+            C: "Swing softer only",
+            D: "Aim randomly"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "rules",
+        categoryLabel: "Rules Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "If a ball is lost, what is the correct procedure?",
+        answers: {
+            A: "Drop nearby",
+            B: "Replay from previous position with penalty",
+            C: "Continue play without penalty",
+            D: "Move ball forward"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "rules",
+        categoryLabel: "Rules Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "How many clubs are allowed in a golf bag under standard rules?",
+        answers: {
+            A: "10",
+            B: "12",
+            C: "14",
+            D: "Unlimited"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "courseManagement",
+        categoryLabel: "Course Management",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "Water hazard directly in front of green. Best decision?",
+        answers: {
+            A: "Always attack pin",
+            B: "Lay up safely short",
+            C: "Ignore hazard",
+            D: "Hit harder"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "courseManagement",
+        categoryLabel: "Course Management",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "Narrow fairway with out-of-bounds right. You tend to slice. Best play?",
+        answers: {
+            A: "Aim centre",
+            B: "Aim left side",
+            C: "Aim right side",
+            D: "Swing harder"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "courseManagement",
+        categoryLabel: "Course Management",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You are 170 yards out, slight uphill, wind into you, ball in light rough. What is best decision?",
+        answers: {
+            A: "Take normal club and swing harder",
+            B: "Take extra club and play controlled shot",
+            C: "Use less club",
+            D: "Hit driver"
+        },
+        correct: "B"
+    }
+];
+
 const caddieAdvice = {
     placeholder: {
         title: "Caddie Waiting",
@@ -934,6 +1358,10 @@ function showLiveCaddieAdvice(adviceKey) {
     });
 
     document.getElementById("liveCaddiePanel").classList.remove("hidden");
+}
+
+function getCourseType() {
+    return document.getElementById("courseType").value;
 }
 
 function getSelectedCaddieProfile() {
@@ -1592,6 +2020,156 @@ function takeShot() {
     updateCaddieForCurrentPlayState();
 }
 
+/* Training system */
+
+function updateTrainingStatDisplays() {
+    document.getElementById("statDriving").innerText = trainingState.stats.driving.toFixed(1) + "%";
+    document.getElementById("statFairway").innerText = trainingState.stats.fairway.toFixed(1) + "%";
+    document.getElementById("statRough").innerText = trainingState.stats.rough.toFixed(1) + "%";
+    document.getElementById("statBunker").innerText = trainingState.stats.bunker.toFixed(1) + "%";
+    document.getElementById("statGreenReading").innerText = trainingState.stats.greenReading.toFixed(1) + "%";
+    document.getElementById("statPutting").innerText = trainingState.stats.putting.toFixed(1) + "%";
+    document.getElementById("statWeather").innerText = trainingState.stats.weather.toFixed(1) + "%";
+    document.getElementById("statRules").innerText = trainingState.stats.rules.toFixed(1) + "%";
+    document.getElementById("statCourseManagement").innerText = trainingState.stats.courseManagement.toFixed(1) + "%";
+}
+
+function clampTrainingStat(value) {
+    if (value < 0) return 0;
+    return Math.round(value * 10) / 10;
+}
+
+function adjustTrainingStat(categoryKey, delta) {
+    trainingState.stats[categoryKey] = clampTrainingStat(trainingState.stats[categoryKey] + delta);
+    updateTrainingStatDisplays();
+}
+
+function updateTrainingTimerDisplay() {
+    const timerEl = document.getElementById("trainingTimer");
+    timerEl.innerText = trainingState.timeLeft + "s";
+    timerEl.className = "";
+
+    if (trainingState.timeLeft > 10) {
+        timerEl.classList.add("timer-good");
+    } else if (trainingState.timeLeft > 5) {
+        timerEl.classList.add("timer-warn");
+    } else {
+        timerEl.classList.add("timer-bad");
+    }
+}
+
+function getUnusedQuestionIndexes() {
+    const indexes = [];
+    for (let i = 0; i < trainingQuestions.length; i++) {
+        if (!trainingState.askedIndexes.includes(i)) {
+            indexes.push(i);
+        }
+    }
+    return indexes;
+}
+
+function startTrainingQuestion() {
+    if (trainingState.timer) {
+        clearInterval(trainingState.timer);
+        trainingState.timer = null;
+    }
+
+    if (trainingState.askedIndexes.length >= trainingQuestions.length) {
+        trainingState.askedIndexes = [];
+    }
+
+    const unusedIndexes = getUnusedQuestionIndexes();
+    const pickedIndex = unusedIndexes[Math.floor(Math.random() * unusedIndexes.length)];
+    const question = trainingQuestions[pickedIndex];
+
+    trainingState.currentQuestion = {
+        ...question,
+        index: pickedIndex
+    };
+    trainingState.askedIndexes.push(pickedIndex);
+    trainingState.locked = false;
+    trainingState.timeLeft = question.timeLimit;
+
+    document.getElementById("trainingQuestionPanel").classList.remove("hidden");
+    document.getElementById("trainingQuestionTitle").innerText = "Training Question";
+    document.getElementById("trainingCategory").innerText = question.categoryLabel;
+    document.getElementById("trainingType").innerText = question.type;
+    document.getElementById("trainingQuestionText").innerText = question.question;
+    document.getElementById("answerA").innerText = "A. " + question.answers.A;
+    document.getElementById("answerB").innerText = "B. " + question.answers.B;
+    document.getElementById("answerC").innerText = "C. " + question.answers.C;
+    document.getElementById("answerD").innerText = "D. " + question.answers.D;
+    document.getElementById("trainingResultBox").classList.add("hidden");
+    document.getElementById("trainingResultBox").innerHTML = "";
+
+    enableTrainingAnswerButtons(true);
+    updateTrainingTimerDisplay();
+
+    trainingState.timer = setInterval(function() {
+        trainingState.timeLeft -= 1;
+        updateTrainingTimerDisplay();
+
+        if (trainingState.timeLeft <= 0) {
+            clearInterval(trainingState.timer);
+            trainingState.timer = null;
+            finishTrainingQuestion(null, true);
+        }
+    }, 1000);
+}
+
+function enableTrainingAnswerButtons(enabled) {
+    document.getElementById("answerA").disabled = !enabled;
+    document.getElementById("answerB").disabled = !enabled;
+    document.getElementById("answerC").disabled = !enabled;
+    document.getElementById("answerD").disabled = !enabled;
+}
+
+function answerTrainingQuestion(answerKey) {
+    if (!trainingState.currentQuestion || trainingState.locked) return;
+    finishTrainingQuestion(answerKey, false);
+}
+
+function finishTrainingQuestion(answerKey, timedOut) {
+    if (!trainingState.currentQuestion || trainingState.locked) return;
+    trainingState.locked = true;
+
+    if (trainingState.timer) {
+        clearInterval(trainingState.timer);
+        trainingState.timer = null;
+    }
+
+    enableTrainingAnswerButtons(false);
+
+    const question = trainingState.currentQuestion;
+    const correct = question.correct;
+    const isCorrect = !timedOut && answerKey === correct;
+    const delta = isCorrect ? 0.1 : -0.1;
+
+    adjustTrainingStat(question.categoryKey, delta);
+
+    const resultBox = document.getElementById("trainingResultBox");
+    resultBox.classList.remove("hidden");
+
+    let resultHtml = "";
+    if (timedOut) {
+        resultHtml += "<p><strong>Time expired.</strong></p>";
+    } else if (isCorrect) {
+        resultHtml += "<p><strong>Correct.</strong></p>";
+    } else {
+        resultHtml += "<p><strong>Incorrect.</strong></p>";
+    }
+
+    if (!timedOut) {
+        resultHtml += "<p><strong>Your answer:</strong> " + answerKey + "</p>";
+    }
+
+    resultHtml += "<p><strong>Correct answer:</strong> " + correct + " — " + question.answers[correct] + "</p>";
+    resultHtml += "<p><strong>Category change:</strong> " + (delta > 0 ? "+" : "") + delta.toFixed(1) + "% to " + question.categoryLabel + "</p>";
+
+    resultBox.innerHTML = resultHtml;
+}
+
+updateTrainingStatDisplays();
 updateCaddieForCurrentPlayState();
 </script>
 
