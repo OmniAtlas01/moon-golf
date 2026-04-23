@@ -489,6 +489,40 @@ ul {
     </div>
 
     <div class="info-panel">
+        <h2 style="text-align:center;">Training Effects Now Active In Play</h2>
+
+        <div class="rule-box">
+            <p><strong>Activation rule now active:</strong> training answers now feed into live shot behaviour in small, skill-based ways.</p>
+            <p>Higher knowledge percentages can tighten distance range, improve club-choice efficiency, and slightly reduce poor shot outcomes for the matching shot type.</p>
+            <p>These are deliberately small scientific gains. Training does not create hidden power, impossible flight, or automatic success.</p>
+        </div>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Full Shot Training Links</h3>
+                <p><strong>Driving:</strong> helps tee-shot efficiency and driver control</p>
+                <p><strong>Fairway:</strong> improves fairway strike quality</p>
+                <p><strong>Rough:</strong> improves recovery efficiency from rough lies</p>
+                <p><strong>Weather:</strong> slightly improves wind and condition judgment</p>
+                <p><strong>Course Management:</strong> slightly improves percentage-play outcomes</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Short Game Training Links</h3>
+                <p><strong>Bunker:</strong> improves bunker strike quality</p>
+                <p><strong>Green Reading:</strong> improves slope-reading decisions</p>
+                <p><strong>Putting:</strong> improves pace and line control</p>
+                <p><strong>Rules:</strong> currently tracked and ready for future penalty / relief logic</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Live Training Influence</h3>
+                <p id="activeTrainingSummary">No command loaded yet. Training influence will appear here once a valid shot command is accepted.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
         <h2 style="text-align:center;">L1 Club Rules — Official Round Lock</h2>
 
         <div class="rule-box">
@@ -1409,48 +1443,112 @@ function findForceBand(profile, forceValue) {
     }) || null;
 }
 
-function applyCaddieRangeAdjustment(min, max) {
-    const caddie = getSelectedCaddieProfile();
+function getTrainingEffectProfile(command) {
+    const stats = trainingState.stats;
 
-    let adjustedMin = min;
-    let adjustedMax = max;
+    if (!command) {
+        return {
+            label: "No active command",
+            distancePercent: 0,
+            varianceTighteningPercent: 0,
+            explanation: "No command loaded yet."
+        };
+    }
 
-    const spread = max - min;
-    const tightenedSpread = spread * caddie.varianceMultiplier;
-    const midpoint = (min + max) / 2;
+    const lie = command.lie;
+    const shotType = command.shotType;
+    const club = command.club;
+    const isDriver = club === "OmniAtlas L1 Adjustable Golf Driver";
+    const isFairwayWood = club === "OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood";
+    const isPutt = shotType === "Putt" || club === "04° Putter" || club === "Putter";
+    const isShortGame = shotType === "Chip" || shotType === "Pitch" || shotType === "Putt" || lie === "Bunker" || lie === "Fringe" || lie === "Green" || isPutt;
 
-    adjustedMin = midpoint - (tightenedSpread / 2);
-    adjustedMax = midpoint + (tightenedSpread / 2);
+    let distancePercent = 0;
+    let varianceTighteningPercent = 0;
+    let label = "General training effect";
+    let explanationParts = [];
 
-    adjustedMin = adjustedMin + (spread * caddie.floorPull);
-    adjustedMax = adjustedMax - (spread * caddie.ceilingTrim);
+    if (isShortGame) {
+        label = isPutt ? "Putting / green control" : "Short-game control";
 
-    adjustedMin = Math.round(adjustedMin);
-    adjustedMax = Math.round(adjustedMax);
+        if (lie === "Bunker") {
+            distancePercent += Math.min(3, stats.bunker * 0.03);
+            varianceTighteningPercent += Math.min(10, stats.bunker * 0.10);
+            explanationParts.push("Bunker knowledge active");
+        }
 
-    if (adjustedMax < adjustedMin) {
-        adjustedMax = adjustedMin;
+        if (isPutt || lie === "Fringe" || lie === "Green") {
+            distancePercent += Math.min(3, stats.putting * 0.03);
+            varianceTighteningPercent += Math.min(10, stats.putting * 0.10);
+            explanationParts.push("Putting control active");
+
+            distancePercent += Math.min(2, stats.greenReading * 0.02);
+            varianceTighteningPercent += Math.min(8, stats.greenReading * 0.08);
+            explanationParts.push("Green-reading active");
+        }
+
+        if (!isPutt && lie !== "Bunker") {
+            distancePercent += Math.min(2, stats.courseManagement * 0.02);
+            varianceTighteningPercent += Math.min(5, stats.courseManagement * 0.05);
+            explanationParts.push("Course-management active");
+        }
+    } else {
+        label = "Full-shot control";
+
+        if (isDriver || shotType === "Drive") {
+            distancePercent += Math.min(4, stats.driving * 0.04);
+            varianceTighteningPercent += Math.min(12, stats.driving * 0.12);
+            explanationParts.push("Driving knowledge active");
+        }
+
+        if (lie === "Fairway") {
+            distancePercent += Math.min(3, stats.fairway * 0.03);
+            varianceTighteningPercent += Math.min(8, stats.fairway * 0.08);
+            explanationParts.push("Fairway knowledge active");
+        }
+
+        if (lie === "First cut rough" || lie === "Second cut rough" || lie === "Rough") {
+            distancePercent += Math.min(3, stats.rough * 0.03);
+            varianceTighteningPercent += Math.min(10, stats.rough * 0.10);
+            explanationParts.push("Rough recovery active");
+        }
+
+        if (isFairwayWood) {
+            distancePercent += Math.min(1.5, stats.fairway * 0.015);
+            varianceTighteningPercent += Math.min(4, stats.courseManagement * 0.04);
+        }
+
+        distancePercent += Math.min(2, stats.weather * 0.02);
+        varianceTighteningPercent += Math.min(5, stats.weather * 0.05);
+        explanationParts.push("Weather judgment active");
+
+        distancePercent += Math.min(2, stats.courseManagement * 0.02);
+        varianceTighteningPercent += Math.min(6, stats.courseManagement * 0.06);
+        explanationParts.push("Course-management active");
+    }
+
+    distancePercent = Math.round(distancePercent * 10) / 10;
+    varianceTighteningPercent = Math.round(varianceTighteningPercent * 10) / 10;
+
+    if (explanationParts.length === 0) {
+        explanationParts.push("No category contribution yet");
     }
 
     return {
-        min: adjustedMin,
-        max: adjustedMax,
-        label: caddie.label
+        label: label,
+        distancePercent: distancePercent,
+        varianceTighteningPercent: varianceTighteningPercent,
+        explanation: explanationParts.join(", ") + "."
     };
 }
 
 function getTrainingEffectText() {
-    const caddie = getSelectedCaddieProfile();
-
-    if (caddie.label === "No Caddie") {
-        return "Training effect: none.";
+    if (!lastAcceptedCommand) {
+        return "Training effect: training stats are active, but no valid shot command is loaded yet.";
     }
 
-    if (caddie.label === "Elite Caddie") {
-        return "Training effect: full shots " + caddie.trainingFullShotsMin + "% to " + caddie.trainingFullShotsMax + "%, short game " + caddie.trainingShortGameMin + "% to " + caddie.trainingShortGameMax + "%, putting " + caddie.trainingPuttingMin + "% to " + caddie.trainingPuttingMax + "%, hook/slice reduction " + caddie.hookSliceMin + "% to " + caddie.hookSliceMax + "%, rare rescue up to " + caddie.rescueMax + "%.";
-    }
-
-    return "Training effect: full shots " + caddie.trainingFullShotsMin + "% to " + caddie.trainingFullShotsMax + "%, short game " + caddie.trainingShortGameMin + "% to " + caddie.trainingShortGameMax + "%, putting " + caddie.trainingPuttingMin + "% to " + caddie.trainingPuttingMax + "%, hook/slice reduction " + caddie.hookSliceMin + "% to " + caddie.hookSliceMax + "%.";
+    const effect = getTrainingEffectProfile(lastAcceptedCommand);
+    return "Training effect: " + effect.label + ", approx " + effect.distancePercent.toFixed(1) + "% distance efficiency and " + effect.varianceTighteningPercent.toFixed(1) + "% variance tightening from answered academy questions.";
 }
 
 function getBallEffectText() {
@@ -1465,6 +1563,19 @@ function getBallEffectText() {
     }
 
     return "Custom ball effect: " + ball.reductionMin + "% to " + ball.reductionMax + "% compliant fitting optimisation.";
+}
+
+function updateActiveTrainingSummary() {
+    const summaryEl = document.getElementById("activeTrainingSummary");
+    if (!summaryEl) return;
+
+    if (!lastAcceptedCommand) {
+        summaryEl.innerText = "No command loaded yet. Training influence will appear here once a valid shot command is accepted.";
+        return;
+    }
+
+    const effect = getTrainingEffectProfile(lastAcceptedCommand);
+    summaryEl.innerText = effect.label + ": approx " + effect.distancePercent.toFixed(1) + "% efficiency boost and " + effect.varianceTighteningPercent.toFixed(1) + "% tighter result spread. " + effect.explanation;
 }
 
 function getDriverEarthTeeSummary(forceValue) {
@@ -1560,6 +1671,8 @@ function updateCaddieForCurrentPlayState() {
     const courseType = getCourseType();
     const caddie = getSelectedCaddieProfile();
     const ball = getSelectedBallProfile();
+
+    updateActiveTrainingSummary();
 
     if (
         lastAcceptedCommand &&
@@ -1814,12 +1927,71 @@ function getRandomInt(min, max) {
     return Math.round(min + Math.random() * (max - min));
 }
 
-function getRandomIntWithCaddie(min, max) {
-    const adjusted = applyCaddieRangeAdjustment(min, max);
-    return getRandomInt(adjusted.min, adjusted.max);
+function applyCaddieRangeAdjustment(min, max) {
+    const caddie = getSelectedCaddieProfile();
+
+    let adjustedMin = min;
+    let adjustedMax = max;
+
+    const spread = max - min;
+    const tightenedSpread = spread * caddie.varianceMultiplier;
+    const midpoint = (min + max) / 2;
+
+    adjustedMin = midpoint - (tightenedSpread / 2);
+    adjustedMax = midpoint + (tightenedSpread / 2);
+
+    adjustedMin = adjustedMin + (spread * caddie.floorPull);
+    adjustedMax = adjustedMax - (spread * caddie.ceilingTrim);
+
+    adjustedMin = Math.round(adjustedMin);
+    adjustedMax = Math.round(adjustedMax);
+
+    if (adjustedMax < adjustedMin) {
+        adjustedMax = adjustedMin;
+    }
+
+    return {
+        min: adjustedMin,
+        max: adjustedMax,
+        label: caddie.label
+    };
 }
 
-function getClub1ShotDistance(clubMode, forceValue) {
+function applyTrainingRangeAdjustment(min, max, command) {
+    const effect = getTrainingEffectProfile(command || lastAcceptedCommand);
+    const spread = Math.max(0, max - min);
+    const midpoint = (min + max) / 2;
+
+    const distanceMultiplier = 1 + (effect.distancePercent / 100);
+    let adjustedMin = Math.round((midpoint - (spread / 2)) * distanceMultiplier);
+    let adjustedMax = Math.round((midpoint + (spread / 2)) * distanceMultiplier);
+
+    const tightenedSpread = Math.max(0, spread * (1 - (effect.varianceTighteningPercent / 100)));
+    const trainedMidpoint = (adjustedMin + adjustedMax) / 2;
+
+    adjustedMin = Math.round(trainedMidpoint - (tightenedSpread / 2));
+    adjustedMax = Math.round(trainedMidpoint + (tightenedSpread / 2));
+
+    if (adjustedMax < adjustedMin) {
+        adjustedMax = adjustedMin;
+    }
+
+    return {
+        min: adjustedMin,
+        max: adjustedMax,
+        label: effect.label,
+        distancePercent: effect.distancePercent,
+        varianceTighteningPercent: effect.varianceTighteningPercent
+    };
+}
+
+function getRandomIntWithCaddie(min, max, command) {
+    const caddieAdjusted = applyCaddieRangeAdjustment(min, max);
+    const trainingAdjusted = applyTrainingRangeAdjustment(caddieAdjusted.min, caddieAdjusted.max, command);
+    return getRandomInt(trainingAdjusted.min, trainingAdjusted.max);
+}
+
+function getClub1ShotDistance(clubMode, forceValue, command) {
     const modeRanges = {
         "04° Putter": { min: 3, max: 18 },
         "12° Stinger": { min: 60, max: 115 },
@@ -1838,11 +2010,12 @@ function getClub1ShotDistance(clubMode, forceValue) {
 
     return getRandomIntWithCaddie(
         Math.round(range.min * factor),
-        Math.round(range.max * factor)
+        Math.round(range.max * factor),
+        command
     );
 }
 
-function getClub2ShotDistance(forceValue) {
+function getClub2ShotDistance(forceValue, command) {
     const setting = moonGolfClubData.club2.currentSetting;
 
     const settingRanges = {
@@ -1856,11 +2029,12 @@ function getClub2ShotDistance(forceValue) {
 
     return getRandomIntWithCaddie(
         Math.round(range.min * factor),
-        Math.round(range.max * factor)
+        Math.round(range.max * factor),
+        command
     );
 }
 
-function getClub3EarthTeeShotDistance(forceValue) {
+function getClub3EarthTeeShotDistance(forceValue, command) {
     const summary = getDriverEarthTeeSummary(forceValue);
     if (!summary) return 0;
 
@@ -1878,10 +2052,10 @@ function getClub3EarthTeeShotDistance(forceValue) {
         max -= 6;
     }
 
-    return getRandomIntWithCaddie(min, max);
+    return getRandomIntWithCaddie(min, max, command);
 }
 
-function getClub3EarthFairwayShotDistance(forceValue) {
+function getClub3EarthFairwayShotDistance(forceValue, command) {
     const summary = getDriverEarthFairwaySummary(forceValue);
     if (!summary) return 0;
 
@@ -1899,10 +2073,10 @@ function getClub3EarthFairwayShotDistance(forceValue) {
         max -= 5;
     }
 
-    return getRandomIntWithCaddie(min, max);
+    return getRandomIntWithCaddie(min, max, command);
 }
 
-function getClub3EarthFirstCutShotDistance(forceValue) {
+function getClub3EarthFirstCutShotDistance(forceValue, command) {
     const summary = getDriverEarthFirstCutSummary(forceValue);
     if (!summary) return 0;
 
@@ -1920,10 +2094,10 @@ function getClub3EarthFirstCutShotDistance(forceValue) {
         max -= 4;
     }
 
-    return getRandomIntWithCaddie(min, max);
+    return getRandomIntWithCaddie(min, max, command);
 }
 
-function getClub3MoonShotDistance(forceValue) {
+function getClub3MoonShotDistance(forceValue, command) {
     const summary = getDriverMoonSummary(forceValue);
     if (!summary) return 0;
 
@@ -1946,7 +2120,7 @@ function getClub3MoonShotDistance(forceValue) {
         min = Math.max(min, 920);
     }
 
-    return getRandomIntWithCaddie(min, max);
+    return getRandomIntWithCaddie(min, max, command);
 }
 
 function getLegacyPowerDistance() {
@@ -1972,30 +2146,30 @@ function getShotDistanceFromAcceptedCommand() {
 
     if (club === "OmniAtlas L1 Adjustable Golf Driver") {
         if (courseType === "Moon") {
-            return getClub3MoonShotDistance(forceValue);
+            return getClub3MoonShotDistance(forceValue, lastAcceptedCommand);
         }
 
         if (lie === "First cut rough") {
-            return getClub3EarthFirstCutShotDistance(forceValue);
+            return getClub3EarthFirstCutShotDistance(forceValue, lastAcceptedCommand);
         }
 
         if (lie === "Fairway") {
-            return getClub3EarthFairwayShotDistance(forceValue);
+            return getClub3EarthFairwayShotDistance(forceValue, lastAcceptedCommand);
         }
 
-        return getClub3EarthTeeShotDistance(forceValue);
+        return getClub3EarthTeeShotDistance(forceValue, lastAcceptedCommand);
     }
 
     if (club === "OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood") {
-        return getClub2ShotDistance(forceValue);
+        return getClub2ShotDistance(forceValue, lastAcceptedCommand);
     }
 
     if (club === "OmniAtlas L1 Adjustable Loft Golf Club") {
-        return getClub1ShotDistance("28° 6 Iron", forceValue);
+        return getClub1ShotDistance("28° 6 Iron", forceValue, lastAcceptedCommand);
     }
 
     if (moonGolfClubData.club1.playableModes.includes(club)) {
-        return getClub1ShotDistance(club, forceValue);
+        return getClub1ShotDistance(club, forceValue, lastAcceptedCommand);
     }
 
     return null;
@@ -2032,6 +2206,9 @@ function updateTrainingStatDisplays() {
     document.getElementById("statWeather").innerText = trainingState.stats.weather.toFixed(1) + "%";
     document.getElementById("statRules").innerText = trainingState.stats.rules.toFixed(1) + "%";
     document.getElementById("statCourseManagement").innerText = trainingState.stats.courseManagement.toFixed(1) + "%";
+
+    updateActiveTrainingSummary();
+    updateCaddieForCurrentPlayState();
 }
 
 function clampTrainingStat(value) {
@@ -2165,11 +2342,13 @@ function finishTrainingQuestion(answerKey, timedOut) {
 
     resultHtml += "<p><strong>Correct answer:</strong> " + correct + " — " + question.answers[correct] + "</p>";
     resultHtml += "<p><strong>Category change:</strong> " + (delta > 0 ? "+" : "") + delta.toFixed(1) + "% to " + question.categoryLabel + "</p>";
+    resultHtml += "<p><strong>Gameplay activation:</strong> this category is now live and will influence matching shot situations in a small, skill-based way.</p>";
 
     resultBox.innerHTML = resultHtml;
 }
 
 updateTrainingStatDisplays();
+updateActiveTrainingSummary();
 updateCaddieForCurrentPlayState();
 </script>
 
