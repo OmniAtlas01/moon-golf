@@ -1054,46 +1054,18 @@ const trainingState = {
     }
 };
 
-const trainingQuestions = [
+const trainingQuestions = [$1,
     {
-        categoryKey: "driving",
-        categoryLabel: "Driving Knowledge",
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
         type: "Factual",
         timeLimit: 15,
-        question: "A player consistently slices the ball to the right (right-handed). What is the most likely cause?",
+        question: "What is the main advantage of a fairway lie compared with rough?",
         answers: {
-            A: "Clubface closed at impact",
-            B: "Clubface open relative to swing path",
-            C: "Ball positioned too far back",
-            D: "Swing path too shallow"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "driving",
-        categoryLabel: "Driving Knowledge",
-        type: "Factual",
-        timeLimit: 15,
-        question: "Which factor has the greatest influence on the initial direction of a drive?",
-        answers: {
-            A: "Swing speed",
-            B: "Clubface angle at impact",
-            C: "Shaft flex",
-            D: "Grip pressure"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "driving",
-        categoryLabel: "Driving Knowledge",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "Wind is blowing left to right. You already have a slight slice. What is the best adjustment?",
-        answers: {
-            A: "Aim further right",
-            B: "Aim left to compensate",
-            C: "Use more loft",
-            D: "Swing harder"
+            A: "Less need for club selection",
+            B: "More predictable contact",
+            C: "Automatic extra spin",
+            D: "Guaranteed extra distance"
         },
         correct: "B"
     },
@@ -1102,238 +1074,378 @@ const trainingQuestions = [
         categoryLabel: "Fairway Knowledge",
         type: "Factual",
         timeLimit: 15,
-        question: "From a clean fairway lie, what is the primary goal?",
+        question: "From the fairway, what usually gives the best result?",
         answers: {
-            A: "Maximum spin",
-            B: "Clean contact before turf",
-            C: "Maximum height",
-            D: "Minimal clubhead speed"
+            A: "Swinging as hard as possible",
+            B: "Controlled centred contact",
+            C: "Leaning back through impact",
+            D: "Keeping the club off the turf entirely"
         },
         correct: "B"
     },
     {
         categoryKey: "fairway",
         categoryLabel: "Fairway Knowledge",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "You are 150 yards out on flat fairway with no wind. What is the best decision?",
-        answers: {
-            A: "Always use driver",
-            B: "Select a club that matches distance",
-            C: "Swing as hard as possible",
-            D: "Use lowest loft"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "rough",
-        categoryLabel: "Rough Recovery",
         type: "Factual",
         timeLimit: 15,
-        question: "What is the main effect of hitting from thick rough?",
+        question: "Why is a fairway lie generally preferred?",
         answers: {
-            A: "Increased backspin",
-            B: "Reduced control over clubface",
-            C: "Increased distance",
-            D: "Cleaner strike"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "rough",
-        categoryLabel: "Rough Recovery",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "Ball is deep in rough. What is the safest play?",
-        answers: {
-            A: "Attempt maximum distance shot",
-            B: "Use higher loft club and escape",
-            C: "Use driver",
-            D: "Try to spin the ball"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "bunker",
-        categoryLabel: "Bunker Play",
-        type: "Factual",
-        timeLimit: 15,
-        question: "In a greenside bunker shot, what should the club strike first?",
-        answers: {
-            A: "The ball",
-            B: "The sand behind the ball",
-            C: "The top of the ball",
-            D: "The ground after the ball"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "bunker",
-        categoryLabel: "Bunker Play",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "Ball is in bunker with high lip in front. What is best approach?",
-        answers: {
-            A: "Low trajectory shot",
-            B: "High lofted shot with open face",
-            C: "Use putter",
-            D: "Hit directly at ball"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "greenReading",
-        categoryLabel: "Green Reading",
-        type: "Factual",
-        timeLimit: 15,
-        question: "What primarily determines how a putt will break?",
-        answers: {
-            A: "Ball colour",
-            B: "Grass length only",
-            C: "Slope of the green",
-            D: "Club weight"
+            A: "The ball sits in longer grass",
+            B: "The lie reduces the need for judgment",
+            C: "The ball is easier to strike cleanly",
+            D: "The ball always flies higher"
         },
         correct: "C"
     },
     {
-        categoryKey: "greenReading",
-        categoryLabel: "Green Reading",
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Which factor matters most when choosing a club from the fairway?",
+        answers: {
+            A: "Ball colour",
+            B: "Remaining distance to target",
+            C: "Shoe grip",
+            D: "Tee height"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What is the main risk of trying to overpower a fairway shot?",
+        answers: {
+            A: "The ball becomes heavier",
+            B: "Contact quality may worsen",
+            C: "The fairway becomes narrower",
+            D: "The club gains loft"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "On a fairway shot, striking the ground before the ball is known as what?",
+        answers: {
+            A: "A fade",
+            B: "A blade",
+            C: "A fat shot",
+            D: "A draw"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "On a fairway approach, what usually matters more than raw power?",
+        answers: {
+            A: "Clubhead colour",
+            B: "Directional control and strike quality",
+            C: "Grip brand",
+            D: "Glove thickness"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "A fairway lie usually allows better control because:",
+        answers: {
+            A: "The ball always has topspin",
+            B: "The club can reach the back of the ball more cleanly",
+            C: "The wind is weaker",
+            D: "The fairway adds power automatically"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What is generally the smartest mindset for fairway play?",
+        answers: {
+            A: "Attack every shot aggressively",
+            B: "Prioritise clean contact and percentage golf",
+            C: "Use driver whenever possible",
+            D: "Ignore lie conditions"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
         type: "Scenario",
         timeLimit: 20,
-        question: "A putt slopes right to left. Where should you aim?",
+        question: "You are on the fairway with a clear shot but water guards the front of the green. What is the safest percentage play?",
         answers: {
-            A: "Right edge",
-            B: "Centre",
-            C: "Left of hole",
-            D: "Directly at hole"
+            A: "Always attack the flag",
+            B: "Aim for the safest landing area",
+            C: "Swing harder to clear everything",
+            D: "Use driver from the fairway"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You are on a fairway lie with the ball slightly below your feet. What is the best general expectation?",
+        answers: {
+            A: "The ball will automatically go higher",
+            B: "Clean contact may be harder",
+            C: "Distance always increases",
+            D: "Spin becomes irrelevant"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You have 90 yards left from the fairway and no trouble ahead. What is usually the best choice?",
+        answers: {
+            A: "Use the club that gives controlled distance",
+            B: "Hit the ball as hard as possible",
+            C: "Use driver for safety",
+            D: "Add unnecessary extra loft"
         },
         correct: "A"
     },
     {
-        categoryKey: "putting",
-        categoryLabel: "Putting",
-        type: "Factual",
-        timeLimit: 15,
-        question: "What is the most important factor in distance control for putting?",
-        answers: {
-            A: "Grip strength",
-            B: "Stroke length and tempo",
-            C: "Ball brand",
-            D: "Shoe type"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "putting",
-        categoryLabel: "Putting",
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
         type: "Scenario",
         timeLimit: 20,
-        question: "Long putt across flat green. What is the priority?",
-        answers: {
-            A: "Hole it at all costs",
-            B: "Leave ball close to hole",
-            C: "Hit as hard as possible",
-            D: "Add spin"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "weather",
-        categoryLabel: "Weather Judgment",
-        type: "Factual",
-        timeLimit: 15,
-        question: "What effect does a headwind have on a golf ball?",
-        answers: {
-            A: "Increases distance",
-            B: "Reduces distance",
-            C: "No effect",
-            D: "Only affects spin"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "weather",
-        categoryLabel: "Weather Judgment",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "Strong wind into your face. What is best adjustment?",
+        question: "You are on a fairway lie but hitting into a strong headwind. Best adjustment?",
         answers: {
             A: "Use less club",
-            B: "Use more club and lower shot",
-            C: "Swing softer only",
-            D: "Aim randomly"
+            B: "Use more club with controlled strike",
+            C: "Swing wildly harder",
+            D: "Ignore the wind"
         },
         correct: "B"
     },
     {
-        categoryKey: "rules",
-        categoryLabel: "Rules Knowledge",
-        type: "Factual",
-        timeLimit: 15,
-        question: "If a ball is lost, what is the correct procedure?",
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "From the fairway, you are between clubs. Which is usually wiser?",
         answers: {
-            A: "Drop nearby",
-            B: "Replay from previous position with penalty",
-            C: "Continue play without penalty",
-            D: "Move ball forward"
+            A: "Choose the club that supports a controlled shot",
+            B: "Always choose the shorter club",
+            C: "Always choose the longer club and smash it",
+            D: "Pick randomly"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You are on a clean fairway lie but the pin is tucked near a bunker. Best decision?",
+        answers: {
+            A: "Fire directly at the pin every time",
+            B: "Aim for the safer part of the green",
+            C: "Use maximum force",
+            D: "Ignore the bunker completely"
         },
         correct: "B"
     },
     {
-        categoryKey: "rules",
-        categoryLabel: "Rules Knowledge",
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You have a fairway lie and a narrow green entrance. What is most important?",
+        answers: {
+            A: "Maximum distance",
+            B: "Clean strike and directional accuracy",
+            C: "Extreme backspin attempt",
+            D: "Fastest possible swing"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You are on the fairway with a downhill shot to the green. Best general adjustment?",
+        answers: {
+            A: "Expect the ball to play longer",
+            B: "Expect the ball to stop sooner automatically",
+            C: "Always add loft",
+            D: "Always use driver"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "From a fairway lie, you are trying to reach the green in regulation, but trouble surrounds the pin. Best course-management decision?",
+        answers: {
+            A: "Attack recklessly",
+            B: "Play to the largest safe target area",
+            C: "Swing harder to reduce risk",
+            D: "Aim at trouble and trust luck"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
         type: "Factual",
         timeLimit: 15,
-        question: "How many clubs are allowed in a golf bag under standard rules?",
+        question: "Why does a fairway lie generally improve strike consistency?",
         answers: {
-            A: "10",
-            B: "12",
-            C: "14",
-            D: "Unlimited"
+            A: "The grass grips the clubhead",
+            B: "The ball is more exposed for predictable contact",
+            C: "The ball rolls before impact",
+            D: "The shaft becomes stiffer"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What is the main difference between a fairway shot and a tee shot?",
+        answers: {
+            A: "A fairway shot usually offers less margin for poor strike mechanics",
+            B: "A fairway shot always goes farther",
+            C: "A fairway shot always launches lower",
+            D: "A fairway shot removes spin"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "From the fairway, which error most often reduces distance and control?",
+        answers: {
+            A: "Clean compression",
+            B: "Hitting ball then turf",
+            C: "Poor strike location or turf-first contact",
+            D: "Balanced tempo"
         },
         correct: "C"
     },
     {
-        categoryKey: "courseManagement",
-        categoryLabel: "Course Management",
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
         type: "Scenario",
         timeLimit: 20,
-        question: "Water hazard directly in front of green. Best decision?",
+        question: "A player has a perfect fairway lie but a hazard short right of the green. The player tends to push shots right. Best play?",
         answers: {
-            A: "Always attack pin",
-            B: "Lay up safely short",
-            C: "Ignore hazard",
-            D: "Hit harder"
+            A: "Aim further right",
+            B: "Aim at the most dangerous line",
+            C: "Adjust target to allow for the common miss",
+            D: "Swing harder to avoid the miss"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "On a fairway approach, why is centred clubface contact valuable?",
+        answers: {
+            A: "It increases random bounce",
+            B: "It improves energy transfer and directional consistency",
+            C: "It makes every shot draw",
+            D: "It removes the need for club selection"
         },
         correct: "B"
     },
     {
-        categoryKey: "courseManagement",
-        categoryLabel: "Course Management",
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
         type: "Scenario",
         timeLimit: 20,
-        question: "Narrow fairway with out-of-bounds right. You tend to slice. Best play?",
+        question: "You are on a fairway lie with 165 yards remaining and no direct danger. What is the smartest baseline choice?",
         answers: {
-            A: "Aim centre",
-            B: "Aim left side",
-            C: "Aim right side",
-            D: "Swing harder"
+            A: "Select a club and force level you can strike cleanly",
+            B: "Use maximum power regardless",
+            C: "Always use the driver",
+            D: "Hit the lowest club available"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You are on the fairway and your previous shots have been inconsistent. Best percentage adjustment?",
+        answers: {
+            A: "Increase force to recover distance",
+            B: "Prioritise rhythm and clean contact",
+            C: "Change aim repeatedly during swing",
+            D: "Ignore consistency and attack hard"
         },
         correct: "B"
     },
     {
-        categoryKey: "courseManagement",
-        categoryLabel: "Course Management",
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "A fairway lie gives a player the clearest opportunity to do what?",
+        answers: {
+            A: "Use reliable judgment and strike the ball cleanly",
+            B: "Remove all risk from the hole",
+            C: "Eliminate the effect of wind",
+            D: "Ignore course strategy"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
         type: "Scenario",
         timeLimit: 20,
-        question: "You are 170 yards out, slight uphill, wind into you, ball in light rough. What is best decision?",
+        question: "You are on the fairway but slightly blocked by a tree branch line. Best decision?",
         answers: {
-            A: "Take normal club and swing harder",
-            B: "Take extra club and play controlled shot",
-            C: "Use less club",
-            D: "Hit driver"
+            A: "Hit directly through the branches at full force",
+            B: "Choose a safer shot shape or lower-risk target",
+            C: "Ignore the obstruction",
+            D: "Use putter"
         },
         correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "On a fairway shot, what is usually the best balance?",
+        answers: {
+            A: "Distance only",
+            B: "Height only",
+            C: "Control, strike, and target selection together",
+            D: "Force above all else"
+        },
+        correct: "C"
     }
 ];
 
@@ -2354,3 +2466,4 @@ updateCaddieForCurrentPlayState();
 
 </body>
 </html>
+
