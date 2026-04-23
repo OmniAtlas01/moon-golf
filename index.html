@@ -311,6 +311,55 @@ ul {
     </div>
 
     <div class="info-panel">
+        <h2 style="text-align:center;">OmniAtlas Custom Ball System</h2>
+
+        <div class="rule-box">
+            <p><strong>Important rule:</strong> the OmniAtlas Custom Ball is separately purchased and fully compliant with golf rules and regulations.</p>
+            <p>The ball does not override physics. It improves performance through correct fitting of compression, spin profile, and launch compatibility to suit the player's game.</p>
+            <p>The quality of the compliant custom ball depends on the caddie level that prepares it.</p>
+        </div>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Cheap Caddie Custom Ball</h3>
+                <p><strong>Effect:</strong> 1% to 5% optimisation</p>
+                <p>Represents basic compliant fitting improvements.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Average Caddie Custom Ball</h3>
+                <p><strong>Effect:</strong> 5% to 12% optimisation</p>
+                <p>Represents improved launch and spin matching.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Elite Caddie Custom Ball</h3>
+                <p><strong>Effect:</strong> 12% to 20% optimisation</p>
+                <p><strong>Rare rescue:</strong> up to 25% on extreme near-OOB standard misses.</p>
+                <p>Represents top-tier player-specific fitting within compliant limits.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Training vs Custom Ball — Scientific Model</h2>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Caddie Training Effect</h3>
+                <p>Improves swing consistency, alignment, club delivery, decision-making, and severe hook/slice control.</p>
+                <p>This is the player's learned improvement.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Custom Ball Effect</h3>
+                <p>Improves spin profile and launch compatibility within conforming golf-ball limits.</p>
+                <p>This is equipment fitting, not a cheat mechanism.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
         <h2 style="text-align:center;">L1 Club Rules — Official Round Lock</h2>
 
         <div class="rule-box">
@@ -679,8 +728,8 @@ const caddieProfiles = {
         varianceMultiplier: 1.00,
         floorPull: 0.00,
         ceilingTrim: 0.00,
-        hookSliceReductionMin: 0,
-        hookSliceReductionMax: 0,
+        trainingMin: 0,
+        trainingMax: 0,
         rescueMax: 0
     },
     cheap: {
@@ -688,8 +737,8 @@ const caddieProfiles = {
         varianceMultiplier: 0.93,
         floorPull: 0.02,
         ceilingTrim: 0.02,
-        hookSliceReductionMin: 1,
-        hookSliceReductionMax: 8,
+        trainingMin: 1,
+        trainingMax: 8,
         rescueMax: 8
     },
     mid: {
@@ -697,8 +746,8 @@ const caddieProfiles = {
         varianceMultiplier: 0.86,
         floorPull: 0.04,
         ceilingTrim: 0.04,
-        hookSliceReductionMin: 8,
-        hookSliceReductionMax: 20,
+        trainingMin: 8,
+        trainingMax: 20,
         rescueMax: 20
     },
     elite: {
@@ -706,9 +755,36 @@ const caddieProfiles = {
         varianceMultiplier: 0.78,
         floorPull: 0.06,
         ceilingTrim: 0.06,
-        hookSliceReductionMin: 20,
-        hookSliceReductionMax: 35,
+        trainingMin: 20,
+        trainingMax: 35,
         rescueMax: 50
+    }
+};
+
+const customBallProfiles = {
+    none: {
+        label: "Standard Ball",
+        reductionMin: 0,
+        reductionMax: 0,
+        rescueMax: 0
+    },
+    cheap: {
+        label: "Cheap Caddie Custom Ball",
+        reductionMin: 1,
+        reductionMax: 5,
+        rescueMax: 5
+    },
+    mid: {
+        label: "Average Caddie Custom Ball",
+        reductionMin: 5,
+        reductionMax: 12,
+        rescueMax: 12
+    },
+    elite: {
+        label: "Elite Caddie Custom Ball",
+        reductionMin: 12,
+        reductionMax: 20,
+        rescueMax: 25
     }
 };
 
@@ -840,6 +916,11 @@ function getSelectedCaddieProfile() {
     return caddieProfiles[level] || caddieProfiles.none;
 }
 
+function getSelectedBallProfile() {
+    const level = document.getElementById("caddieLevel").value;
+    return customBallProfiles[level] || customBallProfiles.none;
+}
+
 function getForceNumber(forceText) {
     return parseInt(String(forceText).replace("%", ""), 10);
 }
@@ -905,18 +986,32 @@ function applyCaddieRangeAdjustment(min, max) {
     };
 }
 
-function getHookSliceEffectText() {
+function getTrainingEffectText() {
     const caddie = getSelectedCaddieProfile();
 
     if (caddie.label === "No Caddie") {
-        return "No scientific hook/slice training benefit applied.";
+        return "No training-based swing improvement active.";
     }
 
     if (caddie.label === "Elite Caddie") {
-        return "Training-based hook/slice reduction model: " + caddie.hookSliceReductionMin + "% to " + caddie.hookSliceReductionMax + "%, with rare rescue cases up to " + caddie.rescueMax + "% for severe default misses.";
+        return "Training effect: " + caddie.trainingMin + "% to " + caddie.trainingMax + "% hook/slice reduction, with rare rescue cases up to " + caddie.rescueMax + "% for severe default misses.";
     }
 
-    return "Training-based hook/slice reduction model: " + caddie.hookSliceReductionMin + "% to " + caddie.hookSliceReductionMax + "%.";
+    return "Training effect: " + caddie.trainingMin + "% to " + caddie.trainingMax + "% hook/slice reduction.";
+}
+
+function getBallEffectText() {
+    const ball = getSelectedBallProfile();
+
+    if (ball.label === "Standard Ball") {
+        return "Custom ball effect: none. Standard ball in use.";
+    }
+
+    if (ball.label === "Elite Caddie Custom Ball") {
+        return "Custom ball effect: " + ball.reductionMin + "% to " + ball.reductionMax + "% compliant fitting optimisation, with rare rescue cases up to " + ball.rescueMax + "% on extreme near-OOB standard misses.";
+    }
+
+    return "Custom ball effect: " + ball.reductionMin + "% to " + ball.reductionMax + "% compliant fitting optimisation.";
 }
 
 function getDriverEarthTeeSummary(forceValue) {
@@ -1011,6 +1106,7 @@ function updateCaddieForCurrentPlayState() {
     const adviceKey = getAdviceKeyForAcceptedCommand();
     const courseType = getCourseType();
     const caddie = getSelectedCaddieProfile();
+    const ball = getSelectedBallProfile();
 
     if (
         lastAcceptedCommand &&
@@ -1031,13 +1127,15 @@ function updateCaddieForCurrentPlayState() {
                 [
                     "Course type: Moon Course.",
                     "Caddie level: " + caddie.label + ".",
+                    "Ball type: " + ball.label + ".",
                     "Driver force band: " + summary.bandLabel + ".",
                     "Estimated Moon total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
                     "Upper-end clean-contact outcome can rise beyond 1,000 yards in this mode.",
                     "Distance note: " + summary.distanceNote + ".",
                     "Risk level: " + summary.riskLevel + ".",
                     "Scientific caddie effect: tighter variance, not altered physics.",
-                    getHookSliceEffectText(),
+                    getTrainingEffectText(),
+                    getBallEffectText(),
                     summary.caddieTip
                 ].forEach(function(paragraph) {
                     const p = document.createElement("p");
@@ -1057,12 +1155,14 @@ function updateCaddieForCurrentPlayState() {
                         "Course type: Parkland.",
                         "Lie: First cut rough.",
                         "Caddie level: " + caddie.label + ".",
+                        "Ball type: " + ball.label + ".",
                         "Driver force band: " + summary.bandLabel + ".",
                         "Estimated 36-handicap 1st-cut-driver total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
                         "Distance note: " + summary.distanceNote + ".",
                         "Risk level: " + summary.riskLevel + ".",
                         "Scientific caddie effect: better consistency and fewer extreme misses.",
-                        getHookSliceEffectText(),
+                        getTrainingEffectText(),
+                        getBallEffectText(),
                         summary.caddieTip
                     ].forEach(function(paragraph) {
                         const p = document.createElement("p");
@@ -1081,12 +1181,14 @@ function updateCaddieForCurrentPlayState() {
                         "Course type: Parkland.",
                         "Lie: Fairway.",
                         "Caddie level: " + caddie.label + ".",
+                        "Ball type: " + ball.label + ".",
                         "Driver force band: " + summary.bandLabel + ".",
                         "Estimated 36-handicap fairway-driver total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
                         "Distance note: " + summary.distanceNote + ".",
                         "Risk level: " + summary.riskLevel + ".",
                         "Scientific caddie effect: reduced variance, not extra hidden power.",
-                        getHookSliceEffectText(),
+                        getTrainingEffectText(),
+                        getBallEffectText(),
                         summary.caddieTip
                     ].forEach(function(paragraph) {
                         const p = document.createElement("p");
@@ -1105,13 +1207,15 @@ function updateCaddieForCurrentPlayState() {
                         "Course type: Parkland.",
                         "Lie: " + lie + ".",
                         "Caddie level: " + caddie.label + ".",
+                        "Ball type: " + ball.label + ".",
                         "Driver force band: " + summary.bandLabel + ".",
                         "Estimated 36-handicap carry range here: " + summary.carryMin + " to " + summary.carryMax + " yards.",
                         "Estimated 36-handicap total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
                         "Distance note: " + summary.distanceNote + ".",
                         "Risk level: " + summary.riskLevel + ".",
                         "Scientific caddie effect: improved consistency, not impossible distance gains.",
-                        getHookSliceEffectText(),
+                        getTrainingEffectText(),
+                        getBallEffectText(),
                         summary.caddieTip
                     ].forEach(function(paragraph) {
                         const p = document.createElement("p");
