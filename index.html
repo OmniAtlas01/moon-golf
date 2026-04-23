@@ -473,6 +473,17 @@ ul {
     </div>
 
     <div class="info-panel">
+        <h2 style="text-align:center;">Gym Training — Strength Building Rules</h2>
+
+        <div class="rule-box">
+            <p><strong>Gym rule now active:</strong> players may build strength through training knowledge focused on muscle, diet, recovery, and safe weight progression.</p>
+            <p><strong>Recommended ceiling:</strong> players are advised to train only up to <strong>10.0%</strong> extra muscle / strength for golf-specific benefit.</p>
+            <p>Beyond that point, players may continue if they wish, but excessive muscle can begin to reduce flexibility, timing, and fluid golf movement.</p>
+            <p>Supplements remain temporary. Gym knowledge represents the more permanent training pathway, though players must continue maintenance work to stay toned.</p>
+        </div>
+    </div>
+
+    <div class="info-panel">
         <h2 style="text-align:center;">Training Category Progress</h2>
 
         <div class="training-stats-grid">
@@ -485,6 +496,7 @@ ul {
             <div class="training-stat-row"><span>Weather Judgment</span><span id="statWeather">0.0%</span></div>
             <div class="training-stat-row"><span>Rules Knowledge</span><span id="statRules">0.0%</span></div>
             <div class="training-stat-row"><span>Course Management</span><span id="statCourseManagement">0.0%</span></div>
+            <div class="training-stat-row"><span>Gym Training</span><span id="statGym">0.0%</span></div>
         </div>
     </div>
 
@@ -501,6 +513,7 @@ ul {
             <div class="club-card">
                 <h3>Full Shot Training Links</h3>
                 <p><strong>Driving:</strong> helps tee-shot efficiency and driver control</p>
+                <p><strong>Gym Training:</strong> helps strength-related distance efficiency, within realistic limits</p>
                 <p><strong>Fairway:</strong> improves fairway strike quality</p>
                 <p><strong>Rough:</strong> improves recovery efficiency from rough lies</p>
                 <p><strong>Weather:</strong> slightly improves wind and condition judgment</p>
@@ -1050,7 +1063,8 @@ const trainingState = {
         putting: 0.0,
         weather: 0.0,
         rules: 0.0,
-        courseManagement: 0.0
+        courseManagement: 0.0,
+        gym: 0.0
     }
 };
 
@@ -1446,6 +1460,426 @@ const trainingQuestions = [$1,
             D: "Force above all else"
         },
         correct: "C"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What is the primary physical benefit of strength training for driving distance?",
+        answers: {
+            A: "Increased force production through the swing",
+            B: "Improved grip colour",
+            C: "Reduced ball weight",
+            D: "Automatic accuracy"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Which muscle group contributes most to generating power in a golf swing?",
+        answers: {
+            A: "Fingers",
+            B: "Ankles only",
+            C: "Core muscles (abs and obliques)",
+            D: "Neck muscles"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What is the most important nutrient for muscle growth?",
+        answers: {
+            A: "Sugar",
+            B: "Fibre",
+            C: "Salt",
+            D: "Protein"
+        },
+        correct: "D"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Why is flexibility important alongside strength in golf?",
+        answers: {
+            A: "It removes the need for practice",
+            B: "It increases ball spin automatically",
+            C: "It allows a fuller and more efficient swing",
+            D: "It reduces club weight"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What is the main risk of gaining too much muscle mass in golf?",
+        answers: {
+            A: "Increased ball speed",
+            B: "Better putting",
+            C: "More spin control",
+            D: "Reduced flexibility and swing fluidity"
+        },
+        correct: "D"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Which type of training best improves explosive power for driving?",
+        answers: {
+            A: "Plyometric and power training",
+            B: "Long-distance running",
+            C: "Static stretching only",
+            D: "Meditation"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What does \"progressive overload\" mean in strength training?",
+        answers: {
+            A: "Avoiding heavy weights",
+            B: "Gradually increasing resistance over time",
+            C: "Training less frequently",
+            D: "Always lifting the same weight"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Which macronutrient provides energy for high-intensity training?",
+        answers: {
+            A: "Protein only",
+            B: "Water",
+            C: "Vitamins",
+            D: "Carbohydrates"
+        },
+        correct: "D"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Why is rest important in muscle development?",
+        answers: {
+            A: "Muscles grow during recovery, not during the workout",
+            B: "It increases fatigue",
+            C: "It lowers metabolism",
+            D: "It reduces strength permanently"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Which type of strength is most beneficial for driving distance?",
+        answers: {
+            A: "Static strength only",
+            B: "Finger strength",
+            C: "Explosive and rotational strength",
+            D: "Neck strength"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A player wants more driving distance but feels stiff during their swing. What is the best adjustment?",
+        answers: {
+            A: "Continue only heavy lifting",
+            B: "Stop training entirely",
+            C: "Swing harder",
+            D: "Combine strength training with mobility work"
+        },
+        correct: "D"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A player increases muscle mass beyond 10% and notices worse accuracy. What is the likely cause?",
+        answers: {
+            A: "Reduced flexibility and coordination",
+            B: "Better swing speed",
+            C: "Improved timing",
+            D: "Lighter clubs"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A player wants to increase strength safely. What is the best approach?",
+        answers: {
+            A: "Lift maximum weight immediately",
+            B: "Train once a month",
+            C: "Use gradual progression with correct technique",
+            D: "Avoid all resistance training"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A golfer trains heavily but ignores nutrition. What is the likely outcome?",
+        answers: {
+            A: "Maximum muscle growth",
+            B: "Instant improvement",
+            C: "Reduced need for rest",
+            D: "Limited strength gains"
+        },
+        correct: "D"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A player wants to improve driving distance without harming control. Best training focus?",
+        answers: {
+            A: "Only upper-body muscle size",
+            B: "Only leg exercises",
+            C: "No training needed",
+            D: "Balanced strength and mobility training"
+        },
+        correct: "D"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A golfer feels strong but struggles with timing. What should they add?",
+        answers: {
+            A: "More weight only",
+            B: "Less sleep",
+            C: "Coordination and swing practice",
+            D: "Random drills"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A player is training for power but feels fatigued constantly. What is likely missing?",
+        answers: {
+            A: "More weight",
+            B: "Proper recovery and rest",
+            C: "More swings",
+            D: "Less food"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A golfer wants explosive power. Which training style is best?",
+        answers: {
+            A: "Slow endurance lifting only",
+            B: "Walking only",
+            C: "Stretching only",
+            D: "Plyometric and rotational drills"
+        },
+        correct: "D"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A player is eating correctly and training well but sees no progress. What might help?",
+        answers: {
+            A: "Progressive overload adjustments",
+            B: "Stopping training",
+            C: "Ignoring form",
+            D: "Reducing protein"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A golfer focuses only on upper-body strength. What is the likely limitation?",
+        answers: {
+            A: "No effect",
+            B: "Increased flexibility",
+            C: "Better balance",
+            D: "Reduced full-body power generation"
+        },
+        correct: "D"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Why is rotational strength critical in golf?",
+        answers: {
+            A: "It reduces grip pressure",
+            B: "It removes the need for technique",
+            C: "It drives the transfer of energy through the swing",
+            D: "It increases club colour"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What role do the legs play in driving distance?",
+        answers: {
+            A: "They only affect walking",
+            B: "They generate ground force and stability",
+            C: "They reduce swing speed",
+            D: "None"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Which training approach best mimics the golf swing?",
+        answers: {
+            A: "Linear pushing movements only",
+            B: "Sitting exercises only",
+            C: "No movement training",
+            D: "Rotational and multi-plane exercises"
+        },
+        correct: "D"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Why is overtraining harmful?",
+        answers: {
+            A: "It increases flexibility",
+            B: "It improves recovery",
+            C: "It leads to fatigue and reduced performance",
+            D: "It guarantees strength gains"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What is the most balanced physical goal for a golfer?",
+        answers: {
+            A: "Maximum muscle size",
+            B: "Only speed",
+            C: "Only endurance",
+            D: "Strength, flexibility, and coordination together"
+        },
+        correct: "D"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "In Moon Golf, why is strength still important despite low gravity?",
+        answers: {
+            A: "It improves initial force generation at impact",
+            B: "It changes gravity",
+            C: "It guarantees distance",
+            D: "It removes direction errors"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Why is excessive strength dangerous in Moon Golf conditions?",
+        answers: {
+            A: "It reduces ball size",
+            B: "It lowers gravity",
+            C: "It amplifies directional errors over long distances",
+            D: "It removes spin"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A player increases strength and now hits further but more erratically. What is needed?",
+        answers: {
+            A: "More strength only",
+            B: "Better control and coordination training",
+            C: "Less food",
+            D: "Ignore the issue"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Why is a 10% strength cap recommended?",
+        answers: {
+            A: "It limits player progress",
+            B: "It reduces distance",
+            C: "It removes skill",
+            D: "It balances power with control and flexibility"
+        },
+        correct: "D"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What is the best long-term strategy for maintaining strength gains?",
+        answers: {
+            A: "Stop training after reaching goal",
+            B: "Only train once per year",
+            C: "Rely on supplements only",
+            D: "Maintain regular training and conditioning"
+        },
+        correct: "D"
     }
 ];
 
@@ -1557,6 +1991,8 @@ function findForceBand(profile, forceValue) {
 
 function getTrainingEffectProfile(command) {
     const stats = trainingState.stats;
+    const gymBenefitRaw = Math.min(10, stats.gym);
+    const gymOverageRaw = Math.max(0, stats.gym - 10);
 
     if (!command) {
         return {
@@ -1609,7 +2045,11 @@ function getTrainingEffectProfile(command) {
 
         if (isDriver || shotType === "Drive") {
             distancePercent += Math.min(4, stats.driving * 0.04);
+            distancePercent += Math.min(5, gymBenefitRaw * 0.5);
             varianceTighteningPercent += Math.min(12, stats.driving * 0.12);
+            varianceTighteningPercent += Math.min(3, gymBenefitRaw * 0.3);
+            distancePercent -= Math.min(3, gymOverageRaw * 0.3);
+            varianceTighteningPercent -= Math.min(5, gymOverageRaw * 0.5);
             explanationParts.push("Driving knowledge active");
         }
 
@@ -1641,6 +2081,14 @@ function getTrainingEffectProfile(command) {
 
     distancePercent = Math.round(distancePercent * 10) / 10;
     varianceTighteningPercent = Math.round(varianceTighteningPercent * 10) / 10;
+
+    if (gymBenefitRaw > 0) {
+        explanationParts.push("Gym strength active up to recommended cap");
+    }
+
+    if (gymOverageRaw > 0) {
+        explanationParts.push("Excess gym mass slightly reducing flexibility / timing");
+    }
 
     if (explanationParts.length === 0) {
         explanationParts.push("No category contribution yet");
@@ -2318,6 +2766,7 @@ function updateTrainingStatDisplays() {
     document.getElementById("statWeather").innerText = trainingState.stats.weather.toFixed(1) + "%";
     document.getElementById("statRules").innerText = trainingState.stats.rules.toFixed(1) + "%";
     document.getElementById("statCourseManagement").innerText = trainingState.stats.courseManagement.toFixed(1) + "%";
+    document.getElementById("statGym").innerText = trainingState.stats.gym.toFixed(1) + "%";
 
     updateActiveTrainingSummary();
     updateCaddieForCurrentPlayState();
@@ -2466,4 +2915,5 @@ updateCaddieForCurrentPlayState();
 
 </body>
 </html>
+
 
