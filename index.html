@@ -689,7 +689,38 @@ $1
     </div>
 
     <div class="info-panel">
-        <h2 style="text-align:center;">Moon Course — OmniAtlas L1 Adjustable Driver</h2>
+        <h2 style="text-align:center;">Second Cut Rough — Driver Penalty (36 Handicap)</h2>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Performance Impact</h3>
+                <p><strong>Lie:</strong> Second cut rough</p>
+                <p><strong>Distance loss:</strong> typically 20–30 yards versus first cut rough</p>
+                <p><strong>Total reduction:</strong> often 15% or more</p>
+                <p><strong>Cause:</strong> reduced clubhead speed, thicker grass interference, and poorer contact quality</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Strike Behaviour</h3>
+                <p>Thicker rough can interfere with the clubface before impact.</p>
+                <p>A low-loft driver often produces glancing, low-spin contact from this lie.</p>
+                <p>This reduces both total distance and directional control compared with a cleaner first-cut lie.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Lie Variability</h3>
+                <p><strong>Fluffy lie (rare):</strong> may perform close to first-cut rough if the ball is sitting up.</p>
+                <p><strong>Buried lie (more likely):</strong> may cause the player to struggle simply to advance the ball safely back onto the fairway.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Caddie Tip</h3>
+                <p>From the second cut, a hybrid or iron will often produce better total distance, accuracy, and recovery value than driver.</p>
+            </div>
+        </div>
+    </div>
+
+$1
 
         <div class="club-grid">
             <div class="club-card">
@@ -1045,19 +1076,20 @@ const clubPerformanceProfiles = {
         ],
         caddieTip: "Most players in your category gain more from centred contact and control than from forcing maximum swing speed. Reducing force slightly may improve strike quality and produce a better overall result. Alternatively, you may be better using a lesser wood, Stinger, Hybrid or Iron, and just focus on staying on the fairway rather than trying to hit the green."
     },
-    driver36HandicapEarthFirstCut: {
+$1
+    driver36HandicapEarthSecondCut: {
         baseline: {
-            averageTotalMin: 135,
-            averageTotalMax: 150
+            averageTotalMin: 105,
+            averageTotalMax: 130
         },
         forceBands: [
-            { min: 1, max: 25, label: "Very weak 1st-cut driver attempt", totalFactorMin: 0.10, totalFactorMax: 0.22, riskLevel: "Low", distanceNote: "Too little force for worthwhile driver use from the 1st cut" },
-            { min: 26, max: 49, label: "Short 1st-cut driver attempt", totalFactorMin: 0.23, totalFactorMax: 0.42, riskLevel: "Low to Moderate", distanceNote: "Manageable lie, but distance remains modest" },
-            { min: 50, max: 74, label: "Moderate 1st-cut driver strike", totalFactorMin: 0.43, totalFactorMax: 0.68, riskLevel: "Moderate", distanceNote: "Playable, with only a slight penalty compared with fairway" },
-            { min: 75, max: 89, label: "Strong 1st-cut driver strike", totalFactorMin: 0.69, totalFactorMax: 0.88, riskLevel: "Moderate to High", distanceNote: "Generally manageable, but slightly less consistent than fairway" },
-            { min: 90, max: 100, label: "High-force 1st-cut driver attempt", totalFactorMin: 0.89, totalFactorMax: 1.00, riskLevel: "High", distanceNote: "Good distance is possible, but contact and consistency remain slightly reduced" }
+            { min: 1, max: 25, label: "Very weak second-cut driver attempt", totalFactorMin: 0.10, totalFactorMax: 0.22, riskLevel: "Low", distanceNote: "Too little force for useful driver recovery from thick rough" },
+            { min: 26, max: 49, label: "Short second-cut recovery attempt", totalFactorMin: 0.23, totalFactorMax: 0.42, riskLevel: "Moderate", distanceNote: "Likely only advances the ball with limited control" },
+            { min: 50, max: 74, label: "Moderate second-cut driver strike", totalFactorMin: 0.43, totalFactorMax: 0.68, riskLevel: "High", distanceNote: "Thick rough is now strongly reducing strike quality and distance" },
+            { min: 75, max: 89, label: "Strong second-cut driver attempt", totalFactorMin: 0.69, totalFactorMax: 0.88, riskLevel: "High", distanceNote: "Potential distance exists, but glancing contact and poor launch are likely" },
+            { min: 90, max: 100, label: "High-force second-cut driver attempt", totalFactorMin: 0.89, totalFactorMax: 1.00, riskLevel: "Very High", distanceNote: "Maximum force from thick rough can reduce control more than it adds distance" }
         ],
-        caddieTip: "For a 36-handicap golfer, the 1st cut is generally manageable and similar to a fairway lie, but slightly less consistent. You would likely get more consistency out of a Hybrid."
+        caddieTip: "From the second cut, a hybrid or iron will often produce better total distance, accuracy, and recovery value than driver. A rare fluffy lie may be playable, but a buried lie can make driver a poor recovery choice."
     },
     driver36HandicapMoon: {
         baseline: {
@@ -2443,8 +2475,9 @@ function getDriverEarthFairwaySummary(forceValue) {
     };
 }
 
-function getDriverEarthFirstCutSummary(forceValue) {
-    const profile = clubPerformanceProfiles.driver36HandicapEarthFirstCut;
+$1
+function getDriverEarthSecondCutSummary(forceValue) {
+    const profile = clubPerformanceProfiles.driver36HandicapEarthSecondCut;
     const band = findForceBand(profile, forceValue);
     if (!band) return null;
 
@@ -2504,35 +2537,39 @@ function updateCaddieForCurrentPlayState() {
         titleElement.innerText = "L1 Driver Advice";
         bodyElement.innerHTML = "";
 
-        if (courseType === "Moon") {
-            const summary = getDriverMoonSummary(forceValue);
+$1
+            if (lie === "Second cut rough") {
+                const summary = getDriverEarthSecondCutSummary(forceValue);
 
-            if (summary) {
-                [
-                    "Course type: Moon Course.",
-                    "Caddie level: " + caddie.label + ".",
-                    "Ball type: " + ball.label + ".",
-                    "Driver force band: " + summary.bandLabel + ".",
-                    "Estimated Moon total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
-                    "Upper-end clean-contact outcome can rise beyond 1,000 yards in this mode.",
-                    "Distance note: " + summary.distanceNote + ".",
-                    "Risk level: " + summary.riskLevel + ".",
-                    "Scientific caddie effect: tighter variance, not altered physics.",
-                    getTrainingEffectText(),
-                    getBallEffectText(),
-                    getOLPEffectText(),
-                    getRealismGuardText(),
-                    summary.caddieTip
-                ].forEach(function(paragraph) {
-                    const p = document.createElement("p");
-                    p.textContent = paragraph;
-                    bodyElement.appendChild(p);
-                });
+                if (summary) {
+                    [
+                        "Course type: Parkland.",
+                        "Lie: Second cut rough.",
+                        "Caddie level: " + caddie.label + ".",
+                        "Ball type: " + ball.label + ".",
+                        "Driver force band: " + summary.bandLabel + ".",
+                        "Estimated 36-handicap second-cut-driver total range here: " + summary.totalMin + " to " + summary.totalMax + " yards before lie-randomness penalties.",
+                        "Second-cut rule: thicker rough often reduces maximum distance by about 20 to 30 yards versus first cut and may cut total distance by 15% or more.",
+                        "Lie variability: rare fluffy lies can perform close to first cut, while buried lies may struggle simply to advance back to the fairway.",
+                        "Distance note: " + summary.distanceNote + ".",
+                        "Risk level: " + summary.riskLevel + ".",
+                        "Scientific caddie effect: better club choice advice, not altered physics.",
+                        getTrainingEffectText(),
+                        getBallEffectText(),
+                        getOLPEffectText(),
+                        getRealismGuardText(),
+                        summary.caddieTip
+                    ].forEach(function(paragraph) {
+                        const p = document.createElement("p");
+                        p.textContent = paragraph;
+                        bodyElement.appendChild(p);
+                    });
 
-                document.getElementById("liveCaddiePanel").classList.remove("hidden");
-                return;
+                    document.getElementById("liveCaddiePanel").classList.remove("hidden");
+                    return;
+                }
             }
-        } else {
+
             if (lie === "First cut rough") {
                 const summary = getDriverEarthFirstCutSummary(forceValue);
 
@@ -2899,8 +2936,9 @@ function getClub3EarthFairwayShotDistance(forceValue, command) {
     return getRandomIntWithCaddie(min, max, command);
 }
 
-function getClub3EarthFirstCutShotDistance(forceValue, command) {
-    const summary = getDriverEarthFirstCutSummary(forceValue);
+$1
+function getClub3EarthSecondCutShotDistance(forceValue, command) {
+    const summary = getDriverEarthSecondCutSummary(forceValue);
     if (!summary) return 0;
 
     const driverSetting = moonGolfClubData.club3.currentSetting;
@@ -2908,16 +2946,30 @@ function getClub3EarthFirstCutShotDistance(forceValue, command) {
     let max = summary.totalMax;
 
     if (driverSetting === "Low Loft (Distance)") {
-        min += 1;
-        max += 3;
+        min -= 2;
+        max += 2;
     }
 
     if (driverSetting === "High Loft (Control)") {
         min -= 2;
-        max -= 4;
+        max -= 3;
     }
 
-    return getRandomIntWithCaddie(min, max, command);
+    let lieFactor = 0.70 + (Math.random() * 0.15);
+
+    if (Math.random() < 0.12) {
+        lieFactor = 0.95 + (Math.random() * 0.05);
+    }
+
+    if (Math.random() < 0.18) {
+        lieFactor = 0.45 + (Math.random() * 0.20);
+    }
+
+    return getRandomIntWithCaddie(
+        Math.round(min * lieFactor),
+        Math.round(max * lieFactor),
+        command
+    );
 }
 
 function getClub3MoonShotDistance(forceValue, command) {
@@ -2972,9 +3024,11 @@ function getShotDistanceFromAcceptedCommand() {
             return getClub3MoonShotDistance(forceValue, lastAcceptedCommand);
         }
 
-        if (lie === "First cut rough") {
-            return getClub3EarthFirstCutShotDistance(forceValue, lastAcceptedCommand);
+        if (lie === "Second cut rough") {
+            return getClub3EarthSecondCutShotDistance(forceValue, lastAcceptedCommand);
         }
+
+$1
 
         if (lie === "Fairway") {
             return getClub3EarthFairwayShotDistance(forceValue, lastAcceptedCommand);
