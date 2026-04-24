@@ -437,28 +437,23 @@ ul {
         </div>
     </div>
 
+$1
+
     <div class="info-panel">
-        <h2 style="text-align:center;">Hole Dispenser — OmniAtlas Liquefied Placebo (OLP)</h2>
+        <h2 style="text-align:center;">Natural Realism Guard — Earned Performance Range</h2>
 
         <div class="rule-box">
-            <p><strong>OLP rule now active:</strong> OmniAtlas Liquefied Placebo is a hole-side liquefied meal drink with no proven scientific enhancement effect.</p>
-            <p>It is modelled as a small uncertain placebo-style influence. At low dose, it may sometimes help confidence, rhythm, or perceived steadiness. Sometimes it does nothing.</p>
-            <p><strong>Sensible use:</strong> one sip per hole is enough. One carton per round is more than enough.</p>
-            <p><strong>Overuse risk:</strong> too much OLP may reduce coordination, slow thinking, soften putting touch, cause discomfort or toilet urgency, and create back-nine fatigue.</p>
-        </div>
-
-        <div class="command-actions">
-            <button onclick="buyOLPCarton()">Buy 1 OLP Carton</button>
-            <button onclick="drinkOLPSip()">Drink 1 Sip</button>
+            <p><strong>Golden rule now active:</strong> the system improves good shots, not bad shots.</p>
+            <p>Performance help is kept inside believable golf variation: full shots can gain up to 5%, chips up to 12%, putts up to 15%, and rollout can occasionally gain more only when the strike and conditions justify it.</p>
+            <p><strong>Suspicion guard:</strong> top-end rollout is rare, poor strikes do not receive big bonuses, and identical boosted outcomes should not repeat every shot.</p>
+            <p><strong>Realism rule:</strong> no ball correction, no mid-flight assistance, no weak-shot rescue, and no impossible distance jump.</p>
         </div>
 
         <div class="setup-status">
-            <p><strong>Cartons Purchased:</strong> <span id="olpCartonsPurchased">0</span></p>
-            <p><strong>Available Sips:</strong> <span id="olpAvailableSips">0</span></p>
-            <p><strong>Sips This Hole:</strong> <span id="olpSipsThisHole">0</span></p>
-            <p><strong>Total Round Sips:</strong> <span id="olpTotalRoundSips">0</span></p>
-            <p><strong>Current OLP Status:</strong> <span id="olpCurrentStatus">No OLP taken.</span></p>
-            <p class="note-text" style="margin-bottom:0;">OLP effects are deliberately small, uncertain, and believable. It never creates impossible performance.</p>
+            <p><strong>Last Realism Result:</strong> <span id="realismGuardLastResult">No shot checked yet.</span></p>
+            <p><strong>Last Shot Quality:</strong> <span id="realismGuardLastQuality">None</span></p>
+            <p><strong>Last Applied Adjustment:</strong> <span id="realismGuardLastAdjustment">0.0%</span></p>
+            <p class="note-text" style="margin-bottom:0;">This system protects believable simulation behaviour while allowing small, earned performance differences.</p>
         </div>
     </div>
 
@@ -874,12 +869,12 @@ const roundState = {
     lockedClub3Setting: "Neutral"
 };
 
-const olpState = {
-    cartonsPurchased: 0,
-    availableSips: 0,
-    sipsThisHole: 0,
-    totalRoundSips: 0,
-    lastEffectNote: "No OLP taken."
+$1
+
+const realismGuardState = {
+    lastResult: "No shot checked yet.",
+    lastQuality: "None",
+    lastAdjustmentPercent: 0.0
 };
 
 const allowedCommandData = {
@@ -2123,24 +2118,133 @@ function getOLPEffectSnapshot() {
     };
 }
 
-function getOLPEffectText() {
-    if (olpState.totalRoundSips <= 0) {
-        return "OLP effect: none. No OLP taken.";
-    }
+$1
+function updateRealismGuardDisplay() {
+    const resultEl = document.getElementById("realismGuardLastResult");
+    const qualityEl = document.getElementById("realismGuardLastQuality");
+    const adjustmentEl = document.getElementById("realismGuardLastAdjustment");
 
-    return "OLP effect: " + olpState.lastEffectNote + " Sips this hole: " + olpState.sipsThisHole + ", total round sips: " + olpState.totalRoundSips + ".";
+    if (resultEl) resultEl.innerText = realismGuardState.lastResult;
+    if (qualityEl) qualityEl.innerText = realismGuardState.lastQuality;
+    if (adjustmentEl) adjustmentEl.innerText = realismGuardState.lastAdjustmentPercent.toFixed(1) + "%";
 }
 
-function applyOLPToShotDistance(shotDistance) {
-    if (olpState.totalRoundSips <= 0) {
-        return shotDistance;
+function getShotTypeForRealismGuard(command) {
+    if (!command) return "full";
+
+    const club = command.club;
+    const shotType = command.shotType;
+
+    if (shotType === "Putt" || club === "04° Putter" || club === "Putter") {
+        return "putt";
     }
 
-    const snapshot = getOLPEffectSnapshot();
-    olpState.lastEffectNote = snapshot.note;
-    updateOLPDisplay();
+    if (shotType === "Chip" || shotType === "Pitch") {
+        return "chip";
+    }
 
-    return Math.max(1, Math.round(shotDistance * snapshot.distanceMultiplier));
+    return "full";
+}
+
+function estimateShotQualityForRealismGuard(command) {
+    if (!command) {
+        return Math.random() < 0.55 ? "solid" : "ordinary";
+    }
+
+    const forceValue = getForceNumber(command.force);
+    const roll = Math.random();
+
+    if (forceValue >= 90) {
+        if (roll < 0.18) return "poor";
+        if (roll < 0.55) return "ordinary";
+        if (roll < 0.88) return "solid";
+        return "excellent";
+    }
+
+    if (forceValue >= 70) {
+        if (roll < 0.10) return "poor";
+        if (roll < 0.44) return "ordinary";
+        if (roll < 0.86) return "solid";
+        return "excellent";
+    }
+
+    if (roll < 0.08) return "poor";
+    if (roll < 0.50) return "ordinary";
+    if (roll < 0.90) return "solid";
+    return "excellent";
+}
+
+function getRealismGuardAdjustment(command) {
+    const shotType = getShotTypeForRealismGuard(command);
+    const quality = estimateShotQualityForRealismGuard(command);
+    const roll = Math.random();
+
+    let adjustmentPercent = 0;
+    let result = "No boost applied. Result kept neutral for natural variation.";
+
+    if (quality === "poor") {
+        adjustmentPercent = 0;
+        result = "Poor strike detected. No rescue bonus applied.";
+    } else if (shotType === "full") {
+        if (quality === "excellent") {
+            adjustmentPercent = 2.5 + (Math.random() * 2.5);
+            result = "Good full shot rewarded inside natural 0% to 5% variation.";
+        } else if (quality === "solid") {
+            adjustmentPercent = 0.5 + (Math.random() * 2.0);
+            result = "Solid full shot given a small believable gain.";
+        }
+    } else if (shotType === "chip") {
+        if (quality === "excellent") {
+            adjustmentPercent = 7 + (Math.random() * 5);
+            result = "Excellent chip rewarded through believable technique and spin control.";
+        } else if (quality === "solid") {
+            adjustmentPercent = 3 + (Math.random() * 5);
+            result = "Solid chip given a modest short-game control gain.";
+        }
+    } else if (shotType === "putt") {
+        if (quality === "excellent") {
+            adjustmentPercent = 8 + (Math.random() * 7);
+            result = "Excellent putt rewarded through green-reading, confidence, and pace control.";
+        } else if (quality === "solid") {
+            adjustmentPercent = 3 + (Math.random() * 6);
+            result = "Solid putt given a small believable pace-control gain.";
+        }
+    }
+
+    if (quality === "excellent" && shotType === "full") {
+        if (roll > 0.94) {
+            adjustmentPercent += 15 + (Math.random() * 10);
+            result += " Rare firm-ground rollout triggered; top-end chase is noticeable but not repeated every shot.";
+        } else if (roll > 0.78) {
+            adjustmentPercent += 5 + (Math.random() * 10);
+            result += " Natural rollout added from good strike and fair conditions.";
+        }
+    }
+
+    adjustmentPercent = Math.round(adjustmentPercent * 10) / 10;
+
+    return {
+        quality: quality,
+        adjustmentPercent: adjustmentPercent,
+        result: result
+    };
+}
+
+function getRealismGuardText() {
+    return "Realism guard: " + realismGuardState.lastResult + " Last quality: " + realismGuardState.lastQuality + ", adjustment: " + realismGuardState.lastAdjustmentPercent.toFixed(1) + "%.";
+}
+
+function applyRealismGuardToShotDistance(shotDistance, command) {
+    const adjustment = getRealismGuardAdjustment(command || lastAcceptedCommand);
+    const adjustedDistance = Math.round(shotDistance * (1 + (adjustment.adjustmentPercent / 100)));
+
+    realismGuardState.lastResult = adjustment.result;
+    realismGuardState.lastQuality = adjustment.quality;
+    realismGuardState.lastAdjustmentPercent = adjustment.adjustmentPercent;
+
+    updateRealismGuardDisplay();
+
+    return Math.max(1, adjustedDistance);
 }
 
 function getTrainingEffectProfile(command) {
@@ -2417,6 +2521,7 @@ function updateCaddieForCurrentPlayState() {
                     getTrainingEffectText(),
                     getBallEffectText(),
                     getOLPEffectText(),
+                    getRealismGuardText(),
                     summary.caddieTip
                 ].forEach(function(paragraph) {
                     const p = document.createElement("p");
@@ -2900,6 +3005,7 @@ function takeShot() {
         shotDistance = getLegacyPowerDistance();
     }
 
+    shotDistance = applyRealismGuardToShotDistance(shotDistance, lastAcceptedCommand);
     shotDistance = applyOLPToShotDistance(shotDistance);
 
     distance -= shotDistance;
@@ -3071,10 +3177,10 @@ function finishTrainingQuestion(answerKey, timedOut) {
 updateTrainingStatDisplays();
 updateActiveTrainingSummary();
 updateOLPDisplay();
+updateRealismGuardDisplay();
 updateCaddieForCurrentPlayState();
 </script>
 
 </body>
 </html>
-
 
