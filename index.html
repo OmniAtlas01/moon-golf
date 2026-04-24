@@ -438,6 +438,31 @@ ul {
     </div>
 
     <div class="info-panel">
+        <h2 style="text-align:center;">Hole Dispenser — OmniAtlas Liquefied Placebo (OLP)</h2>
+
+        <div class="rule-box">
+            <p><strong>OLP rule now active:</strong> OmniAtlas Liquefied Placebo is a hole-side liquefied meal drink with no proven scientific enhancement effect.</p>
+            <p>It is modelled as a small uncertain placebo-style influence. At low dose, it may sometimes help confidence, rhythm, or perceived steadiness. Sometimes it does nothing.</p>
+            <p><strong>Sensible use:</strong> one sip per hole is enough. One carton per round is more than enough.</p>
+            <p><strong>Overuse risk:</strong> too much OLP may reduce coordination, slow thinking, soften putting touch, cause discomfort or toilet urgency, and create back-nine fatigue.</p>
+        </div>
+
+        <div class="command-actions">
+            <button onclick="buyOLPCarton()">Buy 1 OLP Carton</button>
+            <button onclick="drinkOLPSip()">Drink 1 Sip</button>
+        </div>
+
+        <div class="setup-status">
+            <p><strong>Cartons Purchased:</strong> <span id="olpCartonsPurchased">0</span></p>
+            <p><strong>Available Sips:</strong> <span id="olpAvailableSips">0</span></p>
+            <p><strong>Sips This Hole:</strong> <span id="olpSipsThisHole">0</span></p>
+            <p><strong>Total Round Sips:</strong> <span id="olpTotalRoundSips">0</span></p>
+            <p><strong>Current OLP Status:</strong> <span id="olpCurrentStatus">No OLP taken.</span></p>
+            <p class="note-text" style="margin-bottom:0;">OLP effects are deliberately small, uncertain, and believable. It never creates impossible performance.</p>
+        </div>
+    </div>
+
+    <div class="info-panel">
         <h2 style="text-align:center;">Training Academy</h2>
 
         <div class="rule-box">
@@ -849,6 +874,14 @@ const roundState = {
     lockedClub3Setting: "Neutral"
 };
 
+const olpState = {
+    cartonsPurchased: 0,
+    availableSips: 0,
+    sipsThisHole: 0,
+    totalRoundSips: 0,
+    lastEffectNote: "No OLP taken."
+};
+
 const allowedCommandData = {
     clubs: [
         "Driver",
@@ -1068,7 +1101,7 @@ const trainingState = {
     }
 };
 
-const trainingQuestions = [$1,
+const trainingQuestions = [
     {
         categoryKey: "fairway",
         categoryLabel: "Fairway Knowledge",
@@ -1989,6 +2022,127 @@ function findForceBand(profile, forceValue) {
     }) || null;
 }
 
+function updateOLPDisplay() {
+    const cartonsEl = document.getElementById("olpCartonsPurchased");
+    const sipsEl = document.getElementById("olpAvailableSips");
+    const holeEl = document.getElementById("olpSipsThisHole");
+    const roundEl = document.getElementById("olpTotalRoundSips");
+    const statusEl = document.getElementById("olpCurrentStatus");
+
+    if (cartonsEl) cartonsEl.innerText = olpState.cartonsPurchased;
+    if (sipsEl) sipsEl.innerText = olpState.availableSips;
+    if (holeEl) holeEl.innerText = olpState.sipsThisHole;
+    if (roundEl) roundEl.innerText = olpState.totalRoundSips;
+    if (statusEl) statusEl.innerText = olpState.lastEffectNote;
+}
+
+function buyOLPCarton() {
+    olpState.cartonsPurchased += 1;
+    olpState.availableSips += 9;
+
+    if (olpState.cartonsPurchased === 1) {
+        olpState.lastEffectNote = "One OLP carton purchased. Sensible use is one sip per hole.";
+    } else {
+        olpState.lastEffectNote = "Extra OLP carton purchased. One carton per round is normally more than enough.";
+    }
+
+    updateOLPDisplay();
+    updateCaddieForCurrentPlayState();
+}
+
+function drinkOLPSip() {
+    if (olpState.availableSips <= 0) {
+        olpState.lastEffectNote = "No OLP available. Buy one carton first.";
+        updateOLPDisplay();
+        updateCaddieForCurrentPlayState();
+        return;
+    }
+
+    olpState.availableSips -= 1;
+    olpState.sipsThisHole += 1;
+    olpState.totalRoundSips += 1;
+
+    const snapshot = getOLPEffectSnapshot();
+    olpState.lastEffectNote = snapshot.note;
+
+    updateOLPDisplay();
+    updateCaddieForCurrentPlayState();
+}
+
+function getOLPEffectSnapshot() {
+    const holeSips = olpState.sipsThisHole;
+    const roundSips = olpState.totalRoundSips;
+
+    if (holeSips <= 0) {
+        return {
+            distanceMultiplier: 1.000,
+            note: "No OLP taken."
+        };
+    }
+
+    if (holeSips === 1 && roundSips <= 9) {
+        const roll = Math.random();
+
+        if (roll < 0.40) {
+            return {
+                distanceMultiplier: 1.006,
+                note: "Low-dose OLP: slight confidence rhythm benefit. Effect is small and uncertain."
+            };
+        }
+
+        if (roll < 0.75) {
+            return {
+                distanceMultiplier: 1.000,
+                note: "Low-dose OLP: neutral. No clear performance change."
+            };
+        }
+
+        return {
+            distanceMultiplier: 0.997,
+            note: "Low-dose OLP: mild heaviness. Tiny loss of sharpness."
+        };
+    }
+
+    if (holeSips === 2 || roundSips > 9) {
+        return {
+            distanceMultiplier: 0.985,
+            note: "OLP caution: extra intake is starting to slow rhythm and reduce coordination."
+        };
+    }
+
+    if (holeSips === 3 || roundSips > 12) {
+        return {
+            distanceMultiplier: 0.970,
+            note: "OLP overuse: reduced coordination, slower thinking, and poorer touch are now affecting play."
+        };
+    }
+
+    return {
+        distanceMultiplier: 0.950,
+        note: "OLP heavy overuse: discomfort, toilet urgency, and back-nine fatigue are hurting performance."
+    };
+}
+
+function getOLPEffectText() {
+    if (olpState.totalRoundSips <= 0) {
+        return "OLP effect: none. No OLP taken.";
+    }
+
+    return "OLP effect: " + olpState.lastEffectNote + " Sips this hole: " + olpState.sipsThisHole + ", total round sips: " + olpState.totalRoundSips + ".";
+}
+
+function applyOLPToShotDistance(shotDistance) {
+    if (olpState.totalRoundSips <= 0) {
+        return shotDistance;
+    }
+
+    const snapshot = getOLPEffectSnapshot();
+    olpState.lastEffectNote = snapshot.note;
+    updateOLPDisplay();
+
+    return Math.max(1, Math.round(shotDistance * snapshot.distanceMultiplier));
+}
+
 function getTrainingEffectProfile(command) {
     const stats = trainingState.stats;
     const gymBenefitRaw = Math.min(10, stats.gym);
@@ -2262,6 +2416,7 @@ function updateCaddieForCurrentPlayState() {
                     "Scientific caddie effect: tighter variance, not altered physics.",
                     getTrainingEffectText(),
                     getBallEffectText(),
+                    getOLPEffectText(),
                     summary.caddieTip
                 ].forEach(function(paragraph) {
                     const p = document.createElement("p");
@@ -2289,6 +2444,7 @@ function updateCaddieForCurrentPlayState() {
                         "Scientific caddie effect: better consistency and fewer extreme misses.",
                         getTrainingEffectText(),
                         getBallEffectText(),
+                        getOLPEffectText(),
                         summary.caddieTip
                     ].forEach(function(paragraph) {
                         const p = document.createElement("p");
@@ -2315,6 +2471,7 @@ function updateCaddieForCurrentPlayState() {
                         "Scientific caddie effect: reduced variance, not extra hidden power.",
                         getTrainingEffectText(),
                         getBallEffectText(),
+                        getOLPEffectText(),
                         summary.caddieTip
                     ].forEach(function(paragraph) {
                         const p = document.createElement("p");
@@ -2342,6 +2499,7 @@ function updateCaddieForCurrentPlayState() {
                         "Scientific caddie effect: improved consistency, not impossible distance gains.",
                         getTrainingEffectText(),
                         getBallEffectText(),
+                        getOLPEffectText(),
                         summary.caddieTip
                     ].forEach(function(paragraph) {
                         const p = document.createElement("p");
@@ -2742,6 +2900,8 @@ function takeShot() {
         shotDistance = getLegacyPowerDistance();
     }
 
+    shotDistance = applyOLPToShotDistance(shotDistance);
+
     distance -= shotDistance;
     shots++;
 
@@ -2910,6 +3070,7 @@ function finishTrainingQuestion(answerKey, timedOut) {
 
 updateTrainingStatDisplays();
 updateActiveTrainingSummary();
+updateOLPDisplay();
 updateCaddieForCurrentPlayState();
 </script>
 
