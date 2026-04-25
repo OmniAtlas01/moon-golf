@@ -1118,6 +1118,125 @@ const customBallProfiles = {
     }
 };
 
+   ],
+    lies: [
+        "Tee",
+        "Fairway",
+        "First cut rough",
+        "Second cut rough",
+        "Rough",
+        "Walkway",
+        "Bunker",
+        "Fringe",
+        "Green"
+    ],
+    directions: [
+        "Straight up the fairway",
+        "Left up the fairway",
+        "Right up the fairway",
+        "Towards the green",
+        "Towards the pin"
+    ],
+    shotTypes: [
+        "Drive",
+        "Fairway strike",
+        "Lay-up",
+        "Chip",
+        "Pitch",
+        "Putt"
+    ]
+};
+
+const caddieProfiles = {
+    none: {
+        label: "No Caddie",
+        varianceMultiplier: 1.00,
+        floorPull: 0.00,
+        ceilingTrim: 0.00,
+        trainingFullShotsMin: 0,
+        trainingFullShotsMax: 0,
+        trainingShortGameMin: 0,
+        trainingShortGameMax: 0,
+        trainingPuttingMin: 0,
+        trainingPuttingMax: 0,
+        hookSliceMin: 0,
+        hookSliceMax: 0,
+        rescueMax: 0
+    },
+    cheap: {
+        label: "Cheap Caddie",
+        varianceMultiplier: 0.93,
+        floorPull: 0.02,
+        ceilingTrim: 0.02,
+        trainingFullShotsMin: 1,
+        trainingFullShotsMax: 4,
+        trainingShortGameMin: 3,
+        trainingShortGameMax: 6,
+        trainingPuttingMin: 4,
+        trainingPuttingMax: 8,
+        hookSliceMin: 1,
+        hookSliceMax: 8,
+        rescueMax: 8
+    },
+    mid: {
+        label: "Average Caddie",
+        varianceMultiplier: 0.86,
+        floorPull: 0.04,
+        ceilingTrim: 0.04,
+        trainingFullShotsMin: 3,
+        trainingFullShotsMax: 8,
+        trainingShortGameMin: 6,
+        trainingShortGameMax: 12,
+        trainingPuttingMin: 8,
+        trainingPuttingMax: 15,
+        hookSliceMin: 8,
+        hookSliceMax: 20,
+        rescueMax: 20
+    },
+    elite: {
+        label: "Elite Caddie",
+        varianceMultiplier: 0.78,
+        floorPull: 0.06,
+        ceilingTrim: 0.06,
+        trainingFullShotsMin: 5,
+        trainingFullShotsMax: 12,
+        trainingShortGameMin: 10,
+        trainingShortGameMax: 18,
+        trainingPuttingMin: 12,
+        trainingPuttingMax: 22,
+        hookSliceMin: 20,
+        hookSliceMax: 35,
+        rescueMax: 50
+    }
+};
+
+const customBallProfiles = {
+    none: {
+        label: "Standard Ball",
+        reductionMin: 0,
+        reductionMax: 0,
+        rescueMax: 0
+    },
+    cheap: {
+        label: "Cheap Caddie Custom Ball",
+        reductionMin: 1,
+        reductionMax: 5,
+        rescueMax: 5
+    },
+    mid: {
+        label: "Average Caddie Custom Ball",
+        reductionMin: 5,
+        reductionMax: 12,
+        rescueMax: 12
+    },
+    elite: {
+        label: "Elite Caddie Custom Ball",
+        reductionMin: 12,
+        reductionMax: 20,
+        rescueMax: 25
+    }
+};
+
 const clubPerformanceProfiles = {
 
     driver36Handicap3WoodTee: {
