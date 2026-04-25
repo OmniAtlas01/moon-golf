@@ -3200,6 +3200,17 @@ function getClub2ShotDistance(forceValue, command) {
     );
 }
 
+function get3WoodShotDistance(forceValue, command) {
+    const summary = get3WoodTeeSummary(forceValue);
+    if (!summary) return 0;
+
+    return getRandomIntWithCaddie(
+        summary.totalMin,
+        summary.totalMax,
+        command
+    );
+}
+
 function getClub3EarthTeeShotDistance(forceValue, command) {
     const summary = getDriverEarthTeeSummary(forceValue);
     if (!summary) return 0;
@@ -3253,7 +3264,6 @@ function getClub3EarthFirstCutShotDistance(forceValue, command) {
     return getRandomIntWithCaddie(min, max, command);
 }
 
-$1
 function getClub3EarthWalkwayShotDistance(forceValue, command) {
     const summary = getDriverEarthWalkwaySummary(forceValue);
     if (!summary) return 0;
@@ -3335,6 +3345,10 @@ function getShotDistanceFromAcceptedCommand() {
     const club = lastAcceptedCommand.club;
     const lie = lastAcceptedCommand.lie;
     const courseType = getCourseType();
+
+    if (club === "3-wood") {
+        return get3WoodShotDistance(forceValue, lastAcceptedCommand);
+    }
 
     if (club === "OmniAtlas L1 Adjustable Golf Driver") {
         if (courseType === "Moon") {
@@ -3565,5 +3579,3 @@ updateCaddieForCurrentPlayState();
 
 </body>
 </html>
-
-
