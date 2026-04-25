@@ -2749,7 +2749,26 @@ function getDriverEarthFirstCutSummary(forceValue) {
     return { bandLabel: band.label, distanceNote: band.distanceNote, riskLevel: band.riskLevel, totalMin: adjustedTotal.min, totalMax: adjustedTotal.max, caddieTip: profile.caddieTip };
 }
 
-$1
+function get3WoodTeeSummary(forceValue) {
+    const profile = clubPerformanceProfiles.driver36Handicap3WoodTee;
+    const band = findForceBand(profile, forceValue);
+    if (!band) return null;
+
+    const adjustedTotal = applyCaddieRangeAdjustment(
+        Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
+        Math.round(profile.baseline.averageTotalMax * band.totalFactorMax)
+    );
+
+    return {
+        bandLabel: band.label,
+        totalMin: adjustedTotal.min,
+        totalMax: adjustedTotal.max,
+        riskLevel: band.riskLevel,
+        distanceNote: band.distanceNote,
+        caddieTip: profile.caddieTip
+    };
+}
+
 function getDriverEarthWalkwaySummary(forceValue) {
     const profile = clubPerformanceProfiles.driver36HandicapEarthWalkway;
     const band = findForceBand(profile, forceValue);
@@ -2824,8 +2843,6 @@ function updateCaddieForCurrentPlayState() {
                 return;
             }
         } else {
-$1
-
             if (lie === "Walkway") {
                 const summary = getDriverEarthWalkwaySummary(forceValue);
 
