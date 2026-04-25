@@ -2290,10 +2290,10 @@ function getAdviceKeyForAcceptedCommand() {
     }
 
     if (club === "OmniAtlas L1 Adjustable Golf Driver") {
-        return "club3";
-    }
+    return "club3";
+}
 
-    return roundState.clubSettingsLocked ? "lockedRound" : "placeholder";
+return roundState.clubSettingsLocked ? "lockedRound" : "placeholder";
 }
 
 function findForceBand(profile, forceValue) {
@@ -2301,6 +2301,28 @@ function findForceBand(profile, forceValue) {
         return forceValue >= band.min && forceValue <= band.max;
     }) || null;
 }
+
+/* ===== PART 2: 3-WOOD FAIRWAY SUMMARY ===== */
+function get3WoodFairwaySummary(forceValue) {
+    const profile = clubPerformanceProfiles.driver36Handicap3WoodFairway;
+    const band = findForceBand(profile, forceValue);
+    if (!band) return null;
+
+    const adjustedTotal = applyCaddieRangeAdjustment(
+        Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
+        Math.round(profile.baseline.averageTotalMax * band.totalFactorMax)
+    );
+
+    return {
+        bandLabel: band.label,
+        totalMin: adjustedTotal.min,
+        totalMax: adjustedTotal.max,
+        riskLevel: band.riskLevel,
+        distanceNote: band.distanceNote,
+        caddieTip: profile.caddieTip
+    };
+}
+/* ===== END PART 2 ===== */
 
 function updateOLPDisplay() {
     const cartonsEl = document.getElementById("olpCartonsPurchased");
