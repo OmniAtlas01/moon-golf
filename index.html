@@ -721,40 +721,36 @@ ul {
         </div>
     </div>
 
+$1
+
     <div class="info-panel">
-        <h2 style="text-align:center;">Second Cut Rough — Driver Penalty (36 Handicap)</h2>
+        <h2 style="text-align:center;">Walkway / Hard Surface — Driver Rule (36 Handicap)</h2>
 
         <div class="club-grid">
             <div class="club-card">
-                <h3>Performance Impact</h3>
-                <p><strong>Lie:</strong> Second cut rough</p>
-                <p><strong>Distance loss:</strong> typically 20–30 yards versus first cut rough</p>
-                <p><strong>Total reduction:</strong> often 15% or more</p>
-                <p><strong>Cause:</strong> reduced clubhead speed, thicker grass interference, and poorer contact quality</p>
+                <h3>Surface Behaviour</h3>
+                <p><strong>Lie:</strong> Walkway, cart path, firm non-grass surface, or slightly elevated artificial surface</p>
+                <p><strong>Launch pattern:</strong> often lower than a normal fairway strike</p>
+                <p><strong>Rollout:</strong> may increase if contact is clean</p>
+                <p><strong>Distance expectation:</strong> usually remains within the 36-handicap driver range, but may match or slightly exceed fairway total distance on a clean strike</p>
             </div>
 
             <div class="club-card">
-                <h3>Strike Behaviour</h3>
-                <p>Thicker rough can interfere with the clubface before impact.</p>
-                <p>A low-loft driver often produces glancing, low-spin contact from this lie.</p>
-                <p>This reduces both total distance and directional control compared with a cleaner first-cut lie.</p>
-            </div>
-
-            <div class="club-card">
-                <h3>Lie Variability</h3>
-                <p><strong>Fluffy lie (rare):</strong> may perform close to first-cut rough if the ball is sitting up.</p>
-                <p><strong>Buried lie (more likely):</strong> may cause the player to struggle simply to advance the ball safely back onto the fairway.</p>
+                <h3>Risk Behaviour</h3>
+                <p>Hard surfaces are unforgiving and can make clean contact difficult for a high-handicap player.</p>
+                <p>Poor contact may reduce distance, create a very low shot, or make the ball skid unpredictably.</p>
+                <p>Striking the hard ground with the club may also risk damaging the club.</p>
             </div>
 
             <div class="club-card">
                 <h3>Caddie Tip</h3>
-                <p>From the second cut, a hybrid or iron will often produce better total distance, accuracy, and recovery value than driver.</p>
+                <p>A low Stinger or safer controlled recovery shot may be wiser than driver from a walkway.</p>
+                <p>The player should avoid digging the club into the hard surface, because club damage and poor strike quality are real risks.</p>
             </div>
         </div>
     </div>
 
-    <div class="info-panel">
-        <h2 style="text-align:center;">Moon Course — OmniAtlas L1 Adjustable Driver</h2>
+$2
 
         <div class="club-grid">
             <div class="club-card">
@@ -979,6 +975,7 @@ const allowedCommandData = {
         "First cut rough",
         "Second cut rough",
         "Rough",
+        "Walkway",
         "Bunker",
         "Fringe",
         "Green"
@@ -1132,19 +1129,20 @@ const clubPerformanceProfiles = {
         ],
         caddieTip: "For a 36-handicap golfer, the 1st cut is generally manageable and similar to a fairway lie, but slightly less consistent. You would likely get more consistency out of a Hybrid."
     },
-    driver36HandicapEarthSecondCut: {
+$1
+    driver36HandicapEarthWalkway: {
         baseline: {
-            averageTotalMin: 105,
-            averageTotalMax: 130
+            averageTotalMin: 135,
+            averageTotalMax: 168
         },
         forceBands: [
-            { min: 1, max: 25, label: "Very weak second-cut driver attempt", totalFactorMin: 0.10, totalFactorMax: 0.22, riskLevel: "Low", distanceNote: "Too little force for useful driver recovery from thick rough" },
-            { min: 26, max: 49, label: "Short second-cut recovery attempt", totalFactorMin: 0.23, totalFactorMax: 0.42, riskLevel: "Moderate", distanceNote: "Likely only advances the ball with limited control" },
-            { min: 50, max: 74, label: "Moderate second-cut driver strike", totalFactorMin: 0.43, totalFactorMax: 0.68, riskLevel: "High", distanceNote: "Thick rough is now strongly reducing strike quality and distance" },
-            { min: 75, max: 89, label: "Strong second-cut driver attempt", totalFactorMin: 0.69, totalFactorMax: 0.88, riskLevel: "High", distanceNote: "Potential distance exists, but glancing contact and poor launch are likely" },
-            { min: 90, max: 100, label: "High-force second-cut driver attempt", totalFactorMin: 0.89, totalFactorMax: 1.00, riskLevel: "Very High", distanceNote: "Maximum force from thick rough can reduce control more than it adds distance" }
+            { min: 1, max: 25, label: "Very weak hard-surface driver attempt", totalFactorMin: 0.10, totalFactorMax: 0.22, riskLevel: "Moderate", distanceNote: "Low force may only skid the ball forward with little useful flight" },
+            { min: 26, max: 49, label: "Short hard-surface driver attempt", totalFactorMin: 0.23, totalFactorMax: 0.42, riskLevel: "Moderate to High", distanceNote: "Contact can be awkward because there is no tee and no grass cushion" },
+            { min: 50, max: 74, label: "Moderate hard-surface driver strike", totalFactorMin: 0.43, totalFactorMax: 0.68, riskLevel: "High", distanceNote: "A clean strike can run, but poor contact may produce a low unpredictable shot" },
+            { min: 75, max: 89, label: "Strong hard-surface driver strike", totalFactorMin: 0.69, totalFactorMax: 0.88, riskLevel: "High", distanceNote: "Possible fairway-like total distance if clean, but club-damage and mishit risk rise" },
+            { min: 90, max: 100, label: "Maximum hard-surface driver attempt", totalFactorMin: 0.89, totalFactorMax: 1.00, riskLevel: "Very High", distanceNote: "May roll out well from clean contact, but the hard surface makes the strike risky" }
         ],
-        caddieTip: "From the second cut, a hybrid or iron will often produce better total distance, accuracy, and recovery value than driver. A rare fluffy lie may be playable, but a buried lie can make driver a poor recovery choice."
+        caddieTip: "From a walkway or hard surface, a low Stinger or controlled recovery shot is often safer than driver. Avoid striking the hard ground because it can damage the club and ruin contact."
     },
     driver36HandicapMoon: {
         baseline: {
@@ -2582,8 +2580,9 @@ function getDriverEarthFirstCutSummary(forceValue) {
     return { bandLabel: band.label, distanceNote: band.distanceNote, riskLevel: band.riskLevel, totalMin: adjustedTotal.min, totalMax: adjustedTotal.max, caddieTip: profile.caddieTip };
 }
 
-function getDriverEarthSecondCutSummary(forceValue) {
-    const profile = clubPerformanceProfiles.driver36HandicapEarthSecondCut;
+$1
+function getDriverEarthWalkwaySummary(forceValue) {
+    const profile = clubPerformanceProfiles.driver36HandicapEarthWalkway;
     const band = findForceBand(profile, forceValue);
     if (!band) return null;
 
@@ -2656,25 +2655,28 @@ function updateCaddieForCurrentPlayState() {
                 return;
             }
         } else {
-            if (lie === "Second cut rough") {
-                const summary = getDriverEarthSecondCutSummary(forceValue);
+$1
+
+            if (lie === "Walkway") {
+                const summary = getDriverEarthWalkwaySummary(forceValue);
 
                 if (summary) {
                     [
                         "Course type: Parkland.",
-                        "Lie: Second cut rough.",
+                        "Lie: Walkway / hard surface.",
                         "Caddie level: " + caddie.label + ".",
                         "Ball type: " + ball.label + ".",
                         "Driver force band: " + summary.bandLabel + ".",
-                        "Estimated 36-handicap second-cut-driver total range here: " + summary.totalMin + " to " + summary.totalMax + " yards before lie-randomness penalties.",
-                        "Second-cut rule: thicker rough often reduces maximum distance by about 20 to 30 yards versus first cut and may cut total distance by 15% or more.",
-                        "Lie variability: rare fluffy lies can perform close to first cut, while buried lies may struggle simply to advance back to the fairway.",
+                        "Estimated 36-handicap hard-surface-driver total range here: " + summary.totalMin + " to " + summary.totalMax + " yards before hard-surface strike randomness.",
+                        "Walkway rule: clean contact can launch lower and roll farther, but poor contact is more likely because there is no tee or grass cushion.",
+                        "Club warning: striking the hard ground may damage the club or produce an unpredictable low shot.",
                         "Distance note: " + summary.distanceNote + ".",
                         "Risk level: " + summary.riskLevel + ".",
                         "Scientific caddie effect: better club choice advice, not altered physics.",
                         getTrainingEffectText(),
                         getBallEffectText(),
                         getOLPEffectText(),
+                        getRoughLieEffectText(),
                         getRealismGuardText(),
                         summary.caddieTip
                     ].forEach(function(paragraph) {
@@ -3065,8 +3067,9 @@ function getClub3EarthFirstCutShotDistance(forceValue, command) {
     return getRandomIntWithCaddie(min, max, command);
 }
 
-function getClub3EarthSecondCutShotDistance(forceValue, command) {
-    const summary = getDriverEarthSecondCutSummary(forceValue);
+$1
+function getClub3EarthWalkwayShotDistance(forceValue, command) {
+    const summary = getDriverEarthWalkwaySummary(forceValue);
     if (!summary) return 0;
 
     const driverSetting = moonGolfClubData.club3.currentSetting;
@@ -3074,28 +3077,28 @@ function getClub3EarthSecondCutShotDistance(forceValue, command) {
     let max = summary.totalMax;
 
     if (driverSetting === "Low Loft (Distance)") {
-        min -= 2;
-        max += 2;
+        min += 2;
+        max += 5;
     }
 
     if (driverSetting === "High Loft (Control)") {
-        min -= 2;
-        max -= 3;
+        min -= 4;
+        max -= 7;
     }
 
-    let lieFactor = 0.70 + (Math.random() * 0.15);
-
-    if (Math.random() < 0.12) {
-        lieFactor = 0.95 + (Math.random() * 0.05);
-    }
+    let hardSurfaceFactor = 0.82 + (Math.random() * 0.18);
 
     if (Math.random() < 0.18) {
-        lieFactor = 0.45 + (Math.random() * 0.20);
+        hardSurfaceFactor = 1.00 + (Math.random() * 0.12);
+    }
+
+    if (Math.random() < 0.24) {
+        hardSurfaceFactor = 0.45 + (Math.random() * 0.30);
     }
 
     return getRandomIntWithCaddie(
-        Math.round(min * lieFactor),
-        Math.round(max * lieFactor),
+        Math.round(min * hardSurfaceFactor),
+        Math.round(max * hardSurfaceFactor),
         command
     );
 }
@@ -3154,6 +3157,10 @@ function getShotDistanceFromAcceptedCommand() {
 
         if (lie === "Second cut rough") {
             return getClub3EarthSecondCutShotDistance(forceValue, lastAcceptedCommand);
+        }
+
+        if (lie === "Walkway") {
+            return getClub3EarthWalkwayShotDistance(forceValue, lastAcceptedCommand);
         }
 
         if (lie === "First cut rough") {
