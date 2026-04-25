@@ -3254,7 +3254,15 @@ function getClub2ShotDistance(forceValue, command) {
 }
 
 function get3WoodShotDistance(forceValue, command) {
-    const summary = get3WoodTeeSummary(forceValue);
+    const lie = command ? command.lie : "Tee";
+    let summary = null;
+
+    if (lie === "Fairway") {
+        summary = get3WoodFairwaySummary(forceValue);
+    } else {
+        summary = get3WoodTeeSummary(forceValue);
+    }
+
     if (!summary) return 0;
 
     return getRandomIntWithCaddie(
