@@ -1118,125 +1118,6 @@ const customBallProfiles = {
     }
 };
 
-   ],
-    lies: [
-        "Tee",
-        "Fairway",
-        "First cut rough",
-        "Second cut rough",
-        "Rough",
-        "Walkway",
-        "Bunker",
-        "Fringe",
-        "Green"
-    ],
-    directions: [
-        "Straight up the fairway",
-        "Left up the fairway",
-        "Right up the fairway",
-        "Towards the green",
-        "Towards the pin"
-    ],
-    shotTypes: [
-        "Drive",
-        "Fairway strike",
-        "Lay-up",
-        "Chip",
-        "Pitch",
-        "Putt"
-    ]
-};
-
-const caddieProfiles = {
-    none: {
-        label: "No Caddie",
-        varianceMultiplier: 1.00,
-        floorPull: 0.00,
-        ceilingTrim: 0.00,
-        trainingFullShotsMin: 0,
-        trainingFullShotsMax: 0,
-        trainingShortGameMin: 0,
-        trainingShortGameMax: 0,
-        trainingPuttingMin: 0,
-        trainingPuttingMax: 0,
-        hookSliceMin: 0,
-        hookSliceMax: 0,
-        rescueMax: 0
-    },
-    cheap: {
-        label: "Cheap Caddie",
-        varianceMultiplier: 0.93,
-        floorPull: 0.02,
-        ceilingTrim: 0.02,
-        trainingFullShotsMin: 1,
-        trainingFullShotsMax: 4,
-        trainingShortGameMin: 3,
-        trainingShortGameMax: 6,
-        trainingPuttingMin: 4,
-        trainingPuttingMax: 8,
-        hookSliceMin: 1,
-        hookSliceMax: 8,
-        rescueMax: 8
-    },
-    mid: {
-        label: "Average Caddie",
-        varianceMultiplier: 0.86,
-        floorPull: 0.04,
-        ceilingTrim: 0.04,
-        trainingFullShotsMin: 3,
-        trainingFullShotsMax: 8,
-        trainingShortGameMin: 6,
-        trainingShortGameMax: 12,
-        trainingPuttingMin: 8,
-        trainingPuttingMax: 15,
-        hookSliceMin: 8,
-        hookSliceMax: 20,
-        rescueMax: 20
-    },
-    elite: {
-        label: "Elite Caddie",
-        varianceMultiplier: 0.78,
-        floorPull: 0.06,
-        ceilingTrim: 0.06,
-        trainingFullShotsMin: 5,
-        trainingFullShotsMax: 12,
-        trainingShortGameMin: 10,
-        trainingShortGameMax: 18,
-        trainingPuttingMin: 12,
-        trainingPuttingMax: 22,
-        hookSliceMin: 20,
-        hookSliceMax: 35,
-        rescueMax: 50
-    }
-};
-
-const customBallProfiles = {
-    none: {
-        label: "Standard Ball",
-        reductionMin: 0,
-        reductionMax: 0,
-        rescueMax: 0
-    },
-    cheap: {
-        label: "Cheap Caddie Custom Ball",
-        reductionMin: 1,
-        reductionMax: 5,
-        rescueMax: 5
-    },
-    mid: {
-        label: "Average Caddie Custom Ball",
-        reductionMin: 5,
-        reductionMax: 12,
-        rescueMax: 12
-    },
-    elite: {
-        label: "Elite Caddie Custom Ball",
-        reductionMin: 12,
-        reductionMax: 20,
-        rescueMax: 25
-    }
-};
-
 const clubPerformanceProfiles = {
 
     driver36Handicap3WoodTee: {
@@ -1270,21 +1151,35 @@ const clubPerformanceProfiles = {
         ],
         caddieTip: "A 5-wood, 7-wood, Hybrid, or Stinger will often produce similar or better results because they are easier to launch from the fairway for a 36-handicap golfer."
     },
-    driver36Handicap3WoodTee: {
+
+    driver36Handicap3WoodFirstCut: {
         baseline: {
-            averageCarryMin: 115,
-            averageCarryMax: 140,
-            averageTotalMin: 140,
-            averageTotalMax: 155
+            averageTotalMin: 120,
+            averageTotalMax: 130
         },
         forceBands: [
-            { min: 1, max: 25, label: "Very weak 3-wood tee shot", totalFactorMin: 0.10, totalFactorMax: 0.22, riskLevel: "Low", distanceNote: "Minimal useful 3-wood distance" },
-            { min: 26, max: 49, label: "Short 3-wood tee shot", totalFactorMin: 0.23, totalFactorMax: 0.42, riskLevel: "Low to Moderate", distanceNote: "Limited 3-wood value" },
-            { min: 50, max: 74, label: "Moderate 3-wood tee strike", totalFactorMin: 0.43, totalFactorMax: 0.68, riskLevel: "Moderate", distanceNote: "Playable 3-wood distance" },
-            { min: 75, max: 89, label: "Strong 3-wood tee strike", totalFactorMin: 0.69, totalFactorMax: 0.88, riskLevel: "Moderate to High", distanceNote: "Good distance if contact is clean" },
-            { min: 90, max: 100, label: "Maximum 3-wood tee strike", totalFactorMin: 0.89, totalFactorMax: 1.00, riskLevel: "High", distanceNote: "Best-case outcome, but inconsistent" }
+            { min: 1, max: 25, label: "Very weak 3-wood from first cut", totalFactorMin: 0.10, totalFactorMax: 0.22, riskLevel: "Low", distanceNote: "Minimal usable distance from light rough" },
+            { min: 26, max: 49, label: "Short 3-wood from first cut", totalFactorMin: 0.23, totalFactorMax: 0.42, riskLevel: "Low to Moderate", distanceNote: "Limited carry and rollout due to grass interference" },
+            { min: 50, max: 74, label: "Moderate 3-wood from first cut", totalFactorMin: 0.43, totalFactorMax: 0.68, riskLevel: "Moderate", distanceNote: "Playable but inconsistent launch from first cut" },
+            { min: 75, max: 89, label: "Strong 3-wood from first cut", totalFactorMin: 0.69, totalFactorMax: 0.88, riskLevel: "Moderate to High", distanceNote: "Good contact required; thin or fat strikes remain common" },
+            { min: 90, max: 100, label: "Maximum 3-wood from first cut", totalFactorMin: 0.89, totalFactorMax: 1.00, riskLevel: "High", distanceNote: "Best-case outcome; low loft still limits consistency" }
         ],
-        caddieTip: "A controlled driver swing may produce better total distance and consistency than forcing a full 3-wood. At this level, control often outperforms maximum effort."
+        caddieTip: "A 5-wood or Hybrid will usually provide better launch and consistency from the first cut because of the higher trajectory."
+    },
+
+    driver36Handicap3WoodSecondCut: {
+        baseline: {
+            averageTotalMin: 110,
+            averageTotalMax: 120
+        },
+        forceBands: [
+            { min: 1, max: 25, label: "Very weak 3-wood second-cut attempt", totalFactorMin: 0.10, totalFactorMax: 0.22, riskLevel: "Low", distanceNote: "Minimal escape distance from heavy grass" },
+            { min: 26, max: 49, label: "Short 3-wood second-cut attempt", totalFactorMin: 0.23, totalFactorMax: 0.42, riskLevel: "Low to Moderate", distanceNote: "Limited distance due to heavy friction and poor launch" },
+            { min: 50, max: 74, label: "Moderate 3-wood second-cut strike", totalFactorMin: 0.43, totalFactorMax: 0.68, riskLevel: "Moderate", distanceNote: "Playable but reduced distance and consistency" },
+            { min: 75, max: 89, label: "Strong 3-wood second-cut strike", totalFactorMin: 0.69, totalFactorMax: 0.88, riskLevel: "High", distanceNote: "Requires a clean strike; still inconsistent from deeper grass" },
+            { min: 90, max: 100, label: "Maximum 3-wood second-cut attempt", totalFactorMin: 0.89, totalFactorMax: 1.00, riskLevel: "Very High", distanceNote: "Best-case clean contact, but mishit risk is very high" }
+        ],
+        caddieTip: "From the second cut, a 3-wood is difficult to launch consistently. A 5-wood, 7-wood, or Hybrid will usually provide better height, control, and more reliable distance."
     },
 
     driver36HandicapEarthTee: {
@@ -1302,8 +1197,8 @@ const clubPerformanceProfiles = {
             { min: 90, max: 100, label: "Full driver intent", carryFactorMin: 0.89, carryFactorMax: 1.00, totalFactorMin: 0.89, totalFactorMax: 1.00, riskLevel: "High", distanceNote: "Highest distance potential with increased mishit and dispersion risk" }
         ],
         caddieTip: "Accuracy over power. At this level, keeping the ball in play is more beneficial than attempting maximum distance, which can lead to high scores. You may consider trying a lower force rate in return for more focus on accuracy."
-    }, 
     },
+
     driver36HandicapEarthFairway: {
         baseline: {
             averageTotalMin: 141,
@@ -1318,8 +1213,12 @@ const clubPerformanceProfiles = {
         ],
         caddieTip: "Most players in your category gain more from centred contact and control than from forcing maximum swing speed. Reducing force slightly may improve strike quality and produce a better overall result. Alternatively, you may be better using a lesser wood, Stinger, Hybrid or Iron, and just focus on staying on the fairway rather than trying to hit the green."
     },
+
     driver36HandicapEarthFirstCut: {
-        baseline: { averageTotalMin: 135, averageTotalMax: 150 },
+        baseline: {
+            averageTotalMin: 135,
+            averageTotalMax: 150
+        },
         forceBands: [
             { min: 1, max: 25, label: "Very weak 1st-cut driver attempt", totalFactorMin: 0.10, totalFactorMax: 0.22, riskLevel: "Low", distanceNote: "Too little force for worthwhile driver use from the 1st cut" },
             { min: 26, max: 49, label: "Short 1st-cut driver attempt", totalFactorMin: 0.23, totalFactorMax: 0.42, riskLevel: "Low to Moderate", distanceNote: "Manageable lie, but distance remains modest" },
@@ -1329,7 +1228,7 @@ const clubPerformanceProfiles = {
         ],
         caddieTip: "For a 36-handicap golfer, the 1st cut is generally manageable and similar to a fairway lie, but slightly less consistent. You would likely get more consistency out of a Hybrid."
     },
-$1
+
     driver36HandicapEarthWalkway: {
         baseline: {
             averageTotalMin: 135,
@@ -1344,6 +1243,7 @@ $1
         ],
         caddieTip: "From a walkway or hard surface, a low Stinger or controlled recovery shot is often safer than driver. Avoid striking the hard ground because it can damage the club and ruin contact."
     },
+
     driver36HandicapMoon: {
         baseline: {
             averageTotalMin: 780,
@@ -1382,626 +1282,6 @@ const trainingState = {
 };
 
 const trainingQuestions = [
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Factual",
-        timeLimit: 15,
-        question: "What is the main advantage of a fairway lie compared with rough?",
-        answers: {
-            A: "Less need for club selection",
-            B: "More predictable contact",
-            C: "Automatic extra spin",
-            D: "Guaranteed extra distance"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Factual",
-        timeLimit: 15,
-        question: "From the fairway, what usually gives the best result?",
-        answers: {
-            A: "Swinging as hard as possible",
-            B: "Controlled centred contact",
-            C: "Leaning back through impact",
-            D: "Keeping the club off the turf entirely"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Factual",
-        timeLimit: 15,
-        question: "Why is a fairway lie generally preferred?",
-        answers: {
-            A: "The ball sits in longer grass",
-            B: "The lie reduces the need for judgment",
-            C: "The ball is easier to strike cleanly",
-            D: "The ball always flies higher"
-        },
-        correct: "C"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Factual",
-        timeLimit: 15,
-        question: "Which factor matters most when choosing a club from the fairway?",
-        answers: {
-            A: "Ball colour",
-            B: "Remaining distance to target",
-            C: "Shoe grip",
-            D: "Tee height"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Factual",
-        timeLimit: 15,
-        question: "What is the main risk of trying to overpower a fairway shot?",
-        answers: {
-            A: "The ball becomes heavier",
-            B: "Contact quality may worsen",
-            C: "The fairway becomes narrower",
-            D: "The club gains loft"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Factual",
-        timeLimit: 15,
-        question: "On a fairway shot, striking the ground before the ball is known as what?",
-        answers: {
-            A: "A fade",
-            B: "A blade",
-            C: "A fat shot",
-            D: "A draw"
-        },
-        correct: "C"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Factual",
-        timeLimit: 15,
-        question: "On a fairway approach, what usually matters more than raw power?",
-        answers: {
-            A: "Clubhead colour",
-            B: "Directional control and strike quality",
-            C: "Grip brand",
-            D: "Glove thickness"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Factual",
-        timeLimit: 15,
-        question: "A fairway lie usually allows better control because:",
-        answers: {
-            A: "The ball always has topspin",
-            B: "The club can reach the back of the ball more cleanly",
-            C: "The wind is weaker",
-            D: "The fairway adds power automatically"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Factual",
-        timeLimit: 15,
-        question: "What is generally the smartest mindset for fairway play?",
-        answers: {
-            A: "Attack every shot aggressively",
-            B: "Prioritise clean contact and percentage golf",
-            C: "Use driver whenever possible",
-            D: "Ignore lie conditions"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "You are on the fairway with a clear shot but water guards the front of the green. What is the safest percentage play?",
-        answers: {
-            A: "Always attack the flag",
-            B: "Aim for the safest landing area",
-            C: "Swing harder to clear everything",
-            D: "Use driver from the fairway"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "You are on a fairway lie with the ball slightly below your feet. What is the best general expectation?",
-        answers: {
-            A: "The ball will automatically go higher",
-            B: "Clean contact may be harder",
-            C: "Distance always increases",
-            D: "Spin becomes irrelevant"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "You have 90 yards left from the fairway and no trouble ahead. What is usually the best choice?",
-        answers: {
-            A: "Use the club that gives controlled distance",
-            B: "Hit the ball as hard as possible",
-            C: "Use driver for safety",
-            D: "Add unnecessary extra loft"
-        },
-        correct: "A"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "You are on a fairway lie but hitting into a strong headwind. Best adjustment?",
-        answers: {
-            A: "Use less club",
-            B: "Use more club with controlled strike",
-            C: "Swing wildly harder",
-            D: "Ignore the wind"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "From the fairway, you are between clubs. Which is usually wiser?",
-        answers: {
-            A: "Choose the club that supports a controlled shot",
-            B: "Always choose the shorter club",
-            C: "Always choose the longer club and smash it",
-            D: "Pick randomly"
-        },
-        correct: "A"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "You are on a clean fairway lie but the pin is tucked near a bunker. Best decision?",
-        answers: {
-            A: "Fire directly at the pin every time",
-            B: "Aim for the safer part of the green",
-            C: "Use maximum force",
-            D: "Ignore the bunker completely"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "You have a fairway lie and a narrow green entrance. What is most important?",
-        answers: {
-            A: "Maximum distance",
-            B: "Clean strike and directional accuracy",
-            C: "Extreme backspin attempt",
-            D: "Fastest possible swing"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "You are on the fairway with a downhill shot to the green. Best general adjustment?",
-        answers: {
-            A: "Expect the ball to play longer",
-            B: "Expect the ball to stop sooner automatically",
-            C: "Always add loft",
-            D: "Always use driver"
-        },
-        correct: "A"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "From a fairway lie, you are trying to reach the green in regulation, but trouble surrounds the pin. Best course-management decision?",
-        answers: {
-            A: "Attack recklessly",
-            B: "Play to the largest safe target area",
-            C: "Swing harder to reduce risk",
-            D: "Aim at trouble and trust luck"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Factual",
-        timeLimit: 15,
-        question: "Why does a fairway lie generally improve strike consistency?",
-        answers: {
-            A: "The grass grips the clubhead",
-            B: "The ball is more exposed for predictable contact",
-            C: "The ball rolls before impact",
-            D: "The shaft becomes stiffer"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Factual",
-        timeLimit: 15,
-        question: "What is the main difference between a fairway shot and a tee shot?",
-        answers: {
-            A: "A fairway shot usually offers less margin for poor strike mechanics",
-            B: "A fairway shot always goes farther",
-            C: "A fairway shot always launches lower",
-            D: "A fairway shot removes spin"
-        },
-        correct: "A"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Factual",
-        timeLimit: 15,
-        question: "From the fairway, which error most often reduces distance and control?",
-        answers: {
-            A: "Clean compression",
-            B: "Hitting ball then turf",
-            C: "Poor strike location or turf-first contact",
-            D: "Balanced tempo"
-        },
-        correct: "C"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "A player has a perfect fairway lie but a hazard short right of the green. The player tends to push shots right. Best play?",
-        answers: {
-            A: "Aim further right",
-            B: "Aim at the most dangerous line",
-            C: "Adjust target to allow for the common miss",
-            D: "Swing harder to avoid the miss"
-        },
-        correct: "C"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Factual",
-        timeLimit: 15,
-        question: "On a fairway approach, why is centred clubface contact valuable?",
-        answers: {
-            A: "It increases random bounce",
-            B: "It improves energy transfer and directional consistency",
-            C: "It makes every shot draw",
-            D: "It removes the need for club selection"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "You are on a fairway lie with 165 yards remaining and no direct danger. What is the smartest baseline choice?",
-        answers: {
-            A: "Select a club and force level you can strike cleanly",
-            B: "Use maximum power regardless",
-            C: "Always use the driver",
-            D: "Hit the lowest club available"
-        },
-        correct: "A"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "You are on the fairway and your previous shots have been inconsistent. Best percentage adjustment?",
-        answers: {
-            A: "Increase force to recover distance",
-            B: "Prioritise rhythm and clean contact",
-            C: "Change aim repeatedly during swing",
-            D: "Ignore consistency and attack hard"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Factual",
-        timeLimit: 15,
-        question: "A fairway lie gives a player the clearest opportunity to do what?",
-        answers: {
-            A: "Use reliable judgment and strike the ball cleanly",
-            B: "Remove all risk from the hole",
-            C: "Eliminate the effect of wind",
-            D: "Ignore course strategy"
-        },
-        correct: "A"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "You are on the fairway but slightly blocked by a tree branch line. Best decision?",
-        answers: {
-            A: "Hit directly through the branches at full force",
-            B: "Choose a safer shot shape or lower-risk target",
-            C: "Ignore the obstruction",
-            D: "Use putter"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "fairway",
-        categoryLabel: "Fairway Knowledge",
-        type: "Factual",
-        timeLimit: 15,
-        question: "On a fairway shot, what is usually the best balance?",
-        answers: {
-            A: "Distance only",
-            B: "Height only",
-            C: "Control, strike, and target selection together",
-            D: "Force above all else"
-        },
-        correct: "C"
-    },
-    {
-        categoryKey: "gym",
-        categoryLabel: "Gym Training",
-        type: "Factual",
-        timeLimit: 15,
-        question: "What is the primary physical benefit of strength training for driving distance?",
-        answers: {
-            A: "Increased force production through the swing",
-            B: "Improved grip colour",
-            C: "Reduced ball weight",
-            D: "Automatic accuracy"
-        },
-        correct: "A"
-    },
-    {
-        categoryKey: "gym",
-        categoryLabel: "Gym Training",
-        type: "Factual",
-        timeLimit: 15,
-        question: "Which muscle group contributes most to generating power in a golf swing?",
-        answers: {
-            A: "Fingers",
-            B: "Ankles only",
-            C: "Core muscles (abs and obliques)",
-            D: "Neck muscles"
-        },
-        correct: "C"
-    },
-    {
-        categoryKey: "gym",
-        categoryLabel: "Gym Training",
-        type: "Factual",
-        timeLimit: 15,
-        question: "What is the most important nutrient for muscle growth?",
-        answers: {
-            A: "Sugar",
-            B: "Fibre",
-            C: "Salt",
-            D: "Protein"
-        },
-        correct: "D"
-    },
-    {
-        categoryKey: "gym",
-        categoryLabel: "Gym Training",
-        type: "Factual",
-        timeLimit: 15,
-        question: "Why is flexibility important alongside strength in golf?",
-        answers: {
-            A: "It removes the need for practice",
-            B: "It increases ball spin automatically",
-            C: "It allows a fuller and more efficient swing",
-            D: "It reduces club weight"
-        },
-        correct: "C"
-    },
-    {
-        categoryKey: "gym",
-        categoryLabel: "Gym Training",
-        type: "Factual",
-        timeLimit: 15,
-        question: "What is the main risk of gaining too much muscle mass in golf?",
-        answers: {
-            A: "Increased ball speed",
-            B: "Better putting",
-            C: "More spin control",
-            D: "Reduced flexibility and swing fluidity"
-        },
-        correct: "D"
-    },
-    {
-        categoryKey: "gym",
-        categoryLabel: "Gym Training",
-        type: "Factual",
-        timeLimit: 15,
-        question: "Which type of training best improves explosive power for driving?",
-        answers: {
-            A: "Plyometric and power training",
-            B: "Long-distance running",
-            C: "Static stretching only",
-            D: "Meditation"
-        },
-        correct: "A"
-    },
-    {
-        categoryKey: "gym",
-        categoryLabel: "Gym Training",
-        type: "Factual",
-        timeLimit: 15,
-        question: "What does \"progressive overload\" mean in strength training?",
-        answers: {
-            A: "Avoiding heavy weights",
-            B: "Gradually increasing resistance over time",
-            C: "Training less frequently",
-            D: "Always lifting the same weight"
-        },
-        correct: "B"
-    },
-    {
-        categoryKey: "gym",
-        categoryLabel: "Gym Training",
-        type: "Factual",
-        timeLimit: 15,
-        question: "Which macronutrient provides energy for high-intensity training?",
-        answers: {
-            A: "Protein only",
-            B: "Water",
-            C: "Vitamins",
-            D: "Carbohydrates"
-        },
-        correct: "D"
-    },
-    {
-        categoryKey: "gym",
-        categoryLabel: "Gym Training",
-        type: "Factual",
-        timeLimit: 15,
-        question: "Why is rest important in muscle development?",
-        answers: {
-            A: "Muscles grow during recovery, not during the workout",
-            B: "It increases fatigue",
-            C: "It lowers metabolism",
-            D: "It reduces strength permanently"
-        },
-        correct: "A"
-    },
-    {
-        categoryKey: "gym",
-        categoryLabel: "Gym Training",
-        type: "Factual",
-        timeLimit: 15,
-        question: "Which type of strength is most beneficial for driving distance?",
-        answers: {
-            A: "Static strength only",
-            B: "Finger strength",
-            C: "Explosive and rotational strength",
-            D: "Neck strength"
-        },
-        correct: "C"
-    },
-    {
-        categoryKey: "gym",
-        categoryLabel: "Gym Training",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "A player wants more driving distance but feels stiff during their swing. What is the best adjustment?",
-        answers: {
-            A: "Continue only heavy lifting",
-            B: "Stop training entirely",
-            C: "Swing harder",
-            D: "Combine strength training with mobility work"
-        },
-        correct: "D"
-    },
-    {
-        categoryKey: "gym",
-        categoryLabel: "Gym Training",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "A player increases muscle mass beyond 10% and notices worse accuracy. What is the likely cause?",
-        answers: {
-            A: "Reduced flexibility and coordination",
-            B: "Better swing speed",
-            C: "Improved timing",
-            D: "Lighter clubs"
-        },
-        correct: "A"
-    },
-    {
-        categoryKey: "gym",
-        categoryLabel: "Gym Training",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "A player wants to increase strength safely. What is the best approach?",
-        answers: {
-            A: "Lift maximum weight immediately",
-            B: "Train once a month",
-            C: "Use gradual progression with correct technique",
-            D: "Avoid all resistance training"
-        },
-        correct: "C"
-    },
-    {
-        categoryKey: "gym",
-        categoryLabel: "Gym Training",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "A golfer trains heavily but ignores nutrition. What is the likely outcome?",
-        answers: {
-            A: "Maximum muscle growth",
-            B: "Instant improvement",
-            C: "Reduced need for rest",
-            D: "Limited strength gains"
-        },
-        correct: "D"
-    },
-    {
-        categoryKey: "gym",
-        categoryLabel: "Gym Training",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "A player wants to improve driving distance without harming control. Best training focus?",
-        answers: {
-            A: "Only upper-body muscle size",
-            B: "Only leg exercises",
-            C: "No training needed",
-            D: "Balanced strength and mobility training"
-        },
-        correct: "D"
-    },
-    {
-        categoryKey: "gym",
-        categoryLabel: "Gym Training",
-        type: "Scenario",
-        timeLimit: 20,
-        question: "A golfer feels strong but struggles with timing. What should they add?",
-        answers: {
-            A: "More weight only",
-            B: "Less sleep",
-            C: "Coordination and swing practice",
-            D: "Random drills"
-        },
-        correct: "C"
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Moon Golf V2</title>
 
 <style>
 body {
