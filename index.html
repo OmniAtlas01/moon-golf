@@ -1997,6 +1997,1805 @@ const trainingQuestions = [
             D: "Random drills"
         },
         correct: "C"
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Moon Golf V2</title>
+
+<style>
+body {
+    background-color: #061a3a;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+}
+
+.container {
+    padding: 30px;
+}
+
+h1 {
+    margin-bottom: 5px;
+}
+
+.controls {
+    margin: 20px 0;
+}
+
+button, select, textarea {
+    padding: 8px 12px;
+    font-size: 16px;
+}
+
+.course-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+.course-wrap img {
+    height: 60vh;
+    width: auto;
+    display: block;
+    margin: 20px auto;
+    border-radius: 12px;
+}
+
+#ball {
+    position: absolute;
+    bottom: 12%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
+    transform: translateX(-50%);
+}
+
+.info-panel {
+    max-width: 1000px;
+    margin: 30px auto 0 auto;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: left;
+}
+
+.info-panel h2,
+.info-panel h3,
+.info-panel h4 {
+    margin-top: 0;
+}
+
+ul {
+    line-height: 1.8;
+}
+
+.hidden {
+    display: none;
+}
+
+.command-box {
+    width: 100%;
+    min-height: 210px;
+    box-sizing: border-box;
+    resize: vertical;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.28);
+    color: white;
+    font-family: Consolas, Monaco, monospace;
+    line-height: 1.6;
+}
+
+.command-actions {
+    margin-top: 14px;
+    text-align: center;
+}
+
+.command-example {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 14px;
+    font-family: monospace;
+    white-space: pre-line;
+}
+
+.accepted-command {
+    margin-top: 16px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.accepted-command p {
+    margin: 8px 0;
+}
+
+.note-text {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.caddie-live-box {
+    background: rgba(0,0,0,0.28);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.caddie-live-box p {
+    margin: 10px 0;
+}
+
+.club-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+
+.club-card {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.club-card h3 {
+    margin-bottom: 8px;
+}
+
+.setup-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.setup-row label {
+    min-width: 230px;
+    font-weight: bold;
+}
+
+.setup-status {
+    margin-top: 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.rule-box {
+    background: rgba(0,0,0,0.28);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.small-muted {
+    font-size: 14px;
+    opacity: 0.92;
+}
+
+.status-good {
+    color: #9cff9c;
+}
+
+.status-warn {
+    color: #ffd27f;
+}
+
+.status-bad {
+    color: #ff9898;
+}
+
+.training-question-box {
+    background: rgba(0,0,0,0.30);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+}
+
+.training-answer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.training-answer-btn {
+    text-align: left;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.06);
+    color: white;
+    cursor: pointer;
+}
+
+.training-answer-btn:hover {
+    background: rgba(255,255,255,0.12);
+}
+
+.training-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.training-result {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.10);
+}
+
+.training-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.training-stat-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+}
+
+.timer-good {
+    color: #9cff9c;
+}
+
+.timer-warn {
+    color: #ffd27f;
+}
+
+.timer-bad {
+    color: #ff9898;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Moon Golf V2</h1>
+    <h2>Hole 1 — Par 4 — 380 Yards</h2>
+    <p>Fairway ends at 240 yards | Bunkers at 250 yards</p>
+
+    <div class="controls">
+        <select id="courseType" onchange="updateCaddieForCurrentPlayState()">
+            <option value="Parkland" selected>Parkland</option>
+            <option value="Moon">Moon Course</option>
+        </select>
+
+        <select id="caddieLevel" onchange="updateCaddieForCurrentPlayState()">
+            <option value="none" selected>No Caddie</option>
+            <option value="cheap">Cheap Caddie</option>
+            <option value="mid">Average Caddie</option>
+            <option value="elite">Elite Caddie</option>
+        </select>
+
+        <select id="power">
+            <option value="50">50%</option>
+            <option value="75" selected>75%</option>
+            <option value="100">100%</option>
+        </select>
+
+        <button onclick="takeShot()">Take Shot</button>
+    </div>
+
+    <div class="course-wrap">
+        <img src="atlashole-1.png" alt="Moon Golf Hole 1">
+        <div id="ball"></div>
+    </div>
+
+    <p id="distance">Distance Remaining: 380</p>
+    <p id="shots">Shots Taken: 0</p>
+
+    <div id="liveCaddiePanel" class="info-panel">
+        <h2 style="text-align:center;">Live Caddie Advice</h2>
+
+        <div id="liveCaddieContent" class="caddie-live-box">
+            <h3 id="liveCaddieTitle">Caddie Waiting</h3>
+            <div id="liveCaddieBody">
+                <p>No club-specific caddie advice is currently loaded.</p>
+                <p>The live caddie system remains active and ready for the next ruleset.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Scientific Caddie Rules</h2>
+
+        <div class="rule-box">
+            <p><strong>Scientific rule now active:</strong> caddies do not alter physics, move the ball, or create impossible outcomes.</p>
+            <p>Caddie effects are modelled through improved decision quality, better consistency, tighter dispersion, reduced hook/slice severity, and fewer extreme mishits.</p>
+            <p>Higher caddie levels improve the player's statistical consistency, especially in the short game and directional discipline, but do not guarantee results.</p>
+            <p class="small-muted" style="margin-bottom:0;">This keeps all caddie effects within scientifically possible golf behaviour.</p>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Caddie Effect Levels</h2>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>No Caddie</h3>
+                <p>Raw player randomness. Wider distance spread. Greater chance of poor outcomes and larger variance.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Cheap Caddie</h3>
+                <p>Small consistency improvement. Slightly tighter distance range. Slight reduction in extreme errors.</p>
+                <p><strong>Typical effect:</strong> subtle enough that it may feel like ordinary better advice.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Average Caddie</h3>
+                <p>Noticeable consistency improvement. Better shot-shape discipline and fewer poor misses.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Elite Caddie</h3>
+                <p>Strongest consistency gain. Narrower variance, fewer disasters, and stronger short-game steadiness.</p>
+                <p><strong>Important:</strong> still no impossible physics and no guaranteed outcomes.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Realistic Caddie Coaching Improvements</h2>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Cheap Caddie Coaching</h3>
+                <p><strong>Full shots:</strong> 1% to 4% consistency improvement</p>
+                <p><strong>Short game:</strong> 3% to 6%</p>
+                <p><strong>Putting:</strong> 4% to 8%</p>
+                <p><strong>Hook / slice reduction:</strong> 1% to 8%</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Average Caddie Coaching</h3>
+                <p><strong>Full shots:</strong> 3% to 8% consistency improvement</p>
+                <p><strong>Short game:</strong> 6% to 12%</p>
+                <p><strong>Putting:</strong> 8% to 15%</p>
+                <p><strong>Hook / slice reduction:</strong> 8% to 20%</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Elite Caddie Coaching</h3>
+                <p><strong>Full shots:</strong> 5% to 12% consistency improvement</p>
+                <p><strong>Short game:</strong> 10% to 18%</p>
+                <p><strong>Putting:</strong> 12% to 22%</p>
+                <p><strong>Hook / slice reduction:</strong> 20% to 35%</p>
+                <p><strong>Rare rescue case:</strong> up to 50% only for severe default misses.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">OmniAtlas Custom Ball System</h2>
+
+        <div class="rule-box">
+            <p><strong>Important rule:</strong> the OmniAtlas Custom Ball is separately purchased and fully compliant with golf rules and regulations.</p>
+            <p>The ball does not override physics. It improves performance through correct fitting of compression, spin profile, and launch compatibility to suit the player's game.</p>
+            <p>The quality of the compliant custom ball depends on the caddie level that prepares it.</p>
+        </div>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Cheap Caddie Custom Ball</h3>
+                <p><strong>Effect:</strong> 1% to 5% optimisation</p>
+                <p>Represents basic compliant fitting improvements.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Average Caddie Custom Ball</h3>
+                <p><strong>Effect:</strong> 5% to 12% optimisation</p>
+                <p>Represents improved launch and spin matching.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Elite Caddie Custom Ball</h3>
+                <p><strong>Effect:</strong> 12% to 20% optimisation</p>
+                <p><strong>Rare rescue:</strong> up to 25% on extreme near-OOB standard misses.</p>
+                <p>Represents top-tier player-specific fitting within compliant limits.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Training vs Custom Ball — Scientific Model</h2>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Caddie Training Effect</h3>
+                <p>Improves swing consistency, alignment, club delivery, decision-making, and severe hook/slice control.</p>
+                <p>This is the player's learned improvement.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Custom Ball Effect</h3>
+                <p>Improves spin profile and launch compatibility within conforming golf-ball limits.</p>
+                <p>This is equipment fitting, not a cheat mechanism.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Hole Dispenser — OmniAtlas Liquefied Placebo (OLP)</h2>
+        <div class="rule-box">
+            <p><strong>OLP rule now active:</strong> OmniAtlas Liquefied Placebo is a hole-side liquefied meal drink with no proven scientific enhancement effect.</p>
+            <p>It is modelled as a small uncertain placebo-style influence. At low dose, it may sometimes help confidence, rhythm, or perceived steadiness. Sometimes it does nothing.</p>
+            <p><strong>Sensible use:</strong> one sip per hole is enough. One carton per round is more than enough.</p>
+            <p><strong>Overuse risk:</strong> too much OLP may reduce coordination, slow thinking, soften putting touch, cause discomfort or toilet urgency, and create back-nine fatigue.</p>
+        </div>
+        <div class="command-actions">
+            <button onclick="buyOLPCarton()">Buy 1 OLP Carton</button>
+            <button onclick="drinkOLPSip()">Drink 1 Sip</button>
+        </div>
+        <div class="setup-status">
+            <p><strong>Cartons Purchased:</strong> <span id="olpCartonsPurchased">0</span></p>
+            <p><strong>Available Sips:</strong> <span id="olpAvailableSips">0</span></p>
+            <p><strong>Sips This Hole:</strong> <span id="olpSipsThisHole">0</span></p>
+            <p><strong>Total Round Sips:</strong> <span id="olpTotalRoundSips">0</span></p>
+            <p><strong>Current OLP Status:</strong> <span id="olpCurrentStatus">No OLP taken.</span></p>
+            <p class="note-text" style="margin-bottom:0;">OLP effects are deliberately small, uncertain, and believable. It never creates impossible performance.</p>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Graduated Rough & Lie System</h2>
+        <div class="rule-box">
+            <p><strong>Graduated rough rule now active:</strong> rough becomes more punishing the further the ball finishes from the fairway.</p>
+            <p>Lie condition now matters. Fluffy lies can produce fliers, buried lies force steep recovery swings, grain direction changes distance, and trampled rough can be easier than deep long grass.</p>
+        </div>
+        <div class="club-grid">
+            <div class="club-card"><h3>Graduated Rough</h3><p><strong>First cut:</strong> light resistance, usually playable with a mostly normal swing.</p><p><strong>Second cut:</strong> thicker grass, more speed loss, higher contact risk.</p><p><strong>Deep rough:</strong> severe penalty where escape can matter more than distance.</p></div>
+            <div class="club-card"><h3>Lie Types</h3><p><strong>Fluffy lie:</strong> ball sits up and may jump as a flyer.</p><p><strong>Buried / nested lie:</strong> ball sits down and requires a steep aggressive swing.</p><p><strong>Against the grain:</strong> grass snags the club and reduces distance.</p><p><strong>With the grain:</strong> grass helps the club pass through and may produce a flyer.</p><p><strong>Spectator / trampled rough:</strong> flattened grass can behave closer to firm hardpan than deep rough.</p></div>
+            <div class="club-card"><h3>Caddie Tip</h3><p><strong>Light / first cut:</strong> use a regular swing, often with one extra club to account for loss of spin.</p><p><strong>Thick / deep rough:</strong> use a more lofted club, such as a wedge or 9-iron, and prioritise returning to the fairway.</p><p><strong>Buried lie:</strong> use a steep, aggressive swing with a wedge toward safety, because a standard swing can get caught in the grass.</p></div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Natural Realism Guard — Earned Performance Range</h2>
+
+        <div class="rule-box">
+            <p><strong>Golden rule now active:</strong> the system improves good shots, not bad shots.</p>
+            <p>Performance help is kept inside believable golf variation: full shots can gain up to 5%, chips up to 12%, putts up to 15%, and rollout can occasionally gain more only when the strike and conditions justify it.</p>
+            <p><strong>Suspicion guard:</strong> top-end rollout is rare, poor strikes do not receive big bonuses, and identical boosted outcomes should not repeat every shot.</p>
+            <p><strong>Realism rule:</strong> no ball correction, no mid-flight assistance, no weak-shot rescue, and no impossible distance jump.</p>
+        </div>
+
+        <div class="setup-status">
+            <p><strong>Last Realism Result:</strong> <span id="realismGuardLastResult">No shot checked yet.</span></p>
+            <p><strong>Last Shot Quality:</strong> <span id="realismGuardLastQuality">None</span></p>
+            <p><strong>Last Applied Adjustment:</strong> <span id="realismGuardLastAdjustment">0.0%</span></p>
+            <p class="note-text" style="margin-bottom:0;">This system protects believable simulation behaviour while allowing small, earned performance differences.</p>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Training Academy</h2>
+
+        <div class="rule-box">
+            <p><strong>Training rule:</strong> each correct answer awards <strong>+0.1%</strong> to the relevant category.</p>
+            <p>Each wrong answer or timeout results in <strong>-0.1%</strong> to the relevant category.</p>
+            <p>Standard factual questions allow <strong>15 seconds</strong>. Scenario questions allow <strong>20 seconds</strong>.</p>
+            <p>The correct answer is not shown until the player has answered, or the timer has expired.</p>
+        </div>
+
+        <div class="command-actions">
+            <button onclick="startTrainingQuestion()">Start Training Question</button>
+        </div>
+
+        <div id="trainingQuestionPanel" class="training-question-box hidden">
+            <h3 id="trainingQuestionTitle" style="margin-top:0;">Training Question</h3>
+            <div class="training-meta">
+                <div><strong>Category:</strong> <span id="trainingCategory"></span></div>
+                <div><strong>Type:</strong> <span id="trainingType"></span></div>
+                <div><strong>Time Left:</strong> <span id="trainingTimer" class="timer-good"></span></div>
+            </div>
+
+            <p id="trainingQuestionText" style="margin-top:16px;"></p>
+
+            <div class="training-answer-grid">
+                <button class="training-answer-btn" id="answerA" onclick="answerTrainingQuestion('A')"></button>
+                <button class="training-answer-btn" id="answerB" onclick="answerTrainingQuestion('B')"></button>
+                <button class="training-answer-btn" id="answerC" onclick="answerTrainingQuestion('C')"></button>
+                <button class="training-answer-btn" id="answerD" onclick="answerTrainingQuestion('D')"></button>
+            </div>
+
+            <div id="trainingResultBox" class="training-result hidden"></div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Gym Training — Strength Building Rules</h2>
+
+        <div class="rule-box">
+            <p><strong>Gym rule now active:</strong> players may build strength through training knowledge focused on muscle, diet, recovery, and safe weight progression.</p>
+            <p><strong>Recommended ceiling:</strong> players are advised to train only up to <strong>10.0%</strong> extra muscle / strength for golf-specific benefit.</p>
+            <p>Beyond that point, players may continue if they wish, but excessive muscle can begin to reduce flexibility, timing, and fluid golf movement.</p>
+            <p>Supplements remain temporary. Gym knowledge represents the more permanent training pathway, though players must continue maintenance work to stay toned.</p>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Training Category Progress</h2>
+
+        <div class="training-stats-grid">
+            <div class="training-stat-row"><span>Driving Knowledge</span><span id="statDriving">0.0%</span></div>
+            <div class="training-stat-row"><span>Fairway Knowledge</span><span id="statFairway">0.0%</span></div>
+            <div class="training-stat-row"><span>Rough Recovery</span><span id="statRough">0.0%</span></div>
+            <div class="training-stat-row"><span>Bunker Play</span><span id="statBunker">0.0%</span></div>
+            <div class="training-stat-row"><span>Green Reading</span><span id="statGreenReading">0.0%</span></div>
+            <div class="training-stat-row"><span>Putting</span><span id="statPutting">0.0%</span></div>
+            <div class="training-stat-row"><span>Weather Judgment</span><span id="statWeather">0.0%</span></div>
+            <div class="training-stat-row"><span>Rules Knowledge</span><span id="statRules">0.0%</span></div>
+            <div class="training-stat-row"><span>Course Management</span><span id="statCourseManagement">0.0%</span></div>
+            <div class="training-stat-row"><span>Gym Training</span><span id="statGym">0.0%</span></div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Training Effects Now Active In Play</h2>
+
+        <div class="rule-box">
+            <p><strong>Activation rule now active:</strong> training answers now feed into live shot behaviour in small, skill-based ways.</p>
+            <p>Higher knowledge percentages can tighten distance range, improve club-choice efficiency, and slightly reduce poor shot outcomes for the matching shot type.</p>
+            <p>These are deliberately small scientific gains. Training does not create hidden power, impossible flight, or automatic success.</p>
+        </div>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Full Shot Training Links</h3>
+                <p><strong>Driving:</strong> helps tee-shot efficiency and driver control</p>
+                <p><strong>Gym Training:</strong> helps strength-related distance efficiency, within realistic limits</p>
+                <p><strong>Fairway:</strong> improves fairway strike quality</p>
+                <p><strong>Rough:</strong> improves recovery efficiency from rough lies</p>
+                <p><strong>Weather:</strong> slightly improves wind and condition judgment</p>
+                <p><strong>Course Management:</strong> slightly improves percentage-play outcomes</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Short Game Training Links</h3>
+                <p><strong>Bunker:</strong> improves bunker strike quality</p>
+                <p><strong>Green Reading:</strong> improves slope-reading decisions</p>
+                <p><strong>Putting:</strong> improves pace and line control</p>
+                <p><strong>Rules:</strong> currently tracked and ready for future penalty / relief logic</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Live Training Influence</h3>
+                <p id="activeTrainingSummary">No command loaded yet. Training influence will appear here once a valid shot command is accepted.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">L1 Club Rules — Official Round Lock</h2>
+
+        <div class="rule-box">
+            <p><strong>Official rule now active:</strong> adjustable club settings are locked for the stipulated round once the round begins.</p>
+            <p>Club 2 and Club 3 may be configured before the round starts, but not changed during the round.</p>
+            <p>Club 1 remains the OmniAtlas L1 all-in-one playing club with 8 live playable loft settings as part of its normal shot-use design.</p>
+            <p>If a club becomes broken later, replacement logic may be allowed under the broken-club pathway.</p>
+            <p class="small-muted" style="margin-bottom:0;">Current build status: round-lock rules are active, broken replacement tracking is prepared, full break / replacement gameplay can be expanded next.</p>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Pre-Round L1 Club Setup</h2>
+
+        <p>Set Club 2 and Club 3 before the round begins. Once the round starts, these settings are locked under official rules.</p>
+
+        <div class="setup-row">
+            <label for="club2Setting">Club 2 — OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood</label>
+            <select id="club2Setting">
+                <option value="Low Flight">Low Flight</option>
+                <option value="Neutral" selected>Neutral</option>
+                <option value="High Launch">High Launch</option>
+            </select>
+        </div>
+
+        <div class="setup-row">
+            <label for="club3Setting">Club 3 — OmniAtlas L1 Adjustable Golf Driver</label>
+            <select id="club3Setting">
+                <option value="Low Loft (Distance)">Low Loft (Distance)</option>
+                <option value="Neutral" selected>Neutral</option>
+                <option value="High Loft (Control)">High Loft (Control)</option>
+            </select>
+        </div>
+
+        <div class="command-actions">
+            <button onclick="lockRoundClubSettings()">Lock Club Settings For Round</button>
+        </div>
+
+        <div id="roundLockStatus" class="setup-status">
+            <p><strong>Round Status:</strong> <span id="roundStatusText">Pre-round setup open</span></p>
+            <p><strong>Club 2 Setting:</strong> <span id="club2LockedDisplay">Neutral</span></p>
+            <p><strong>Club 3 Setting:</strong> <span id="club3LockedDisplay">Neutral</span></p>
+            <p class="note-text" style="margin-bottom:0;">These settings become locked for the round after confirmation.</p>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">OmniAtlas L1 Club Data</h2>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Club 1 — OmniAtlas L1 Adjustable Loft Golf Club</h3>
+                <p><strong>Role:</strong> all-in-one precision and utility club</p>
+                <p><strong>Playable settings:</strong> 04° Putter, 12° Stinger, 20° Hybrid, 28° 6 Iron, 36° 8 Iron, 44° Wedge, 52° Sand, 60° Lob</p>
+                <p><strong>Use:</strong> putting, chipping, approach play, bunker use, controlled recovery, lower-flight and higher-flight options</p>
+                <p><strong>Design note:</strong> treated as the live all-in-one playing club for Moon Golf</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Club 2 — OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood</h3>
+                <p><strong>Role:</strong> controlled distance and safer long play</p>
+                <p><strong>Round-lock settings:</strong> Low Flight, Neutral, High Launch</p>
+                <p><strong>Use:</strong> long fairway strikes, safer tee use, longer approaches, lower-risk distance</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Club 3 — OmniAtlas L1 Adjustable Golf Driver</h3>
+                <p><strong>Role:</strong> maximum distance and highest tee aggression</p>
+                <p><strong>Round-lock settings:</strong> Low Loft (Distance), Neutral, High Loft (Control)</p>
+                <p><strong>Use:</strong> tee shots, aggressive long play, distance-priority situations</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">OmniAtlas L1 Driver Baseline — 36 Handicap</h2>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Parkland / Earth Tee Baseline</h3>
+                <p><strong>Club:</strong> OmniAtlas L1 Adjustable Golf Driver</p>
+                <p><strong>Primary use:</strong> tee shots and aggressive distance play</p>
+                <p><strong>Average carry distance:</strong> 120 to 145 yards</p>
+                <p><strong>Average total distance:</strong> 135 to 166 yards</p>
+                <p><strong>Best force zone:</strong> 90% to 100% for full driver intent</p>
+                <p><strong>Important rule:</strong> lower force may improve control, but greatly reduces distance potential</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Parkland / Earth Fairway Baseline</h3>
+                <p><strong>Lie:</strong> Fairway</p>
+                <p><strong>36-handicap high-force total distance:</strong> 141 to 155 yards</p>
+                <p><strong>Distance type:</strong> mainly total distance, not carry only</p>
+                <p><strong>Gameplay note:</strong> driver from the fairway is more demanding than from the tee</p>
+                <p><strong>Practical note:</strong> a safer club may often be the percentage play</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Parkland / Earth 1st Cut Baseline</h3>
+                <p><strong>Lie:</strong> First cut rough</p>
+                <p><strong>36-handicap high-force total distance:</strong> 135 to 150 yards</p>
+                <p><strong>1st cut effect:</strong> generally playable, but slightly less efficient and less consistent than the fairway</p>
+                <p><strong>Practical note:</strong> a Hybrid will often give more consistency from this lie</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Driver Caddie Strategy Notes</h2>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Tee-1 Parkland Caddie Tip</h3>
+                <p>Accuracy over power. At this level, keeping the ball in play is more beneficial than attempting maximum distance, which can lead to high scores.</p>
+                <p>You may consider trying a lower force rate in return for more focus on accuracy.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Fairway Driver Caddie Tip</h3>
+                <p>Most players in your category gain more from centred contact and control than from forcing maximum swing speed.</p>
+                <p>Reducing force slightly may improve strike quality and produce a better overall result.</p>
+                <p>Alternatively, you may be better using a lesser wood, Stinger, Hybrid or Iron, and just focus on staying on the fairway rather than trying to hit the green.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>1st Cut Driver Caddie Tip</h3>
+                <p>For a 36-handicap golfer, the 1st cut is generally manageable and similar to a fairway lie, but slightly less consistent.</p>
+                <p>You would likely get more consistency out of a Hybrid.</p>
+            </div>
+        </div>
+    </div>
+
+$1
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Walkway / Hard Surface — Driver Rule (36 Handicap)</h2>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Surface Behaviour</h3>
+                <p><strong>Lie:</strong> Walkway, cart path, firm non-grass surface, or slightly elevated artificial surface</p>
+                <p><strong>Launch pattern:</strong> often lower than a normal fairway strike</p>
+                <p><strong>Rollout:</strong> may increase if contact is clean</p>
+                <p><strong>Distance expectation:</strong> usually remains within the 36-handicap driver range, but may match or slightly exceed fairway total distance on a clean strike</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Risk Behaviour</h3>
+                <p>Hard surfaces are unforgiving and can make clean contact difficult for a high-handicap player.</p>
+                <p>Poor contact may reduce distance, create a very low shot, or make the ball skid unpredictably.</p>
+                <p>Striking the hard ground with the club may also risk damaging the club.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Caddie Tip</h3>
+                <p>A low Stinger or safer controlled recovery shot may be wiser than driver from a walkway.</p>
+                <p>The player should avoid digging the club into the hard surface, because club damage and poor strike quality are real risks.</p>
+            </div>
+        </div>
+    </div>
+
+$2
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Moon Course Baseline</h3>
+                <p><strong>Player:</strong> 36-handicap baseline</p>
+                <p><strong>Environment:</strong> shot launched from an atmospheric chamber toward lunar play conditions</p>
+                <p><strong>Best-case clean strike:</strong> may approach or exceed 1,000 yards</p>
+                <p><strong>Gameplay rule:</strong> extreme distance potential comes with extreme directional punishment</p>
+                <p><strong>Landing rule:</strong> the ball may strike the lunar surface at high velocity and behave more like a projectile bounce than a normal Earth roll</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Moon Course Behaviour</h3>
+                <p>Low gravity and near-vacuum conditions massively increase distance potential.</p>
+                <p>Hooks and slices become dramatically worse over very long travel distances.</p>
+                <p>Whiffs and off-centre contact remain possible because control is harder, not easier.</p>
+                <p>Best-case monster outcomes are possible, but they should not happen every time.</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Moon Course Caddie Tip</h3>
+                <p>As you are in an atmospheric chamber, you can utilise full force, which could see you potentially hit many times farther than you would on Earth.</p>
+                <p>However, this also means hooks and slices are far worse. You may consider less force, in favour of more control.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Player Command Format</h2>
+
+        <p>
+            All player shots must follow the official Moon Golf command structure. If a command is written incorrectly, then nothing happens.
+        </p>
+
+        <h3>Official Command Fields</h3>
+        <ul>
+            <li><strong>Club:</strong> OmniAtlas L1 Adjustable Golf Driver</li>
+            <li><strong>Lie:</strong> Fairway</li>
+            <li><strong>Force:</strong> 75%</li>
+            <li><strong>Direction:</strong> Straight up the fairway</li>
+            <li><strong>Shot type:</strong> Drive</li>
+            <li><strong>Message:</strong> Aim slightly right and favour clean contact</li>
+        </ul>
+
+        <h3>Example Player Command</h3>
+        <div class="command-example">Club: OmniAtlas L1 Adjustable Golf Driver
+Lie: Fairway
+Force: 75%
+Direction: Straight up the fairway
+Shot type: Drive
+Message: Aim slightly right and favour clean contact</div>
+
+        <p style="margin-top:14px; margin-bottom:0;">
+            The player message expresses intent only. It does not guarantee the result. Player skill, lie, club, course conditions, and weighted probability still decide the final outcome.
+        </p>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">Player Command Entry</h2>
+
+        <p>
+            Enter the command exactly in the six-line format below. Invalid commands are ignored.
+        </p>
+
+        <textarea id="playerCommand" class="command-box" placeholder="Club: OmniAtlas L1 Adjustable Golf Driver
+Lie: Fairway
+Force: 75%
+Direction: Straight up the fairway
+Shot type: Drive
+Message: Aim slightly right and favour clean contact"></textarea>
+
+        <div class="command-actions">
+            <button onclick="submitPlayerCommand()">Submit Command</button>
+        </div>
+
+        <div id="acceptedCommandPanel" class="accepted-command hidden">
+            <h3 style="margin-top:0;">Last Accepted Command</h3>
+            <p><strong>Club:</strong> <span id="acceptedClub"></span></p>
+            <p><strong>Lie:</strong> <span id="acceptedLie"></span></p>
+            <p><strong>Force:</strong> <span id="acceptedForce"></span></p>
+            <p><strong>Direction:</strong> <span id="acceptedDirection"></span></p>
+            <p><strong>Shot type:</strong> <span id="acceptedShotType"></span></p>
+            <p><strong>Message:</strong> <span id="acceptedMessage"></span></p>
+            <p class="note-text" style="margin-bottom:0;">
+                Accepted command stored. Outcome logic can now use this command later.
+            </p>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h2 style="text-align:center;">L1 Round Equipment Status</h2>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3>Club 1 Status</h3>
+                <p><strong>Name:</strong> OmniAtlas L1 Adjustable Loft Golf Club</p>
+                <p><strong>Condition:</strong> <span id="club1Condition" class="status-good">Excellent</span></p>
+                <p><strong>Broken:</strong> <span id="club1Broken">No</span></p>
+                <p><strong>Replacement Allowed If Broken:</strong> Yes</p>
+            </div>
+
+            <div class="club-card">
+                <h3>Club 2 Status</h3>
+                <p><strong>Name:</strong> OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood</p>
+                <p><strong>Condition:</strong> <span id="club2Condition" class="status-good">Excellent</span></p>
+                <p><strong>Broken:</strong> <span id="club2Broken">No</span></p>
+                <p><strong>Locked Setting:</strong> <span id="club2StatusSetting">Neutral</span></p>
+            </div>
+
+            <div class="club-card">
+                <h3>Club 3 Status</h3>
+                <p><strong>Name:</strong> OmniAtlas L1 Adjustable Golf Driver</p>
+                <p><strong>Condition:</strong> <span id="club3Condition" class="status-good">Excellent</span></p>
+                <p><strong>Broken:</strong> <span id="club3Broken">No</span></p>
+                <p><strong>Locked Setting:</strong> <span id="club3StatusSetting">Neutral</span></p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+let distance = 380;
+let shots = 0;
+let lastAcceptedCommand = null;
+
+const moonGolfClubData = {
+    club1: {
+        name: "OmniAtlas L1 Adjustable Loft Golf Club",
+        shortName: "Club 1",
+        type: "all_in_one",
+        condition: "Excellent",
+        broken: false,
+        playableModes: [
+            "04° Putter",
+            "12° Stinger",
+            "20° Hybrid",
+            "28° 6 Iron",
+            "36° 8 Iron",
+            "44° Wedge",
+            "52° Sand",
+            "60° Lob"
+        ]
+    },
+    club2: {
+        name: "OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood",
+        shortName: "Club 2",
+        type: "adjustable_fairway_wood",
+        condition: "Excellent",
+        broken: false,
+        allowedSettings: [
+            "Low Flight",
+            "Neutral",
+            "High Launch"
+        ],
+        currentSetting: "Neutral"
+    },
+    club3: {
+        name: "OmniAtlas L1 Adjustable Golf Driver",
+        shortName: "Club 3",
+        type: "adjustable_driver",
+        condition: "Excellent",
+        broken: false,
+        allowedSettings: [
+            "Low Loft (Distance)",
+            "Neutral",
+            "High Loft (Control)"
+        ],
+        currentSetting: "Neutral"
+    }
+};
+
+const roundState = {
+    started: false,
+    clubSettingsLocked: false,
+    lockedClub2Setting: "Neutral",
+    lockedClub3Setting: "Neutral"
+};
+
+const olpState = {
+    cartonsPurchased: 0,
+    availableSips: 0,
+    sipsThisHole: 0,
+    totalRoundSips: 0,
+    lastEffectNote: "No OLP taken."
+};
+
+const roughLieState = {
+    lastLieType: "Clean",
+    lastRoughNote: "No rough lie applied yet."
+};
+
+const realismGuardState = {
+    lastResult: "No shot checked yet.",
+    lastQuality: "None",
+    lastAdjustmentPercent: 0.0
+};
+
+const allowedCommandData = {
+    clubs: [
+        "Driver",
+        "3-wood",
+        "5-wood",
+        "7-iron",
+        "Pitching Wedge",
+        "Putter",
+        "OmniAtlas L1 Adjustable Loft Golf Club",
+        "OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood",
+        "OmniAtlas L1 Adjustable Golf Driver",
+        "04° Putter",
+        "12° Stinger",
+        "20° Hybrid",
+        "28° 6 Iron",
+        "36° 8 Iron",
+        "44° Wedge",
+        "52° Sand",
+        "60° Lob"
+    ],
+    lies: [
+        "Tee",
+        "Fairway",
+        "First cut rough",
+        "Second cut rough",
+        "Rough",
+        "Walkway",
+        "Bunker",
+        "Fringe",
+        "Green"
+    ],
+    directions: [
+        "Straight up the fairway",
+        "Left up the fairway",
+        "Right up the fairway",
+        "Towards the green",
+        "Towards the pin"
+    ],
+    shotTypes: [
+        "Drive",
+        "Fairway strike",
+        "Lay-up",
+        "Chip",
+        "Pitch",
+        "Putt"
+    ]
+};
+
+const caddieProfiles = {
+    none: {
+        label: "No Caddie",
+        varianceMultiplier: 1.00,
+        floorPull: 0.00,
+        ceilingTrim: 0.00,
+        trainingFullShotsMin: 0,
+        trainingFullShotsMax: 0,
+        trainingShortGameMin: 0,
+        trainingShortGameMax: 0,
+        trainingPuttingMin: 0,
+        trainingPuttingMax: 0,
+        hookSliceMin: 0,
+        hookSliceMax: 0,
+        rescueMax: 0
+    },
+    cheap: {
+        label: "Cheap Caddie",
+        varianceMultiplier: 0.93,
+        floorPull: 0.02,
+        ceilingTrim: 0.02,
+        trainingFullShotsMin: 1,
+        trainingFullShotsMax: 4,
+        trainingShortGameMin: 3,
+        trainingShortGameMax: 6,
+        trainingPuttingMin: 4,
+        trainingPuttingMax: 8,
+        hookSliceMin: 1,
+        hookSliceMax: 8,
+        rescueMax: 8
+    },
+    mid: {
+        label: "Average Caddie",
+        varianceMultiplier: 0.86,
+        floorPull: 0.04,
+        ceilingTrim: 0.04,
+        trainingFullShotsMin: 3,
+        trainingFullShotsMax: 8,
+        trainingShortGameMin: 6,
+        trainingShortGameMax: 12,
+        trainingPuttingMin: 8,
+        trainingPuttingMax: 15,
+        hookSliceMin: 8,
+        hookSliceMax: 20,
+        rescueMax: 20
+    },
+    elite: {
+        label: "Elite Caddie",
+        varianceMultiplier: 0.78,
+        floorPull: 0.06,
+        ceilingTrim: 0.06,
+        trainingFullShotsMin: 5,
+        trainingFullShotsMax: 12,
+        trainingShortGameMin: 10,
+        trainingShortGameMax: 18,
+        trainingPuttingMin: 12,
+        trainingPuttingMax: 22,
+        hookSliceMin: 20,
+        hookSliceMax: 35,
+        rescueMax: 50
+    }
+};
+
+const customBallProfiles = {
+    none: {
+        label: "Standard Ball",
+        reductionMin: 0,
+        reductionMax: 0,
+        rescueMax: 0
+    },
+    cheap: {
+        label: "Cheap Caddie Custom Ball",
+        reductionMin: 1,
+        reductionMax: 5,
+        rescueMax: 5
+    },
+    mid: {
+        label: "Average Caddie Custom Ball",
+        reductionMin: 5,
+        reductionMax: 12,
+        rescueMax: 12
+    },
+    elite: {
+        label: "Elite Caddie Custom Ball",
+        reductionMin: 12,
+        reductionMax: 20,
+        rescueMax: 25
+    }
+};
+
+const clubPerformanceProfiles = {
+    driver36HandicapEarthTee: {
+        baseline: {
+            averageCarryMin: 120,
+            averageCarryMax: 145,
+            averageTotalMin: 135,
+            averageTotalMax: 166
+        },
+        forceBands: [
+            { min: 1, max: 25, label: "Very weak advancing strike", carryFactorMin: 0.10, carryFactorMax: 0.22, totalFactorMin: 0.10, totalFactorMax: 0.22, riskLevel: "Low", distanceNote: "Little useful driver distance" },
+            { min: 26, max: 49, label: "Short advancing shot", carryFactorMin: 0.23, carryFactorMax: 0.42, totalFactorMin: 0.23, totalFactorMax: 0.42, riskLevel: "Low to Moderate", distanceNote: "Limited driver value" },
+            { min: 50, max: 74, label: "Moderate playable strike", carryFactorMin: 0.43, carryFactorMax: 0.68, totalFactorMin: 0.43, totalFactorMax: 0.68, riskLevel: "Moderate", distanceNote: "Below full driver potential" },
+            { min: 75, max: 89, label: "Strong practical driver use", carryFactorMin: 0.69, carryFactorMax: 0.88, totalFactorMin: 0.69, totalFactorMax: 0.88, riskLevel: "Moderate to High", distanceNote: "Useful distance with manageable risk" },
+            { min: 90, max: 100, label: "Full driver intent", carryFactorMin: 0.89, carryFactorMax: 1.00, totalFactorMin: 0.89, totalFactorMax: 1.00, riskLevel: "High", distanceNote: "Highest distance potential with increased mishit and dispersion risk" }
+        ],
+        caddieTip: "Accuracy over power. At this level, keeping the ball in play is more beneficial than attempting maximum distance, which can lead to high scores. You may consider trying a lower force rate in return for more focus on accuracy."
+    },
+    driver36HandicapEarthFairway: {
+        baseline: {
+            averageTotalMin: 141,
+            averageTotalMax: 155
+        },
+        forceBands: [
+            { min: 1, max: 25, label: "Very weak fairway driver attempt", totalFactorMin: 0.10, totalFactorMax: 0.22, riskLevel: "Low", distanceNote: "Too little force for useful driver-from-fairway value" },
+            { min: 26, max: 49, label: "Short fairway driver attempt", totalFactorMin: 0.23, totalFactorMax: 0.42, riskLevel: "Low to Moderate", distanceNote: "Limited distance and still not ideal club usage" },
+            { min: 50, max: 74, label: "Moderate fairway driver strike", totalFactorMin: 0.43, totalFactorMax: 0.68, riskLevel: "Moderate", distanceNote: "Playable, but contact quality matters heavily" },
+            { min: 75, max: 89, label: "Strong fairway driver strike", totalFactorMin: 0.69, totalFactorMax: 0.88, riskLevel: "Moderate to High", distanceNote: "Demanding shot with real mishit risk" },
+            { min: 90, max: 100, label: "High-force fairway driver attempt", totalFactorMin: 0.89, totalFactorMax: 1.00, riskLevel: "High", distanceNote: "Potentially useful distance, but often not the percentage play" }
+        ],
+        caddieTip: "Most players in your category gain more from centred contact and control than from forcing maximum swing speed. Reducing force slightly may improve strike quality and produce a better overall result. Alternatively, you may be better using a lesser wood, Stinger, Hybrid or Iron, and just focus on staying on the fairway rather than trying to hit the green."
+    },
+    driver36HandicapEarthFirstCut: {
+        baseline: { averageTotalMin: 135, averageTotalMax: 150 },
+        forceBands: [
+            { min: 1, max: 25, label: "Very weak 1st-cut driver attempt", totalFactorMin: 0.10, totalFactorMax: 0.22, riskLevel: "Low", distanceNote: "Too little force for worthwhile driver use from the 1st cut" },
+            { min: 26, max: 49, label: "Short 1st-cut driver attempt", totalFactorMin: 0.23, totalFactorMax: 0.42, riskLevel: "Low to Moderate", distanceNote: "Manageable lie, but distance remains modest" },
+            { min: 50, max: 74, label: "Moderate 1st-cut driver strike", totalFactorMin: 0.43, totalFactorMax: 0.68, riskLevel: "Moderate", distanceNote: "Playable, with only a slight penalty compared with fairway" },
+            { min: 75, max: 89, label: "Strong 1st-cut driver strike", totalFactorMin: 0.69, totalFactorMax: 0.88, riskLevel: "Moderate to High", distanceNote: "Generally manageable, but slightly less consistent than fairway" },
+            { min: 90, max: 100, label: "High-force 1st-cut driver attempt", totalFactorMin: 0.89, totalFactorMax: 1.00, riskLevel: "High", distanceNote: "Good distance is possible, but contact and consistency remain slightly reduced" }
+        ],
+        caddieTip: "For a 36-handicap golfer, the 1st cut is generally manageable and similar to a fairway lie, but slightly less consistent. You would likely get more consistency out of a Hybrid."
+    },
+$1
+    driver36HandicapEarthWalkway: {
+        baseline: {
+            averageTotalMin: 135,
+            averageTotalMax: 168
+        },
+        forceBands: [
+            { min: 1, max: 25, label: "Very weak hard-surface driver attempt", totalFactorMin: 0.10, totalFactorMax: 0.22, riskLevel: "Moderate", distanceNote: "Low force may only skid the ball forward with little useful flight" },
+            { min: 26, max: 49, label: "Short hard-surface driver attempt", totalFactorMin: 0.23, totalFactorMax: 0.42, riskLevel: "Moderate to High", distanceNote: "Contact can be awkward because there is no tee and no grass cushion" },
+            { min: 50, max: 74, label: "Moderate hard-surface driver strike", totalFactorMin: 0.43, totalFactorMax: 0.68, riskLevel: "High", distanceNote: "A clean strike can run, but poor contact may produce a low unpredictable shot" },
+            { min: 75, max: 89, label: "Strong hard-surface driver strike", totalFactorMin: 0.69, totalFactorMax: 0.88, riskLevel: "High", distanceNote: "Possible fairway-like total distance if clean, but club-damage and mishit risk rise" },
+            { min: 90, max: 100, label: "Maximum hard-surface driver attempt", totalFactorMin: 0.89, totalFactorMax: 1.00, riskLevel: "Very High", distanceNote: "May roll out well from clean contact, but the hard surface makes the strike risky" }
+        ],
+        caddieTip: "From a walkway or hard surface, a low Stinger or controlled recovery shot is often safer than driver. Avoid striking the hard ground because it can damage the club and ruin contact."
+    },
+    driver36HandicapMoon: {
+        baseline: {
+            averageTotalMin: 780,
+            averageTotalMax: 1000,
+            bestCaseTotalMax: 1150
+        },
+        forceBands: [
+            { min: 1, max: 25, label: "Controlled lunar advance", totalFactorMin: 0.10, totalFactorMax: 0.22, riskLevel: "Low", distanceNote: "Still long compared with Earth, but controlled" },
+            { min: 26, max: 49, label: "Short moon drive", totalFactorMin: 0.23, totalFactorMax: 0.42, riskLevel: "Moderate", distanceNote: "Distance increases quickly in lunar play" },
+            { min: 50, max: 74, label: "Medium moon launch", totalFactorMin: 0.43, totalFactorMax: 0.68, riskLevel: "Moderate to High", distanceNote: "Large travel distance with rising error punishment" },
+            { min: 75, max: 89, label: "Strong moon drive", totalFactorMin: 0.69, totalFactorMax: 0.88, riskLevel: "High", distanceNote: "Hooks and slices can become severe over long travel" },
+            { min: 90, max: 100, label: "Full lunar blast", totalFactorMin: 0.89, totalFactorMax: 1.00, riskLevel: "Very High", distanceNote: "Monster distance possible, but dispersion becomes extreme" }
+        ],
+        caddieTip: "As you are in an atmospheric chamber, you can utilise full force, which could see you potentially hit many times farther than you would on Earth. However, this also means hooks and slices are far worse. You may consider less force, in favour of more control."
+    }
+};
+
+const trainingState = {
+    currentQuestion: null,
+    timer: null,
+    timeLeft: 0,
+    askedIndexes: [],
+    locked: false,
+    stats: {
+        driving: 0.0,
+        fairway: 0.0,
+        rough: 0.0,
+        bunker: 0.0,
+        greenReading: 0.0,
+        putting: 0.0,
+        weather: 0.0,
+        rules: 0.0,
+        courseManagement: 0.0,
+        gym: 0.0
+    }
+};
+
+const trainingQuestions = [
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What is the main advantage of a fairway lie compared with rough?",
+        answers: {
+            A: "Less need for club selection",
+            B: "More predictable contact",
+            C: "Automatic extra spin",
+            D: "Guaranteed extra distance"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "From the fairway, what usually gives the best result?",
+        answers: {
+            A: "Swinging as hard as possible",
+            B: "Controlled centred contact",
+            C: "Leaning back through impact",
+            D: "Keeping the club off the turf entirely"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Why is a fairway lie generally preferred?",
+        answers: {
+            A: "The ball sits in longer grass",
+            B: "The lie reduces the need for judgment",
+            C: "The ball is easier to strike cleanly",
+            D: "The ball always flies higher"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Which factor matters most when choosing a club from the fairway?",
+        answers: {
+            A: "Ball colour",
+            B: "Remaining distance to target",
+            C: "Shoe grip",
+            D: "Tee height"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What is the main risk of trying to overpower a fairway shot?",
+        answers: {
+            A: "The ball becomes heavier",
+            B: "Contact quality may worsen",
+            C: "The fairway becomes narrower",
+            D: "The club gains loft"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "On a fairway shot, striking the ground before the ball is known as what?",
+        answers: {
+            A: "A fade",
+            B: "A blade",
+            C: "A fat shot",
+            D: "A draw"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "On a fairway approach, what usually matters more than raw power?",
+        answers: {
+            A: "Clubhead colour",
+            B: "Directional control and strike quality",
+            C: "Grip brand",
+            D: "Glove thickness"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "A fairway lie usually allows better control because:",
+        answers: {
+            A: "The ball always has topspin",
+            B: "The club can reach the back of the ball more cleanly",
+            C: "The wind is weaker",
+            D: "The fairway adds power automatically"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What is generally the smartest mindset for fairway play?",
+        answers: {
+            A: "Attack every shot aggressively",
+            B: "Prioritise clean contact and percentage golf",
+            C: "Use driver whenever possible",
+            D: "Ignore lie conditions"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You are on the fairway with a clear shot but water guards the front of the green. What is the safest percentage play?",
+        answers: {
+            A: "Always attack the flag",
+            B: "Aim for the safest landing area",
+            C: "Swing harder to clear everything",
+            D: "Use driver from the fairway"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You are on a fairway lie with the ball slightly below your feet. What is the best general expectation?",
+        answers: {
+            A: "The ball will automatically go higher",
+            B: "Clean contact may be harder",
+            C: "Distance always increases",
+            D: "Spin becomes irrelevant"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You have 90 yards left from the fairway and no trouble ahead. What is usually the best choice?",
+        answers: {
+            A: "Use the club that gives controlled distance",
+            B: "Hit the ball as hard as possible",
+            C: "Use driver for safety",
+            D: "Add unnecessary extra loft"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You are on a fairway lie but hitting into a strong headwind. Best adjustment?",
+        answers: {
+            A: "Use less club",
+            B: "Use more club with controlled strike",
+            C: "Swing wildly harder",
+            D: "Ignore the wind"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "From the fairway, you are between clubs. Which is usually wiser?",
+        answers: {
+            A: "Choose the club that supports a controlled shot",
+            B: "Always choose the shorter club",
+            C: "Always choose the longer club and smash it",
+            D: "Pick randomly"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You are on a clean fairway lie but the pin is tucked near a bunker. Best decision?",
+        answers: {
+            A: "Fire directly at the pin every time",
+            B: "Aim for the safer part of the green",
+            C: "Use maximum force",
+            D: "Ignore the bunker completely"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You have a fairway lie and a narrow green entrance. What is most important?",
+        answers: {
+            A: "Maximum distance",
+            B: "Clean strike and directional accuracy",
+            C: "Extreme backspin attempt",
+            D: "Fastest possible swing"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You are on the fairway with a downhill shot to the green. Best general adjustment?",
+        answers: {
+            A: "Expect the ball to play longer",
+            B: "Expect the ball to stop sooner automatically",
+            C: "Always add loft",
+            D: "Always use driver"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "From a fairway lie, you are trying to reach the green in regulation, but trouble surrounds the pin. Best course-management decision?",
+        answers: {
+            A: "Attack recklessly",
+            B: "Play to the largest safe target area",
+            C: "Swing harder to reduce risk",
+            D: "Aim at trouble and trust luck"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Why does a fairway lie generally improve strike consistency?",
+        answers: {
+            A: "The grass grips the clubhead",
+            B: "The ball is more exposed for predictable contact",
+            C: "The ball rolls before impact",
+            D: "The shaft becomes stiffer"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What is the main difference between a fairway shot and a tee shot?",
+        answers: {
+            A: "A fairway shot usually offers less margin for poor strike mechanics",
+            B: "A fairway shot always goes farther",
+            C: "A fairway shot always launches lower",
+            D: "A fairway shot removes spin"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "From the fairway, which error most often reduces distance and control?",
+        answers: {
+            A: "Clean compression",
+            B: "Hitting ball then turf",
+            C: "Poor strike location or turf-first contact",
+            D: "Balanced tempo"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A player has a perfect fairway lie but a hazard short right of the green. The player tends to push shots right. Best play?",
+        answers: {
+            A: "Aim further right",
+            B: "Aim at the most dangerous line",
+            C: "Adjust target to allow for the common miss",
+            D: "Swing harder to avoid the miss"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "On a fairway approach, why is centred clubface contact valuable?",
+        answers: {
+            A: "It increases random bounce",
+            B: "It improves energy transfer and directional consistency",
+            C: "It makes every shot draw",
+            D: "It removes the need for club selection"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You are on a fairway lie with 165 yards remaining and no direct danger. What is the smartest baseline choice?",
+        answers: {
+            A: "Select a club and force level you can strike cleanly",
+            B: "Use maximum power regardless",
+            C: "Always use the driver",
+            D: "Hit the lowest club available"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You are on the fairway and your previous shots have been inconsistent. Best percentage adjustment?",
+        answers: {
+            A: "Increase force to recover distance",
+            B: "Prioritise rhythm and clean contact",
+            C: "Change aim repeatedly during swing",
+            D: "Ignore consistency and attack hard"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "A fairway lie gives a player the clearest opportunity to do what?",
+        answers: {
+            A: "Use reliable judgment and strike the ball cleanly",
+            B: "Remove all risk from the hole",
+            C: "Eliminate the effect of wind",
+            D: "Ignore course strategy"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "You are on the fairway but slightly blocked by a tree branch line. Best decision?",
+        answers: {
+            A: "Hit directly through the branches at full force",
+            B: "Choose a safer shot shape or lower-risk target",
+            C: "Ignore the obstruction",
+            D: "Use putter"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "fairway",
+        categoryLabel: "Fairway Knowledge",
+        type: "Factual",
+        timeLimit: 15,
+        question: "On a fairway shot, what is usually the best balance?",
+        answers: {
+            A: "Distance only",
+            B: "Height only",
+            C: "Control, strike, and target selection together",
+            D: "Force above all else"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What is the primary physical benefit of strength training for driving distance?",
+        answers: {
+            A: "Increased force production through the swing",
+            B: "Improved grip colour",
+            C: "Reduced ball weight",
+            D: "Automatic accuracy"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Which muscle group contributes most to generating power in a golf swing?",
+        answers: {
+            A: "Fingers",
+            B: "Ankles only",
+            C: "Core muscles (abs and obliques)",
+            D: "Neck muscles"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What is the most important nutrient for muscle growth?",
+        answers: {
+            A: "Sugar",
+            B: "Fibre",
+            C: "Salt",
+            D: "Protein"
+        },
+        correct: "D"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Why is flexibility important alongside strength in golf?",
+        answers: {
+            A: "It removes the need for practice",
+            B: "It increases ball spin automatically",
+            C: "It allows a fuller and more efficient swing",
+            D: "It reduces club weight"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What is the main risk of gaining too much muscle mass in golf?",
+        answers: {
+            A: "Increased ball speed",
+            B: "Better putting",
+            C: "More spin control",
+            D: "Reduced flexibility and swing fluidity"
+        },
+        correct: "D"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Which type of training best improves explosive power for driving?",
+        answers: {
+            A: "Plyometric and power training",
+            B: "Long-distance running",
+            C: "Static stretching only",
+            D: "Meditation"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "What does \"progressive overload\" mean in strength training?",
+        answers: {
+            A: "Avoiding heavy weights",
+            B: "Gradually increasing resistance over time",
+            C: "Training less frequently",
+            D: "Always lifting the same weight"
+        },
+        correct: "B"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Which macronutrient provides energy for high-intensity training?",
+        answers: {
+            A: "Protein only",
+            B: "Water",
+            C: "Vitamins",
+            D: "Carbohydrates"
+        },
+        correct: "D"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Why is rest important in muscle development?",
+        answers: {
+            A: "Muscles grow during recovery, not during the workout",
+            B: "It increases fatigue",
+            C: "It lowers metabolism",
+            D: "It reduces strength permanently"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Factual",
+        timeLimit: 15,
+        question: "Which type of strength is most beneficial for driving distance?",
+        answers: {
+            A: "Static strength only",
+            B: "Finger strength",
+            C: "Explosive and rotational strength",
+            D: "Neck strength"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A player wants more driving distance but feels stiff during their swing. What is the best adjustment?",
+        answers: {
+            A: "Continue only heavy lifting",
+            B: "Stop training entirely",
+            C: "Swing harder",
+            D: "Combine strength training with mobility work"
+        },
+        correct: "D"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A player increases muscle mass beyond 10% and notices worse accuracy. What is the likely cause?",
+        answers: {
+            A: "Reduced flexibility and coordination",
+            B: "Better swing speed",
+            C: "Improved timing",
+            D: "Lighter clubs"
+        },
+        correct: "A"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A player wants to increase strength safely. What is the best approach?",
+        answers: {
+            A: "Lift maximum weight immediately",
+            B: "Train once a month",
+            C: "Use gradual progression with correct technique",
+            D: "Avoid all resistance training"
+        },
+        correct: "C"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A golfer trains heavily but ignores nutrition. What is the likely outcome?",
+        answers: {
+            A: "Maximum muscle growth",
+            B: "Instant improvement",
+            C: "Reduced need for rest",
+            D: "Limited strength gains"
+        },
+        correct: "D"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A player wants to improve driving distance without harming control. Best training focus?",
+        answers: {
+            A: "Only upper-body muscle size",
+            B: "Only leg exercises",
+            C: "No training needed",
+            D: "Balanced strength and mobility training"
+        },
+        correct: "D"
+    },
+    {
+        categoryKey: "gym",
+        categoryLabel: "Gym Training",
+        type: "Scenario",
+        timeLimit: 20,
+        question: "A golfer feels strong but struggles with timing. What should they add?",
+        answers: {
+            A: "More weight only",
+            B: "Less sleep",
+            C: "Coordination and swing practice",
+            D: "Random drills"
+        },
+        correct: "C"
     },
     {
         categoryKey: "gym",
@@ -2290,10 +4089,10 @@ function getAdviceKeyForAcceptedCommand() {
     }
 
     if (club === "OmniAtlas L1 Adjustable Golf Driver") {
-    return "club3";
-}
+        return "club3";
+    }
 
-return roundState.clubSettingsLocked ? "lockedRound" : "placeholder";
+    return roundState.clubSettingsLocked ? "lockedRound" : "placeholder";
 }
 
 function findForceBand(profile, forceValue) {
@@ -2301,28 +4100,6 @@ function findForceBand(profile, forceValue) {
         return forceValue >= band.min && forceValue <= band.max;
     }) || null;
 }
-
-/* ===== PART 2: 3-WOOD FAIRWAY SUMMARY ===== */
-function get3WoodFairwaySummary(forceValue) {
-    const profile = clubPerformanceProfiles.driver36Handicap3WoodFairway;
-    const band = findForceBand(profile, forceValue);
-    if (!band) return null;
-
-    const adjustedTotal = applyCaddieRangeAdjustment(
-        Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
-        Math.round(profile.baseline.averageTotalMax * band.totalFactorMax)
-    );
-
-    return {
-        bandLabel: band.label,
-        totalMin: adjustedTotal.min,
-        totalMax: adjustedTotal.max,
-        riskLevel: band.riskLevel,
-        distanceNote: band.distanceNote,
-        caddieTip: profile.caddieTip
-    };
-}
-/* ===== END PART 2 ===== */
 
 function updateOLPDisplay() {
     const cartonsEl = document.getElementById("olpCartonsPurchased");
@@ -2498,6 +4275,1109 @@ function estimateShotQualityForRealismGuard(command) {
     if (!command) {
         return Math.random() < 0.55 ? "solid" : "ordinary";
     }
+
+    const forceValue = getForceNumber(command.force);
+    const roll = Math.random();
+
+    if (forceValue >= 90) {
+        if (roll < 0.18) return "poor";
+        if (roll < 0.55) return "ordinary";
+        if (roll < 0.88) return "solid";
+        return "excellent";
+    }
+
+    if (forceValue >= 70) {
+        if (roll < 0.10) return "poor";
+        if (roll < 0.44) return "ordinary";
+        if (roll < 0.86) return "solid";
+        return "excellent";
+    }
+
+    if (roll < 0.08) return "poor";
+    if (roll < 0.50) return "ordinary";
+    if (roll < 0.90) return "solid";
+    return "excellent";
+}
+
+function getRealismGuardAdjustment(command) {
+    const shotType = getShotTypeForRealismGuard(command);
+    const quality = estimateShotQualityForRealismGuard(command);
+    const roll = Math.random();
+
+    let adjustmentPercent = 0;
+    let result = "No boost applied. Result kept neutral for natural variation.";
+
+    if (quality === "poor") {
+        adjustmentPercent = 0;
+        result = "Poor strike detected. No rescue bonus applied.";
+    } else if (shotType === "full") {
+        if (quality === "excellent") {
+            adjustmentPercent = 2.5 + (Math.random() * 2.5);
+            result = "Good full shot rewarded inside natural 0% to 5% variation.";
+        } else if (quality === "solid") {
+            adjustmentPercent = 0.5 + (Math.random() * 2.0);
+            result = "Solid full shot given a small believable gain.";
+        }
+    } else if (shotType === "chip") {
+        if (quality === "excellent") {
+            adjustmentPercent = 7 + (Math.random() * 5);
+            result = "Excellent chip rewarded through believable technique and spin control.";
+        } else if (quality === "solid") {
+            adjustmentPercent = 3 + (Math.random() * 5);
+            result = "Solid chip given a modest short-game control gain.";
+        }
+    } else if (shotType === "putt") {
+        if (quality === "excellent") {
+            adjustmentPercent = 8 + (Math.random() * 7);
+            result = "Excellent putt rewarded through green-reading, confidence, and pace control.";
+        } else if (quality === "solid") {
+            adjustmentPercent = 3 + (Math.random() * 6);
+            result = "Solid putt given a small believable pace-control gain.";
+        }
+    }
+
+    if (quality === "excellent" && shotType === "full") {
+        if (roll > 0.94) {
+            adjustmentPercent += 15 + (Math.random() * 10);
+            result += " Rare firm-ground rollout triggered; top-end chase is noticeable but not repeated every shot.";
+        } else if (roll > 0.78) {
+            adjustmentPercent += 5 + (Math.random() * 10);
+            result += " Natural rollout added from good strike and fair conditions.";
+        }
+    }
+
+    adjustmentPercent = Math.round(adjustmentPercent * 10) / 10;
+
+    return {
+        quality: quality,
+        adjustmentPercent: adjustmentPercent,
+        result: result
+    };
+}
+
+function getRealismGuardText() {
+    return "Realism guard: " + realismGuardState.lastResult + " Last quality: " + realismGuardState.lastQuality + ", adjustment: " + realismGuardState.lastAdjustmentPercent.toFixed(1) + "%.";
+}
+
+function applyRealismGuardToShotDistance(shotDistance, command) {
+    const adjustment = getRealismGuardAdjustment(command || lastAcceptedCommand);
+    const adjustedDistance = Math.round(shotDistance * (1 + (adjustment.adjustmentPercent / 100)));
+
+    realismGuardState.lastResult = adjustment.result;
+    realismGuardState.lastQuality = adjustment.quality;
+    realismGuardState.lastAdjustmentPercent = adjustment.adjustmentPercent;
+
+    updateRealismGuardDisplay();
+
+    return Math.max(1, adjustedDistance);
+}
+
+function getTrainingEffectProfile(command) {
+    const stats = trainingState.stats;
+    const gymBenefitRaw = Math.min(10, stats.gym);
+    const gymOverageRaw = Math.max(0, stats.gym - 10);
+
+    if (!command) {
+        return {
+            label: "No active command",
+            distancePercent: 0,
+            varianceTighteningPercent: 0,
+            explanation: "No command loaded yet."
+        };
+    }
+
+    const lie = command.lie;
+    const shotType = command.shotType;
+    const club = command.club;
+    const isDriver = club === "OmniAtlas L1 Adjustable Golf Driver";
+    const isFairwayWood = club === "OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood";
+    const isPutt = shotType === "Putt" || club === "04° Putter" || club === "Putter";
+    const isShortGame = shotType === "Chip" || shotType === "Pitch" || shotType === "Putt" || lie === "Bunker" || lie === "Fringe" || lie === "Green" || isPutt;
+
+    let distancePercent = 0;
+    let varianceTighteningPercent = 0;
+    let label = "General training effect";
+    let explanationParts = [];
+
+    if (isShortGame) {
+        label = isPutt ? "Putting / green control" : "Short-game control";
+
+        if (lie === "Bunker") {
+            distancePercent += Math.min(3, stats.bunker * 0.03);
+            varianceTighteningPercent += Math.min(10, stats.bunker * 0.10);
+            explanationParts.push("Bunker knowledge active");
+        }
+
+        if (isPutt || lie === "Fringe" || lie === "Green") {
+            distancePercent += Math.min(3, stats.putting * 0.03);
+            varianceTighteningPercent += Math.min(10, stats.putting * 0.10);
+            explanationParts.push("Putting control active");
+
+            distancePercent += Math.min(2, stats.greenReading * 0.02);
+            varianceTighteningPercent += Math.min(8, stats.greenReading * 0.08);
+            explanationParts.push("Green-reading active");
+        }
+
+        if (!isPutt && lie !== "Bunker") {
+            distancePercent += Math.min(2, stats.courseManagement * 0.02);
+            varianceTighteningPercent += Math.min(5, stats.courseManagement * 0.05);
+            explanationParts.push("Course-management active");
+        }
+    } else {
+        label = "Full-shot control";
+
+        if (isDriver || shotType === "Drive") {
+            distancePercent += Math.min(4, stats.driving * 0.04);
+            distancePercent += Math.min(5, gymBenefitRaw * 0.5);
+            varianceTighteningPercent += Math.min(12, stats.driving * 0.12);
+            varianceTighteningPercent += Math.min(3, gymBenefitRaw * 0.3);
+            distancePercent -= Math.min(3, gymOverageRaw * 0.3);
+            varianceTighteningPercent -= Math.min(5, gymOverageRaw * 0.5);
+            explanationParts.push("Driving knowledge active");
+        }
+
+        if (lie === "Fairway") {
+            distancePercent += Math.min(3, stats.fairway * 0.03);
+            varianceTighteningPercent += Math.min(8, stats.fairway * 0.08);
+            explanationParts.push("Fairway knowledge active");
+        }
+
+        if (lie === "First cut rough" || lie === "Second cut rough" || lie === "Rough") {
+            distancePercent += Math.min(3, stats.rough * 0.03);
+            varianceTighteningPercent += Math.min(10, stats.rough * 0.10);
+            explanationParts.push("Rough recovery active");
+        }
+
+        if (isFairwayWood) {
+            distancePercent += Math.min(1.5, stats.fairway * 0.015);
+            varianceTighteningPercent += Math.min(4, stats.courseManagement * 0.04);
+        }
+
+        distancePercent += Math.min(2, stats.weather * 0.02);
+        varianceTighteningPercent += Math.min(5, stats.weather * 0.05);
+        explanationParts.push("Weather judgment active");
+
+        distancePercent += Math.min(2, stats.courseManagement * 0.02);
+        varianceTighteningPercent += Math.min(6, stats.courseManagement * 0.06);
+        explanationParts.push("Course-management active");
+    }
+
+    distancePercent = Math.round(distancePercent * 10) / 10;
+    varianceTighteningPercent = Math.round(varianceTighteningPercent * 10) / 10;
+
+    if (gymBenefitRaw > 0) {
+        explanationParts.push("Gym strength active up to recommended cap");
+    }
+
+    if (gymOverageRaw > 0) {
+        explanationParts.push("Excess gym mass slightly reducing flexibility / timing");
+    }
+
+    if (explanationParts.length === 0) {
+        explanationParts.push("No category contribution yet");
+    }
+
+    return {
+        label: label,
+        distancePercent: distancePercent,
+        varianceTighteningPercent: varianceTighteningPercent,
+        explanation: explanationParts.join(", ") + "."
+    };
+}
+
+function getTrainingEffectText() {
+    if (!lastAcceptedCommand) {
+        return "Training effect: training stats are active, but no valid shot command is loaded yet.";
+    }
+
+    const effect = getTrainingEffectProfile(lastAcceptedCommand);
+    return "Training effect: " + effect.label + ", approx " + effect.distancePercent.toFixed(1) + "% distance efficiency and " + effect.varianceTighteningPercent.toFixed(1) + "% variance tightening from answered academy questions.";
+}
+
+function getBallEffectText() {
+    const ball = getSelectedBallProfile();
+
+    if (ball.label === "Standard Ball") {
+        return "Custom ball effect: none. Standard ball in use.";
+    }
+
+    if (ball.label === "Elite Caddie Custom Ball") {
+        return "Custom ball effect: " + ball.reductionMin + "% to " + ball.reductionMax + "% compliant fitting optimisation, with rare rescue cases up to " + ball.rescueMax + "% on extreme near-OOB standard misses.";
+    }
+
+    return "Custom ball effect: " + ball.reductionMin + "% to " + ball.reductionMax + "% compliant fitting optimisation.";
+}
+
+function updateActiveTrainingSummary() {
+    const summaryEl = document.getElementById("activeTrainingSummary");
+    if (!summaryEl) return;
+
+    if (!lastAcceptedCommand) {
+        summaryEl.innerText = "No command loaded yet. Training influence will appear here once a valid shot command is accepted.";
+        return;
+    }
+
+    const effect = getTrainingEffectProfile(lastAcceptedCommand);
+    summaryEl.innerText = effect.label + ": approx " + effect.distancePercent.toFixed(1) + "% efficiency boost and " + effect.varianceTighteningPercent.toFixed(1) + "% tighter result spread. " + effect.explanation;
+}
+
+function getDriverEarthTeeSummary(forceValue) {
+    const profile = clubPerformanceProfiles.driver36HandicapEarthTee;
+    const band = findForceBand(profile, forceValue);
+    if (!band) return null;
+
+    const adjustedCarry = applyCaddieRangeAdjustment(
+        Math.round(profile.baseline.averageCarryMin * band.carryFactorMin),
+        Math.round(profile.baseline.averageCarryMax * band.carryFactorMax)
+    );
+
+    const adjustedTotal = applyCaddieRangeAdjustment(
+        Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
+        Math.round(profile.baseline.averageTotalMax * band.totalFactorMax)
+    );
+
+    return {
+        bandLabel: band.label,
+        distanceNote: band.distanceNote,
+        riskLevel: band.riskLevel,
+        carryMin: adjustedCarry.min,
+        carryMax: adjustedCarry.max,
+        totalMin: adjustedTotal.min,
+        totalMax: adjustedTotal.max,
+        caddieTip: profile.caddieTip
+    };
+}
+
+function getDriverEarthFairwaySummary(forceValue) {
+    const profile = clubPerformanceProfiles.driver36HandicapEarthFairway;
+    const band = findForceBand(profile, forceValue);
+    if (!band) return null;
+
+    const adjustedTotal = applyCaddieRangeAdjustment(
+        Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
+        Math.round(profile.baseline.averageTotalMax * band.totalFactorMax)
+    );
+
+    return {
+        bandLabel: band.label,
+        distanceNote: band.distanceNote,
+        riskLevel: band.riskLevel,
+        totalMin: adjustedTotal.min,
+        totalMax: adjustedTotal.max,
+        caddieTip: profile.caddieTip
+    };
+}
+
+function getDriverEarthFirstCutSummary(forceValue) {
+    const profile = clubPerformanceProfiles.driver36HandicapEarthFirstCut;
+    const band = findForceBand(profile, forceValue);
+    if (!band) return null;
+    const adjustedTotal = applyCaddieRangeAdjustment(
+        Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
+        Math.round(profile.baseline.averageTotalMax * band.totalFactorMax)
+    );
+    return { bandLabel: band.label, distanceNote: band.distanceNote, riskLevel: band.riskLevel, totalMin: adjustedTotal.min, totalMax: adjustedTotal.max, caddieTip: profile.caddieTip };
+}
+
+$1
+function getDriverEarthWalkwaySummary(forceValue) {
+    const profile = clubPerformanceProfiles.driver36HandicapEarthWalkway;
+    const band = findForceBand(profile, forceValue);
+    if (!band) return null;
+
+    const adjustedTotal = applyCaddieRangeAdjustment(
+        Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
+        Math.round(profile.baseline.averageTotalMax * band.totalFactorMax)
+    );
+
+    return {
+        bandLabel: band.label,
+        distanceNote: band.distanceNote,
+        riskLevel: band.riskLevel,
+        totalMin: adjustedTotal.min,
+        totalMax: adjustedTotal.max,
+        caddieTip: profile.caddieTip
+    };
+}
+
+function getDriverMoonSummary(forceValue) {
+    const profile = clubPerformanceProfiles.driver36HandicapMoon;
+    const band = findForceBand(profile, forceValue);
+    if (!band) return null;
+
+    const adjustedTotal = applyCaddieRangeAdjustment(
+        Math.round(profile.baseline.averageTotalMin * band.totalFactorMin),
+        Math.round(profile.baseline.averageTotalMax * band.totalFactorMax)
+    );
+
+    return {
+        bandLabel: band.label,
+        distanceNote: band.distanceNote,
+        riskLevel: band.riskLevel,
+        totalMin: adjustedTotal.min,
+        totalMax: adjustedTotal.max,
+        bestCaseTotalMax: profile.baseline.bestCaseTotalMax,
+        caddieTip: profile.caddieTip
+    };
+}
+
+function updateCaddieForCurrentPlayState() {
+    const adviceKey = getAdviceKeyForAcceptedCommand();
+    const courseType = getCourseType();
+    const caddie = getSelectedCaddieProfile();
+    const ball = getSelectedBallProfile();
+
+    updateActiveTrainingSummary();
+
+    if (
+        lastAcceptedCommand &&
+        lastAcceptedCommand.club === "OmniAtlas L1 Adjustable Golf Driver"
+    ) {
+        const forceValue = getForceNumber(lastAcceptedCommand.force);
+        const lie = lastAcceptedCommand.lie;
+        const titleElement = document.getElementById("liveCaddieTitle");
+        const bodyElement = document.getElementById("liveCaddieBody");
+
+        titleElement.innerText = "L1 Driver Advice";
+        bodyElement.innerHTML = "";
+
+        if (courseType === "Moon") {
+            const summary = getDriverMoonSummary(forceValue);
+            if (summary) {
+                [
+                    "Course type: Moon Course.", "Caddie level: " + caddie.label + ".", "Ball type: " + ball.label + ".",
+                    "Driver force band: " + summary.bandLabel + ".", "Estimated Moon total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
+                    "Upper-end clean-contact outcome can rise beyond 1,000 yards in this mode.", "Distance note: " + summary.distanceNote + ".", "Risk level: " + summary.riskLevel + ".",
+                    "Scientific caddie effect: tighter variance, not altered physics.", getTrainingEffectText(), getBallEffectText(), getOLPEffectText(), getRealismGuardText(), summary.caddieTip
+                ].forEach(function(paragraph) { const p = document.createElement("p"); p.textContent = paragraph; bodyElement.appendChild(p); });
+                document.getElementById("liveCaddiePanel").classList.remove("hidden");
+                return;
+            }
+        } else {
+$1
+
+            if (lie === "Walkway") {
+                const summary = getDriverEarthWalkwaySummary(forceValue);
+
+                if (summary) {
+                    [
+                        "Course type: Parkland.",
+                        "Lie: Walkway / hard surface.",
+                        "Caddie level: " + caddie.label + ".",
+                        "Ball type: " + ball.label + ".",
+                        "Driver force band: " + summary.bandLabel + ".",
+                        "Estimated 36-handicap hard-surface-driver total range here: " + summary.totalMin + " to " + summary.totalMax + " yards before hard-surface strike randomness.",
+                        "Walkway rule: clean contact can launch lower and roll farther, but poor contact is more likely because there is no tee or grass cushion.",
+                        "Club warning: striking the hard ground may damage the club or produce an unpredictable low shot.",
+                        "Distance note: " + summary.distanceNote + ".",
+                        "Risk level: " + summary.riskLevel + ".",
+                        "Scientific caddie effect: better club choice advice, not altered physics.",
+                        getTrainingEffectText(),
+                        getBallEffectText(),
+                        getOLPEffectText(),
+                        getRoughLieEffectText(),
+                        getRealismGuardText(),
+                        summary.caddieTip
+                    ].forEach(function(paragraph) {
+                        const p = document.createElement("p");
+                        p.textContent = paragraph;
+                        bodyElement.appendChild(p);
+                    });
+
+                    document.getElementById("liveCaddiePanel").classList.remove("hidden");
+                    return;
+                }
+            }
+
+            if (lie === "First cut rough") {
+                const summary = getDriverEarthFirstCutSummary(forceValue);
+
+                if (summary) {
+                    [
+                        "Course type: Parkland.",
+                        "Lie: First cut rough.",
+                        "Caddie level: " + caddie.label + ".",
+                        "Ball type: " + ball.label + ".",
+                        "Driver force band: " + summary.bandLabel + ".",
+                        "Estimated 36-handicap 1st-cut-driver total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
+                        "Distance note: " + summary.distanceNote + ".",
+                        "Risk level: " + summary.riskLevel + ".",
+                        "Scientific caddie effect: better consistency and fewer extreme misses.",
+                        getTrainingEffectText(),
+                        getBallEffectText(),
+                        getOLPEffectText(),
+                        summary.caddieTip
+                    ].forEach(function(paragraph) {
+                        const p = document.createElement("p");
+                        p.textContent = paragraph;
+                        bodyElement.appendChild(p);
+                    });
+
+                    document.getElementById("liveCaddiePanel").classList.remove("hidden");
+                    return;
+                }
+            } else if (lie === "Fairway") {
+                const summary = getDriverEarthFairwaySummary(forceValue);
+
+                if (summary) {
+                    [
+                        "Course type: Parkland.",
+                        "Lie: Fairway.",
+                        "Caddie level: " + caddie.label + ".",
+                        "Ball type: " + ball.label + ".",
+                        "Driver force band: " + summary.bandLabel + ".",
+                        "Estimated 36-handicap fairway-driver total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
+                        "Distance note: " + summary.distanceNote + ".",
+                        "Risk level: " + summary.riskLevel + ".",
+                        "Scientific caddie effect: reduced variance, not extra hidden power.",
+                        getTrainingEffectText(),
+                        getBallEffectText(),
+                        getOLPEffectText(),
+                        summary.caddieTip
+                    ].forEach(function(paragraph) {
+                        const p = document.createElement("p");
+                        p.textContent = paragraph;
+                        bodyElement.appendChild(p);
+                    });
+
+                    document.getElementById("liveCaddiePanel").classList.remove("hidden");
+                    return;
+                }
+            } else {
+                const summary = getDriverEarthTeeSummary(forceValue);
+
+                if (summary) {
+                    [
+                        "Course type: Parkland.",
+                        "Lie: " + lie + ".",
+                        "Caddie level: " + caddie.label + ".",
+                        "Ball type: " + ball.label + ".",
+                        "Driver force band: " + summary.bandLabel + ".",
+                        "Estimated 36-handicap carry range here: " + summary.carryMin + " to " + summary.carryMax + " yards.",
+                        "Estimated 36-handicap total range here: " + summary.totalMin + " to " + summary.totalMax + " yards.",
+                        "Distance note: " + summary.distanceNote + ".",
+                        "Risk level: " + summary.riskLevel + ".",
+                        "Scientific caddie effect: improved consistency, not impossible distance gains.",
+                        getTrainingEffectText(),
+                        getBallEffectText(),
+                        getOLPEffectText(),
+                        summary.caddieTip
+                    ].forEach(function(paragraph) {
+                        const p = document.createElement("p");
+                        p.textContent = paragraph;
+                        bodyElement.appendChild(p);
+                    });
+
+                    document.getElementById("liveCaddiePanel").classList.remove("hidden");
+                    return;
+                }
+            }
+        }
+    }
+
+    showLiveCaddieAdvice(adviceKey);
+}
+
+function parsePlayerCommand(rawText) {
+    const lines = rawText
+        .split("\n")
+        .map(line => line.trim())
+        .filter(line => line !== "");
+
+    if (lines.length !== 6) {
+        return null;
+    }
+
+    const clubMatch = lines[0].match(/^Club:\s*(.+)$/i);
+    const lieMatch = lines[1].match(/^Lie:\s*(.+)$/i);
+    const forceMatch = lines[2].match(/^Force:\s*(.+)$/i);
+    const directionMatch = lines[3].match(/^Direction:\s*(.+)$/i);
+    const shotTypeMatch = lines[4].match(/^Shot type:\s*(.+)$/i);
+    const messageMatch = lines[5].match(/^Message:\s*(.*)$/i);
+
+    if (!clubMatch || !lieMatch || !forceMatch || !directionMatch || !shotTypeMatch || !messageMatch) {
+        return null;
+    }
+
+    const club = clubMatch[1].trim();
+    const lie = lieMatch[1].trim();
+    const force = forceMatch[1].trim();
+    const direction = directionMatch[1].trim();
+    const shotType = shotTypeMatch[1].trim();
+    const message = messageMatch[1].trim();
+
+    if (!allowedCommandData.clubs.includes(club)) {
+        return null;
+    }
+
+    if (!allowedCommandData.lies.includes(lie)) {
+        return null;
+    }
+
+    if (!/^(100|[1-9][0-9]?)%$/i.test(force)) {
+        return null;
+    }
+
+    if (!allowedCommandData.directions.includes(direction)) {
+        return null;
+    }
+
+    if (!allowedCommandData.shotTypes.includes(shotType)) {
+        return null;
+    }
+
+    if (message.split(/\s+/).filter(Boolean).length > 10) {
+        return null;
+    }
+
+    return {
+        club: club,
+        lie: lie,
+        force: force,
+        direction: direction,
+        shotType: shotType,
+        message: message
+    };
+}
+
+function submitPlayerCommand() {
+    const commandBox = document.getElementById("playerCommand");
+    const parsedCommand = parsePlayerCommand(commandBox.value);
+
+    if (!parsedCommand) {
+        return;
+    }
+
+    lastAcceptedCommand = parsedCommand;
+
+    document.getElementById("acceptedClub").innerText = parsedCommand.club;
+    document.getElementById("acceptedLie").innerText = parsedCommand.lie;
+    document.getElementById("acceptedForce").innerText = parsedCommand.force;
+    document.getElementById("acceptedDirection").innerText = parsedCommand.direction;
+    document.getElementById("acceptedShotType").innerText = parsedCommand.shotType;
+    document.getElementById("acceptedMessage").innerText = parsedCommand.message === "" ? "(No message)" : parsedCommand.message;
+
+    document.getElementById("acceptedCommandPanel").classList.remove("hidden");
+    updateCaddieForCurrentPlayState();
+}
+
+function lockRoundClubSettings() {
+    if (roundState.started) {
+        return;
+    }
+
+    const club2Selection = document.getElementById("club2Setting").value;
+    const club3Selection = document.getElementById("club3Setting").value;
+
+    if (!moonGolfClubData.club2.allowedSettings.includes(club2Selection)) {
+        return;
+    }
+
+    if (!moonGolfClubData.club3.allowedSettings.includes(club3Selection)) {
+        return;
+    }
+
+    roundState.clubSettingsLocked = true;
+    roundState.lockedClub2Setting = club2Selection;
+    roundState.lockedClub3Setting = club3Selection;
+
+    moonGolfClubData.club2.currentSetting = club2Selection;
+    moonGolfClubData.club3.currentSetting = club3Selection;
+
+    document.getElementById("club2LockedDisplay").innerText = club2Selection;
+    document.getElementById("club3LockedDisplay").innerText = club3Selection;
+    document.getElementById("club2StatusSetting").innerText = club2Selection;
+    document.getElementById("club3StatusSetting").innerText = club3Selection;
+    document.getElementById("roundStatusText").innerText = "Pre-round setup locked";
+
+    updateCaddieForCurrentPlayState();
+}
+
+function markRoundStartedIfNeeded() {
+    if (!roundState.started) {
+        roundState.started = true;
+        document.getElementById("roundStatusText").innerText = roundState.clubSettingsLocked
+            ? "Round in progress — settings locked"
+            : "Round in progress — no pre-round lock used";
+    }
+}
+
+function getRandomInt(min, max) {
+    return Math.round(min + Math.random() * (max - min));
+}
+
+function applyCaddieRangeAdjustment(min, max) {
+    const caddie = getSelectedCaddieProfile();
+
+    let adjustedMin = min;
+    let adjustedMax = max;
+
+    const spread = max - min;
+    const tightenedSpread = spread * caddie.varianceMultiplier;
+    const midpoint = (min + max) / 2;
+
+    adjustedMin = midpoint - (tightenedSpread / 2);
+    adjustedMax = midpoint + (tightenedSpread / 2);
+
+    adjustedMin = adjustedMin + (spread * caddie.floorPull);
+    adjustedMax = adjustedMax - (spread * caddie.ceilingTrim);
+
+    adjustedMin = Math.round(adjustedMin);
+    adjustedMax = Math.round(adjustedMax);
+
+    if (adjustedMax < adjustedMin) {
+        adjustedMax = adjustedMin;
+    }
+
+    return {
+        min: adjustedMin,
+        max: adjustedMax,
+        label: caddie.label
+    };
+}
+
+function applyTrainingRangeAdjustment(min, max, command) {
+    const effect = getTrainingEffectProfile(command || lastAcceptedCommand);
+    const spread = Math.max(0, max - min);
+    const midpoint = (min + max) / 2;
+
+    const distanceMultiplier = 1 + (effect.distancePercent / 100);
+    let adjustedMin = Math.round((midpoint - (spread / 2)) * distanceMultiplier);
+    let adjustedMax = Math.round((midpoint + (spread / 2)) * distanceMultiplier);
+
+    const tightenedSpread = Math.max(0, spread * (1 - (effect.varianceTighteningPercent / 100)));
+    const trainedMidpoint = (adjustedMin + adjustedMax) / 2;
+
+    adjustedMin = Math.round(trainedMidpoint - (tightenedSpread / 2));
+    adjustedMax = Math.round(trainedMidpoint + (tightenedSpread / 2));
+
+    if (adjustedMax < adjustedMin) {
+        adjustedMax = adjustedMin;
+    }
+
+    return {
+        min: adjustedMin,
+        max: adjustedMax,
+        label: effect.label,
+        distancePercent: effect.distancePercent,
+        varianceTighteningPercent: effect.varianceTighteningPercent
+    };
+}
+
+function getRandomIntWithCaddie(min, max, command) {
+    const caddieAdjusted = applyCaddieRangeAdjustment(min, max);
+    const trainingAdjusted = applyTrainingRangeAdjustment(caddieAdjusted.min, caddieAdjusted.max, command);
+    return getRandomInt(trainingAdjusted.min, trainingAdjusted.max);
+}
+
+function getClub1ShotDistance(clubMode, forceValue, command) {
+    const modeRanges = {
+        "04° Putter": { min: 3, max: 18 },
+        "12° Stinger": { min: 60, max: 115 },
+        "20° Hybrid": { min: 85, max: 135 },
+        "28° 6 Iron": { min: 70, max: 115 },
+        "36° 8 Iron": { min: 55, max: 95 },
+        "44° Wedge": { min: 35, max: 70 },
+        "52° Sand": { min: 15, max: 40 },
+        "60° Lob": { min: 10, max: 32 }
+    };
+
+    const range = modeRanges[clubMode];
+    if (!range) return 0;
+
+    const factor = Math.max(0.05, forceValue / 100);
+
+    return getRandomIntWithCaddie(
+        Math.round(range.min * factor),
+        Math.round(range.max * factor),
+        command
+    );
+}
+
+function getClub2ShotDistance(forceValue, command) {
+    const setting = moonGolfClubData.club2.currentSetting;
+
+    const settingRanges = {
+        "Low Flight": { min: 95, max: 140 },
+        "Neutral": { min: 100, max: 150 },
+        "High Launch": { min: 90, max: 138 }
+    };
+
+    const range = settingRanges[setting] || settingRanges["Neutral"];
+    const factor = Math.max(0.08, forceValue / 100);
+
+    return getRandomIntWithCaddie(
+        Math.round(range.min * factor),
+        Math.round(range.max * factor),
+        command
+    );
+}
+
+function getClub3EarthTeeShotDistance(forceValue, command) {
+    const summary = getDriverEarthTeeSummary(forceValue);
+    if (!summary) return 0;
+
+    const driverSetting = moonGolfClubData.club3.currentSetting;
+    let min = summary.totalMin;
+    let max = summary.totalMax;
+
+    if (driverSetting === "Low Loft (Distance)") {
+        min += 4;
+        max += 8;
+    }
+
+    if (driverSetting === "High Loft (Control)") {
+        min -= 4;
+        max -= 6;
+    }
+
+    return getRandomIntWithCaddie(min, max, command);
+}
+
+function getClub3EarthFairwayShotDistance(forceValue, command) {
+    const summary = getDriverEarthFairwaySummary(forceValue);
+    if (!summary) return 0;
+
+    const driverSetting = moonGolfClubData.club3.currentSetting;
+    let min = summary.totalMin;
+    let max = summary.totalMax;
+
+    if (driverSetting === "Low Loft (Distance)") {
+        min += 2;
+        max += 4;
+    }
+
+    if (driverSetting === "High Loft (Control)") {
+        min -= 3;
+        max -= 5;
+    }
+
+    return getRandomIntWithCaddie(min, max, command);
+}
+
+function getClub3EarthFirstCutShotDistance(forceValue, command) {
+    const summary = getDriverEarthFirstCutSummary(forceValue);
+    if (!summary) return 0;
+    const driverSetting = moonGolfClubData.club3.currentSetting;
+    let min = summary.totalMin;
+    let max = summary.totalMax;
+    if (driverSetting === "Low Loft (Distance)") { min += 1; max += 3; }
+    if (driverSetting === "High Loft (Control)") { min -= 2; max -= 4; }
+    return getRandomIntWithCaddie(min, max, command);
+}
+
+$1
+function getClub3EarthWalkwayShotDistance(forceValue, command) {
+    const summary = getDriverEarthWalkwaySummary(forceValue);
+    if (!summary) return 0;
+
+    const driverSetting = moonGolfClubData.club3.currentSetting;
+    let min = summary.totalMin;
+    let max = summary.totalMax;
+
+    if (driverSetting === "Low Loft (Distance)") {
+        min += 2;
+        max += 5;
+    }
+
+    if (driverSetting === "High Loft (Control)") {
+        min -= 4;
+        max -= 7;
+    }
+
+    let hardSurfaceFactor = 0.82 + (Math.random() * 0.18);
+
+    if (Math.random() < 0.18) {
+        hardSurfaceFactor = 1.00 + (Math.random() * 0.12);
+    }
+
+    if (Math.random() < 0.24) {
+        hardSurfaceFactor = 0.45 + (Math.random() * 0.30);
+    }
+
+    return getRandomIntWithCaddie(
+        Math.round(min * hardSurfaceFactor),
+        Math.round(max * hardSurfaceFactor),
+        command
+    );
+}
+
+function getClub3MoonShotDistance(forceValue, command) {
+    const summary = getDriverMoonSummary(forceValue);
+    if (!summary) return 0;
+
+    const driverSetting = moonGolfClubData.club3.currentSetting;
+    let min = summary.totalMin;
+    let max = summary.totalMax;
+
+    if (driverSetting === "Low Loft (Distance)") {
+        min += 35;
+        max += 80;
+    }
+
+    if (driverSetting === "High Loft (Control)") {
+        min -= 30;
+        max -= 60;
+    }
+
+    if (Math.random() < 0.08 && forceValue >= 90) {
+        max = Math.max(max, 1050);
+        min = Math.max(min, 920);
+    }
+
+    return getRandomIntWithCaddie(min, max, command);
+}
+
+function getLegacyPowerDistance() {
+    let power = document.getElementById("power").value;
+    let shotDistance = 0;
+
+    if (power == 50) shotDistance = 120;
+    if (power == 75) shotDistance = 180;
+    if (power == 100) shotDistance = 240;
+
+    return shotDistance;
+}
+
+function getShotDistanceFromAcceptedCommand() {
+    if (!lastAcceptedCommand) {
+        return null;
+    }
+
+    const forceValue = getForceNumber(lastAcceptedCommand.force);
+    const club = lastAcceptedCommand.club;
+    const lie = lastAcceptedCommand.lie;
+    const courseType = getCourseType();
+
+    if (club === "OmniAtlas L1 Adjustable Golf Driver") {
+        if (courseType === "Moon") {
+            return getClub3MoonShotDistance(forceValue, lastAcceptedCommand);
+        }
+
+        if (lie === "Second cut rough") {
+            return getClub3EarthSecondCutShotDistance(forceValue, lastAcceptedCommand);
+        }
+
+        if (lie === "Walkway") {
+            return getClub3EarthWalkwayShotDistance(forceValue, lastAcceptedCommand);
+        }
+
+        if (lie === "First cut rough") {
+            return getClub3EarthFirstCutShotDistance(forceValue, lastAcceptedCommand);
+        }
+
+        if (lie === "Fairway") {
+            return getClub3EarthFairwayShotDistance(forceValue, lastAcceptedCommand);
+        }
+
+        return getClub3EarthTeeShotDistance(forceValue, lastAcceptedCommand);
+    }
+
+    if (club === "OmniAtlas 3-in-1 Fairway Wood L1 Adjustable Wood") {
+        return getClub2ShotDistance(forceValue, lastAcceptedCommand);
+    }
+
+    if (club === "OmniAtlas L1 Adjustable Loft Golf Club") {
+        return getClub1ShotDistance("28° 6 Iron", forceValue, lastAcceptedCommand);
+    }
+
+    if (moonGolfClubData.club1.playableModes.includes(club)) {
+        return getClub1ShotDistance(club, forceValue, lastAcceptedCommand);
+    }
+
+    return null;
+}
+
+function takeShot() {
+    let shotDistance = getShotDistanceFromAcceptedCommand();
+
+    if (shotDistance === null) {
+        shotDistance = getLegacyPowerDistance();
+    }
+
+    shotDistance = applyRealismGuardToShotDistance(shotDistance, lastAcceptedCommand);
+
+    if (lastAcceptedCommand) {
+        shotDistance = applyRoughLieToShot(shotDistance, lastAcceptedCommand.lie);
+    }
+
+    shotDistance = applyOLPToShotDistance(shotDistance);
+
+    distance -= shotDistance;
+    shots++;
+
+    if (distance < 0) distance = 0;
+
+    document.getElementById("distance").innerText = "Distance Remaining: " + distance;
+    document.getElementById("shots").innerText = "Shots Taken: " + shots;
+
+    markRoundStartedIfNeeded();
+    updateCaddieForCurrentPlayState();
+}
+
+/* Training system */
+
+function updateTrainingStatDisplays() {
+    document.getElementById("statDriving").innerText = trainingState.stats.driving.toFixed(1) + "%";
+    document.getElementById("statFairway").innerText = trainingState.stats.fairway.toFixed(1) + "%";
+    document.getElementById("statRough").innerText = trainingState.stats.rough.toFixed(1) + "%";
+    document.getElementById("statBunker").innerText = trainingState.stats.bunker.toFixed(1) + "%";
+    document.getElementById("statGreenReading").innerText = trainingState.stats.greenReading.toFixed(1) + "%";
+    document.getElementById("statPutting").innerText = trainingState.stats.putting.toFixed(1) + "%";
+    document.getElementById("statWeather").innerText = trainingState.stats.weather.toFixed(1) + "%";
+    document.getElementById("statRules").innerText = trainingState.stats.rules.toFixed(1) + "%";
+    document.getElementById("statCourseManagement").innerText = trainingState.stats.courseManagement.toFixed(1) + "%";
+    document.getElementById("statGym").innerText = trainingState.stats.gym.toFixed(1) + "%";
+
+    updateActiveTrainingSummary();
+    updateCaddieForCurrentPlayState();
+}
+
+function clampTrainingStat(value) {
+    if (value < 0) return 0;
+    return Math.round(value * 10) / 10;
+}
+
+function adjustTrainingStat(categoryKey, delta) {
+    trainingState.stats[categoryKey] = clampTrainingStat(trainingState.stats[categoryKey] + delta);
+    updateTrainingStatDisplays();
+}
+
+function updateTrainingTimerDisplay() {
+    const timerEl = document.getElementById("trainingTimer");
+    timerEl.innerText = trainingState.timeLeft + "s";
+    timerEl.className = "";
+
+    if (trainingState.timeLeft > 10) {
+        timerEl.classList.add("timer-good");
+    } else if (trainingState.timeLeft > 5) {
+        timerEl.classList.add("timer-warn");
+    } else {
+        timerEl.classList.add("timer-bad");
+    }
+}
+
+function getUnusedQuestionIndexes() {
+    const indexes = [];
+    for (let i = 0; i < trainingQuestions.length; i++) {
+        if (!trainingState.askedIndexes.includes(i)) {
+            indexes.push(i);
+        }
+    }
+    return indexes;
+}
+
+function startTrainingQuestion() {
+    if (trainingState.timer) {
+        clearInterval(trainingState.timer);
+        trainingState.timer = null;
+    }
+
+    if (trainingState.askedIndexes.length >= trainingQuestions.length) {
+        trainingState.askedIndexes = [];
+    }
+
+    const unusedIndexes = getUnusedQuestionIndexes();
+    const pickedIndex = unusedIndexes[Math.floor(Math.random() * unusedIndexes.length)];
+    const question = trainingQuestions[pickedIndex];
+
+    trainingState.currentQuestion = {
+        ...question,
+        index: pickedIndex
+    };
+    trainingState.askedIndexes.push(pickedIndex);
+    trainingState.locked = false;
+    trainingState.timeLeft = question.timeLimit;
+
+    document.getElementById("trainingQuestionPanel").classList.remove("hidden");
+    document.getElementById("trainingQuestionTitle").innerText = "Training Question";
+    document.getElementById("trainingCategory").innerText = question.categoryLabel;
+    document.getElementById("trainingType").innerText = question.type;
+    document.getElementById("trainingQuestionText").innerText = question.question;
+    document.getElementById("answerA").innerText = "A. " + question.answers.A;
+    document.getElementById("answerB").innerText = "B. " + question.answers.B;
+    document.getElementById("answerC").innerText = "C. " + question.answers.C;
+    document.getElementById("answerD").innerText = "D. " + question.answers.D;
+    document.getElementById("trainingResultBox").classList.add("hidden");
+    document.getElementById("trainingResultBox").innerHTML = "";
+
+    enableTrainingAnswerButtons(true);
+    updateTrainingTimerDisplay();
+
+    trainingState.timer = setInterval(function() {
+        trainingState.timeLeft -= 1;
+        updateTrainingTimerDisplay();
+
+        if (trainingState.timeLeft <= 0) {
+            clearInterval(trainingState.timer);
+            trainingState.timer = null;
+            finishTrainingQuestion(null, true);
+        }
+    }, 1000);
+}
+
+function enableTrainingAnswerButtons(enabled) {
+    document.getElementById("answerA").disabled = !enabled;
+    document.getElementById("answerB").disabled = !enabled;
+    document.getElementById("answerC").disabled = !enabled;
+    document.getElementById("answerD").disabled = !enabled;
+}
+
+function answerTrainingQuestion(answerKey) {
+    if (!trainingState.currentQuestion || trainingState.locked) return;
+    finishTrainingQuestion(answerKey, false);
+}
+
+function finishTrainingQuestion(answerKey, timedOut) {
+    if (!trainingState.currentQuestion || trainingState.locked) return;
+    trainingState.locked = true;
+
+    if (trainingState.timer) {
+        clearInterval(trainingState.timer);
+        trainingState.timer = null;
+    }
+
+    enableTrainingAnswerButtons(false);
+
+    const question = trainingState.currentQuestion;
+    const correct = question.correct;
+    const isCorrect = !timedOut && answerKey === correct;
+    const delta = isCorrect ? 0.1 : -0.1;
+
+    adjustTrainingStat(question.categoryKey, delta);
+
+    const resultBox = document.getElementById("trainingResultBox");
+    resultBox.classList.remove("hidden");
+
+    let resultHtml = "";
+    if (timedOut) {
+        resultHtml += "<p><strong>Time expired.</strong></p>";
+    } else if (isCorrect) {
+        resultHtml += "<p><strong>Correct.</strong></p>";
+    } else {
+        resultHtml += "<p><strong>Incorrect.</strong></p>";
+    }
+
+    if (!timedOut) {
+        resultHtml += "<p><strong>Your answer:</strong> " + answerKey + "</p>";
+    }
+
+    resultHtml += "<p><strong>Correct answer:</strong> " + correct + " — " + question.answers[correct] + "</p>";
+    resultHtml += "<p><strong>Category change:</strong> " + (delta > 0 ? "+" : "") + delta.toFixed(1) + "% to " + question.categoryLabel + "</p>";
+    resultHtml += "<p><strong>Gameplay activation:</strong> this category is now live and will influence matching shot situations in a small, skill-based way.</p>";
+
+    resultBox.innerHTML = resultHtml;
+}
+
+updateTrainingStatDisplays();
+updateActiveTrainingSummary();
+updateOLPDisplay();
+updateRealismGuardDisplay();
+updateCaddieForCurrentPlayState();
+</script>
+
+</body>
+</html>
 
     const forceValue = getForceNumber(command.force);
     const roll = Math.random();
