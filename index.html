@@ -22,7 +22,6 @@ body {
 .topbar {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
   background: #111827;
   padding: 12px;
   border-radius: 10px;
@@ -31,7 +30,6 @@ body {
 }
 
 .scene {
-  position: relative;
   border-radius: 14px;
   overflow: hidden;
   border: 3px solid #334155;
@@ -39,20 +37,6 @@ body {
 
 .scene img {
   width: 100%;
-  display: block;
-}
-
-.poi-icon {
-  position: absolute;
-  left: 8%;
-  top: 26%;
-  font-size: 34px;
-  background: #1d4ed8;
-  border: 3px solid white;
-  border-radius: 50%;
-  padding: 9px 12px;
-  cursor: pointer;
-  box-shadow: 0 0 14px black;
 }
 
 .panel {
@@ -63,47 +47,43 @@ body {
   border: 1px solid #334155;
 }
 
-button {
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 12px 18px;
-  margin: 6px;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
+.routes {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }
+
+.route {
+  flex: 1;
+  background: #1f2937;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid #334155;
+}
+
+.route h3 {
+  margin: 0 0 8px 0;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.left { background: #16a34a; }
+.straight { background: #2563eb; }
+.right { background: #7c3aed; }
 
 button:hover {
-  background: #1d4ed8;
-}
-
-.stop {
-  background: #16a34a;
-}
-
-.continue {
-  background: #475569;
-}
-
-textarea {
-  width: 100%;
-  height: 170px;
-  margin-top: 10px;
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 16px;
-  box-sizing: border-box;
+  opacity: 0.9;
 }
 
 .hidden {
   display: none;
-}
-
-.score {
-  color: #facc15;
-  font-weight: bold;
-  font-size: 20px;
 }
 </style>
 </head>
@@ -112,158 +92,78 @@ textarea {
 
 <div class="game">
 
-  <h1>Scriptorium: Tour Guide Duel</h1>
+<h1>Scriptorium: Tour Guide Duel</h1>
 
-  <div class="topbar">
-    <div>📍 Edinburgh Tour — Ocean Terminal</div>
-    <div>✍ Letters Left: <span id="lettersLeft">3000</span></div>
-    <div>🏁 Stops: <span id="stopsUsed">0</span>/8</div>
-    <div>⭐ Score: <span id="score">0</span></div>
+<div class="topbar">
+  <div>📍 Edinburgh Tour — Leith Junction</div>
+  <div>✍ Letters Left: 2500</div>
+  <div>🏁 Stops: 1/8</div>
+  <div>⭐ Score: 18</div>
+</div>
+
+<div class="scene">
+  <img src="Leith-jobcentre.png">
+</div>
+
+<div class="panel">
+  <h2>🧭 Route Decision — Leith Junction</h2>
+
+  <p>
+    Your coach reaches the first major junction after Ocean Terminal.
+    Traffic moves steadily in all directions, and your passengers are
+    eager to explore more of Leith.
+  </p>
+
+  <p><strong>Which route will you take?</strong></p>
+
+  <div class="routes">
+
+    <div class="route">
+      <h3>⬅ Port of Leith</h3>
+      <p>Maritime route — docks, harbour history, trade, ships.</p>
+      <button class="left" onclick="chooseRoute('port')">Take This Route</button>
+    </div>
+
+    <div class="route">
+      <h3>⬆ Foot of the Walk</h3>
+      <p>Main route — classic Leith streets, local life, food, culture.</p>
+      <button class="straight" onclick="chooseRoute('walk')">Take This Route</button>
+    </div>
+
+    <div class="route">
+      <h3>➡ National Museums Collection Centre</h3>
+      <p>Hidden-history route — archives, storage, lesser-known collections.</p>
+      <button class="right" onclick="chooseRoute('museum')">Take This Route</button>
+    </div>
+
   </div>
+</div>
 
-  <div class="scene">
-    <img src="ocean-terminal.png" alt="Approaching Ocean Terminal">
-    <div class="poi-icon" onclick="showDecision()">⚓</div>
-  </div>
-
-  <div class="panel" id="introPanel">
-    <h2>Approaching Ocean Terminal</h2>
-    <p>
-      The coach moves along Melrose Drive. Ocean Terminal is ahead on the left.
-      This area connects modern shopping, the waterfront, Leith docks, and the Royal Yacht Britannia.
-    </p>
-    <button class="stop" onclick="showDecision()">Approach Point of Interest</button>
-    <button class="continue" onclick="continueDriving()">Continue Driving</button>
-  </div>
-
-  <div class="panel hidden" id="decisionPanel">
-    <h2>⚓ Point of Interest: Ocean Terminal Area</h2>
-    <p>
-      Your passengers can see the Ocean Terminal area. You may stop and present a tour commentary,
-      or continue driving and save your letters for later.
-    </p>
-
-    <p><strong>Possible topics:</strong></p>
-    <ul>
-      <li>Ocean Terminal</li>
-      <li>Royal Yacht Britannia</li>
-      <li>Leith docks</li>
-      <li>Waterfront redevelopment</li>
-      <li>Shopping, dining, tourism, and cruise visitors</li>
-    </ul>
-
-    <p><strong>Minimum letters required if you stop:</strong> 500</p>
-
-    <button class="stop" onclick="stopAndWrite()">Stop & Present</button>
-    <button class="continue" onclick="continueDriving()">Continue Driving</button>
-  </div>
-
-  <div class="panel hidden" id="writingPanel">
-    <h2>Write Your Tour Commentary</h2>
-    <p>
-      Use your letters wisely. A stronger commentary should be interesting, accurate,
-      tourist-friendly, and connected to the place.
-    </p>
-
-    <textarea id="commentary" oninput="updateLetterCount()" placeholder="Write your tour guide commentary here..."></textarea>
-
-    <p>Letters written: <span id="lettersWritten">0</span> / 500 minimum</p>
-
-    <button class="stop" onclick="submitCommentary()">Deliver Commentary</button>
-  </div>
-
-  <div class="panel hidden" id="resultPanel">
-    <h2>Guide Evaluation</h2>
-    <p id="resultText"></p>
-    <p class="score">Points earned: <span id="pointsEarned">0</span></p>
-    <button onclick="continueDriving()">Continue Tour</button>
-  </div>
+<div class="panel hidden" id="resultPanel">
+  <h2>Route Selected</h2>
+  <p id="routeResult"></p>
+</div>
 
 </div>
 
 <script>
-let lettersLeft = 3000;
-let stopsUsed = 0;
-let score = 0;
+function chooseRoute(route) {
+  let text = "";
 
-function showDecision() {
-  hideAllPanels();
-  document.getElementById("decisionPanel").classList.remove("hidden");
-}
-
-function stopAndWrite() {
-  hideAllPanels();
-  document.getElementById("writingPanel").classList.remove("hidden");
-}
-
-function updateLetterCount() {
-  const text = document.getElementById("commentary").value;
-  document.getElementById("lettersWritten").textContent = text.length;
-}
-
-function submitCommentary() {
-  const text = document.getElementById("commentary").value.trim();
-  const length = text.length;
-
-  if (length < 500) {
-    alert("You need at least 500 letters before delivering this commentary.");
-    return;
+  if (route === "port") {
+    text = "You turn toward the Port of Leith, heading deeper into the maritime heart of the city.";
   }
 
-  if (length > lettersLeft) {
-    alert("You do not have enough letters left.");
-    return;
+  if (route === "walk") {
+    text = "You continue straight toward the Foot of the Walk, entering the main artery of Leith life.";
   }
 
-  let points = 10;
-  const lower = text.toLowerCase();
+  if (route === "museum") {
+    text = "You turn right toward the National Museums Collection Centre, exploring a quieter and lesser-known route.";
+  }
 
-  if (lower.includes("ocean terminal")) points += 5;
-  if (lower.includes("britannia")) points += 7;
-  if (lower.includes("royal")) points += 4;
-  if (lower.includes("leith")) points += 5;
-  if (lower.includes("dock")) points += 5;
-  if (lower.includes("waterfront")) points += 4;
-  if (lower.includes("cruise")) points += 3;
-
-  if (length >= 700) points += 4;
-  if (length >= 900) points += 4;
-
-  if (points > 40) points = 40;
-
-  lettersLeft -= length;
-  stopsUsed += 1;
-  score += points;
-
-  document.getElementById("lettersLeft").textContent = lettersLeft;
-  document.getElementById("stopsUsed").textContent = stopsUsed;
-  document.getElementById("score").textContent = score;
-  document.getElementById("pointsEarned").textContent = points;
-
-  document.getElementById("resultText").innerHTML =
-    "Your commentary was judged on local relevance, use of the area, storytelling, cultural value, and guide style.";
-
-  hideAllPanels();
+  document.getElementById("routeResult").innerText = text;
   document.getElementById("resultPanel").classList.remove("hidden");
-}
-
-function continueDriving() {
-  hideAllPanels();
-  document.getElementById("introPanel").classList.remove("hidden");
-  document.getElementById("introPanel").innerHTML = `
-    <h2>Tour Continued</h2>
-    <p>
-      You continue past Ocean Terminal and save your letters for the next stop.
-    </p>
-    <p><strong>Next update:</strong> we add the next road scene and the next icon.</p>
-  `;
-}
-
-function hideAllPanels() {
-  document.getElementById("introPanel").classList.add("hidden");
-  document.getElementById("decisionPanel").classList.add("hidden");
-  document.getElementById("writingPanel").classList.add("hidden");
-  document.getElementById("resultPanel").classList.add("hidden");
 }
 </script>
 
