@@ -74,9 +74,8 @@ button {
   font-weight: bold;
 }
 
-.left { background: #16a34a; }
 .straight { background: #2563eb; }
-.right { background: #7c3aed; }
+.right { background: #16a34a; }
 
 button:hover {
   opacity: 0.9;
@@ -95,23 +94,22 @@ button:hover {
 <h1>Scriptorium: Tour Guide Duel</h1>
 
 <div class="topbar">
-  <div>📍 Edinburgh Tour — Leith Junction</div>
+  <div>📍 Edinburgh Tour — Ferry Road Junction</div>
   <div>✍ Letters Left: 2500</div>
   <div>🏁 Stops: 1/8</div>
   <div>⭐ Score: 18</div>
 </div>
 
 <div class="scene">
-  <img src="Leith-jobcentre.png">
+  <img src="Ferryroad-junction.png">
 </div>
 
 <div class="panel">
-  <h2>🧭 Route Decision — Leith Junction</h2>
+  <h2>🧭 Route Decision — Ferry Road Junction</h2>
 
   <p>
-    Your coach reaches the first major junction after Ocean Terminal.
-    Traffic moves steadily in all directions, and your passengers are
-    eager to explore more of Leith.
+    You continue through Leith and reach another key junction.
+    The area begins to open out, offering different directions into the city.
   </p>
 
   <p><strong>Which route will you take?</strong></p>
@@ -119,21 +117,15 @@ button:hover {
   <div class="routes">
 
     <div class="route">
-      <h3>⬅ Port of Leith</h3>
-      <p>Maritime route — docks, harbour history, trade, ships.</p>
-      <button class="left" onclick="chooseRoute('port')">Take This Route</button>
-    </div>
-
-    <div class="route">
       <h3>⬆ Foot of the Walk</h3>
-      <p>Main route — classic Leith streets, local life, food, culture.</p>
+      <p>Main route — dense local life, shops, food, and classic Leith atmosphere.</p>
       <button class="straight" onclick="chooseRoute('walk')">Take This Route</button>
     </div>
 
     <div class="route">
-      <h3>➡ National Museums Collection Centre</h3>
-      <p>Hidden-history route — archives, storage, lesser-known collections.</p>
-      <button class="right" onclick="chooseRoute('museum')">Take This Route</button>
+      <h3>➡ Inverleith / Botanic Route</h3>
+      <p>Leafy route — parks, gardens, quieter streets, and hidden Edinburgh.</p>
+      <button class="right" onclick="chooseRoute('botanic')">Take This Route</button>
     </div>
 
   </div>
@@ -150,16 +142,12 @@ button:hover {
 function chooseRoute(route) {
   let text = "";
 
-  if (route === "port") {
-    text = "You turn toward the Port of Leith, heading deeper into the maritime heart of the city.";
-  }
-
   if (route === "walk") {
-    text = "You continue straight toward the Foot of the Walk, entering the main artery of Leith life.";
+    text = "You continue straight toward the Foot of the Walk, heading into the busy heart of Leith.";
   }
 
-  if (route === "museum") {
-    text = "You turn right toward the National Museums Collection Centre, exploring a quieter and lesser-known route.";
+  if (route === "botanic") {
+    text = "You turn right toward Inverleith, heading for greener spaces and quieter parts of the city.";
   }
 
   document.getElementById("routeResult").innerText = text;
