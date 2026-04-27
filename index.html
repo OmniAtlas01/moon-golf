@@ -29,14 +29,10 @@ body {
   font-weight: bold;
 }
 
-.scene {
-  border-radius: 14px;
-  overflow: hidden;
-  border: 3px solid #334155;
-}
-
 .scene img {
   width: 100%;
+  border-radius: 12px;
+  border: 3px solid #334155;
 }
 
 .panel {
@@ -61,10 +57,6 @@ body {
   border: 1px solid #334155;
 }
 
-.route h3 {
-  margin: 0 0 8px 0;
-}
-
 button {
   margin-top: 10px;
   padding: 10px;
@@ -73,9 +65,6 @@ button {
   cursor: pointer;
   font-weight: bold;
 }
-
-.straight { background: #2563eb; }
-.right { background: #16a34a; }
 
 button:hover {
   opacity: 0.9;
@@ -94,65 +83,136 @@ button:hover {
 <h1>Scriptorium: Tour Guide Duel</h1>
 
 <div class="topbar">
-  <div>📍 Edinburgh Tour — Ferry Road Junction</div>
-  <div>✍ Letters Left: 2500</div>
+  <div id="location">📍 Leith Junction</div>
+  <div>✍ Letters Left: <span id="letters">2500</span></div>
   <div>🏁 Stops: 1/8</div>
   <div>⭐ Score: 18</div>
 </div>
 
 <div class="scene">
-  <img src="Ferryroad-junction.png">
+  <img id="sceneImage" src="Leith-jobcentre.png">
 </div>
 
-<div class="panel">
-  <h2>🧭 Route Decision — Ferry Road Junction</h2>
-
-  <p>
-    You continue through Leith and reach another key junction.
-    The area begins to open out, offering different directions into the city.
-  </p>
-
-  <p><strong>Which route will you take?</strong></p>
-
-  <div class="routes">
-
-    <div class="route">
-      <h3>⬆ Foot of the Walk</h3>
-      <p>Main route — dense local life, shops, food, and classic Leith atmosphere.</p>
-      <button class="straight" onclick="chooseRoute('walk')">Take This Route</button>
-    </div>
-
-    <div class="route">
-      <h3>➡ Inverleith / Botanic Route</h3>
-      <p>Leafy route — parks, gardens, quieter streets, and hidden Edinburgh.</p>
-      <button class="right" onclick="chooseRoute('botanic')">Take This Route</button>
-    </div>
-
-  </div>
-</div>
-
-<div class="panel hidden" id="resultPanel">
-  <h2>Route Selected</h2>
-  <p id="routeResult"></p>
-</div>
+<div class="panel" id="panel"></div>
 
 </div>
 
 <script>
-function chooseRoute(route) {
-  let text = "";
 
-  if (route === "walk") {
-    text = "You continue straight toward the Foot of the Walk, heading into the busy heart of Leith.";
+let currentScene = 2;
+
+loadScene(currentScene);
+
+function loadScene(scene) {
+  const panel = document.getElementById("panel");
+  const image = document.getElementById("sceneImage");
+  const location = document.getElementById("location");
+
+  if (scene === 2) {
+    location.innerText = "📍 Leith Jobcentre Junction";
+    image.src = "Leith-jobcentre.png";
+
+    panel.innerHTML = `
+      <h2>🧭 Route Decision</h2>
+      <p>You reach a busy junction in Leith.</p>
+
+      <div class="routes">
+
+        <div class="route">
+          <h3>⬅ Port of Leith</h3>
+          <p>Maritime docks and harbour life.</p>
+          <button onclick="nextScene(99)">Go</button>
+        </div>
+
+        <div class="route">
+          <h3>⬆ Foot of the Walk</h3>
+          <p>Main route into Leith life.</p>
+          <button onclick="nextScene(3)">Go</button>
+        </div>
+
+        <div class="route">
+          <h3>➡ Botanic Route</h3>
+          <p>Quieter inland route.</p>
+          <button onclick="nextScene(99)">Go</button>
+        </div>
+
+      </div>
+    `;
   }
 
-  if (route === "botanic") {
-    text = "You turn right toward Inverleith, heading for greener spaces and quieter parts of the city.";
+  if (scene === 3) {
+    location.innerText = "📍 Ferry Road Junction";
+    image.src = "Ferryroad-junction.png";
+
+    panel.innerHTML = `
+      <h2>🧭 Route Decision</h2>
+      <p>You continue toward the Foot of the Walk.</p>
+
+      <div class="routes">
+
+        <div class="route">
+          <h3>⬆ Continue — Foot of the Walk</h3>
+          <p>Stay on the main route.</p>
+          <button onclick="nextScene(4)">Go</button>
+        </div>
+
+        <div class="route">
+          <h3>➡ Inverleith / Botanic Route</h3>
+          <p>Turn toward greener areas.</p>
+          <button onclick="nextScene(99)">Go</button>
+        </div>
+
+      </div>
+    `;
   }
 
-  document.getElementById("routeResult").innerText = text;
-  document.getElementById("resultPanel").classList.remove("hidden");
+  if (scene === 4) {
+    location.innerText = "📍 Great Junction Street";
+    image.src = "scene-5.png";
+
+    panel.innerHTML = `
+      <h2>🧭 Route Decision</h2>
+      <p>The route opens toward central Edinburgh.</p>
+
+      <div class="routes">
+
+        <div class="route">
+          <h3>⬆ Foot of the Walk</h3>
+          <p>Local Leith route.</p>
+          <button onclick="nextScene(5)">Go</button>
+        </div>
+
+        <div class="route">
+          <h3>➡ New Town</h3>
+          <p>Elegant Georgian Edinburgh.</p>
+          <button onclick="nextScene(99)">Go</button>
+        </div>
+
+      </div>
+    `;
+  }
+
+  if (scene === 5) {
+    location.innerText = "📍 Foot of the Walk";
+    panel.innerHTML = `
+      <h2>Route Progressed</h2>
+      <p>You have successfully followed the main Leith route.</p>
+      <p>Next step: we add another stop or decision.</p>
+    `;
+  }
+
 }
+
+function nextScene(scene) {
+  if (scene === 99) {
+    alert("This route will be built next.");
+    return;
+  }
+
+  currentScene = scene;
+  loadScene(scene);
+}
+
 </script>
 
 </body>
