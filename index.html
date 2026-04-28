@@ -21,7 +21,7 @@ body { margin:0; font-family:Arial; background:#0b0f14; color:white; }
 .card {
   background:rgba(0,0,0,0.75);
   padding:15px; border-radius:10px;
-  width:320px;
+  width:340px;
 }
 
 button {
@@ -37,7 +37,7 @@ button {
   display:none; padding:20px;
 }
 
-textarea { width:100%; height:140px; }
+textarea { width:100%; height:160px; }
 </style>
 </head>
 
@@ -79,43 +79,71 @@ let letters = 3000;
 let score = 0;
 let mode = "";
 let currentType = "";
+
 let keywords = {
   monarch:false,
-  leith:false,
   beach:false,
-  edinburgh:false
+  leith:false,
+  edinburgh:false,
+  docks:false
 };
 
-// --- STEP 1 ---
+// --- FLOW ---
+
 function driveToShip() {
-  scene("Royal-yacht.png", "Passing the Waterfront", "Continue", askShip);
+  scene("Royal-yacht.png","Passing the Waterfront","Continue",askShip);
 }
 
-// --- PRIMARY QUESTION ---
 function askShip() {
-  showQuestion("What is the name of that ship?", "ship");
+  showQuestion("What is the name of that ship?","ship");
 }
 
-// --- RED LIGHT ---
 function goToRedLight() {
-  scene("Ocean-terminal-carpark.png", "Stopped at Red Lights", "Wait", followUp);
+  scene("Ocean-terminal-carpark.png","Stopped at Red Lights","Wait",followUp);
 }
 
-// --- FOLLOW-UP LOGIC ---
 function followUp() {
-
   if(!keywords.monarch) {
-    showQuestion("Which Monarchs made landings here?", "monarch");
+    showQuestion("Which Monarchs made landings here?","monarch");
   }
   else if(!keywords.beach) {
-    showQuestion("Does Leith have a beach?", "beach");
+    showQuestion("Does Leith have a beach?","beach");
   }
   else {
-    goToJunction();
+    goToCommercial();
   }
+}
+
+// --- NEW COMMERCIAL QUAY SCENE ---
+
+function goToCommercial() {
+  document.getElementById("scene").src = "Commercial-quay.png";
+
+  document.getElementById("mainCard").innerHTML = `
+    <h3>Near Leith Docks</h3>
+    <p>This is a good place to stop and talk about the docks.</p>
+    
+    <button onclick="askRoad()">Passenger Question</button>
+    <button onclick="lecture()">Pull Over & Lecture</button>
+    <button onclick="goToJunction()">Continue Driving</button>
+  `;
+}
+
+// --- PASSENGER QUESTION ---
+
+function askRoad() {
+  showQuestion("What's the name of that road with the green bar?","road");
+}
+
+// --- LECTURE MODE ---
+
+function lecture() {
+  currentType = "lecture";
+  document.getElementById("commentaryBox").style.display = "block";
 }
 
 // --- JUNCTION ---
+
 function goToJunction() {
 
   document.getElementById("scene").src = "junction-choice.png";
@@ -137,13 +165,13 @@ function goToJunction() {
   `;
 }
 
-// --- ROUTE CHOICE ---
 function choose(route) {
-  alert("Route chosen: " + route + " (next version builds this)");
+  alert("Route chosen: " + route + " (next build)");
 }
 
 // --- QUESTION SYSTEM ---
-function showQuestion(text, type) {
+
+function showQuestion(text,type) {
   currentType = type;
   document.getElementById("questionBox").style.display = "block";
   document.getElementById("questionText").innerText = text;
@@ -155,22 +183,22 @@ function ignore() {
 }
 
 function brief() {
-  mode = "brief";
+  mode="brief";
   openBox(120);
 }
 
 function full() {
-  mode = "full";
+  mode="full";
   openBox(1000);
 }
 
-// --- COMMENTARY ---
 function openBox(limit) {
-  document.getElementById("commentaryBox").style.display = "block";
-  document.getElementById("commentary").maxLength = limit;
+  document.getElementById("commentaryBox").style.display="block";
+  document.getElementById("commentary").maxLength=limit;
 }
 
 // --- SUBMIT ---
+
 function submit() {
 
   let text = document.getElementById("commentary").value.toLowerCase();
@@ -181,32 +209,57 @@ function submit() {
   letters -= len;
   let gained = 0;
 
-  if(currentType === "ship") {
-    if(text.includes("britannia")) gained += 5;
+  // SHIP
+  if(currentType==="ship") {
+    if(text.includes("britannia")) gained+=5;
     if(text.includes("royal")) {
-      gained += 3;
-      keywords.monarch = true;
+      gained+=3;
+      keywords.monarch=true;
     }
   }
 
-  if(currentType === "monarch") {
+  // MONARCH
+  if(currentType==="monarch") {
     if(text.includes("queen") || text.includes("royal")) {
-      gained += 6;
-      keywords.monarch = true;
+      gained+=6;
+      keywords.monarch=true;
     }
   }
 
-  if(currentType === "beach") {
+  // BEACH
+  if(currentType==="beach") {
     if(text.includes("leith sands") || text.includes("beach")) {
-      gained += 6;
-      keywords.beach = true;
-      keywords.leith = true;
+      gained+=6;
+      keywords.leith=true;
+      keywords.beach=true;
     }
   }
 
-  if(text.includes("edinburgh")) {
-    keywords.edinburgh = true;
+  // ROAD
+  if(currentType==="road") {
+    if(text.includes("commercial quay")) {
+      gained+=5;
+      keywords.leith=true;
+    }
   }
+
+  // LECTURE (BIG SYSTEM)
+  if(currentType==="lecture") {
+
+    if(text.includes("ss explorer")) gained+=6;
+    if(text.includes("forth lock")) gained+=5;
+    if(text.includes("breakwater")) gained+=7;
+    if(text.includes("tally toor")) gained+=8;
+    if(text.includes("signal tower")) gained+=6;
+    if(text.includes("victoria quay")) gained+=5;
+    if(text.includes("fingal")) gained+=5;
+    if(text.includes("oyster")) gained+=8;
+
+    keywords.docks = true;
+    keywords.leith = true;
+  }
+
+  if(text.includes("edinburgh")) keywords.edinburgh = true;
 
   if(gained === 0) gained = -2;
 
@@ -214,33 +267,39 @@ function submit() {
 
   alert("Score: " + gained);
 
-  resetAfterAnswer();
+  reset();
   updateUI();
 }
 
 // --- HELPERS ---
-function resetAfterAnswer() {
-  document.getElementById("commentary").value = "";
-  document.getElementById("commentaryBox").style.display = "none";
+
+function reset() {
+  document.getElementById("commentary").value="";
+  document.getElementById("commentaryBox").style.display="none";
   closeQ();
-  goToRedLight();
+
+  if(currentType==="lecture") {
+    goToJunction();
+  } else {
+    goToRedLight();
+  }
 }
 
 function closeQ() {
-  document.getElementById("questionBox").style.display = "none";
+  document.getElementById("questionBox").style.display="none";
 }
 
-function scene(img, title, btnText, fn) {
+function scene(img,title,btn,fn) {
   document.getElementById("scene").src = img;
   document.getElementById("mainCard").innerHTML = `
     <h3>${title}</h3>
-    <button onclick="${fn.name}()">${btnText}</button>
+    <button onclick="${fn.name}()">${btn}</button>
   `;
 }
 
 function updateUI() {
-  document.getElementById("letters").innerText = letters;
-  document.getElementById("score").innerText = score;
+  document.getElementById("letters").innerText=letters;
+  document.getElementById("score").innerText=score;
 }
 
 </script>
