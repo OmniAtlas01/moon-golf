@@ -143,30 +143,43 @@ function lecture() {
 }
 
 // --- JUNCTION ---
+// --- JUNCTION ---
 
 function goToJunction() {
 
-  document.getElementById("scene").src = "junction-choice.png";
+  document.getElementById("scene").src = "Leith-jobcentre.png";
 
   let suggestion = "";
 
-  if(keywords.leith) {
-    suggestion = "<p>Passenger: Could we explore more of Leith?</p>";
+  if(keywords.docks || keywords.leith) {
+    suggestion = "<p>Passenger: Since we have talked about Leith and the docks, could we head toward Newhaven?</p>";
   }
   else if(keywords.edinburgh) {
-    suggestion = "<p>Passenger: Maybe head into Edinburgh?</p>";
+    suggestion = "<p>Passenger: Could we head into Edinburgh City Centre?</p>";
   }
 
   document.getElementById("mainCard").innerHTML = `
-    <h3>Choose Your Route</h3>
+    <h3>Choose Your Direction</h3>
     ${suggestion}
-    <button onclick="choose('leith')">⬅ Tour of Leith</button>
-    <button onclick="choose('edinburgh')">➡ Tour of Edinburgh</button>
+    <button onclick="choose('seafield')">⬅ Seafield</button>
+    <button onclick="choose('edinburgh')">⬆ Edinburgh City Centre</button>
+    <button onclick="choose('newhaven')">➡ Newhaven</button>
   `;
 }
 
 function choose(route) {
-  alert("Route chosen: " + route + " (next build)");
+
+  if(route === "seafield") {
+    alert("Seafield route chosen. Quieter coastal route coming next build.");
+  }
+
+  if(route === "edinburgh") {
+    alert("Edinburgh City Centre route chosen. Main city route coming next build.");
+  }
+
+  if(route === "newhaven") {
+    alert("Newhaven route chosen. Harbour and fishing route coming next build.");
+  }
 }
 
 // --- QUESTION SYSTEM ---
