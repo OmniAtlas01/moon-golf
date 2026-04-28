@@ -5,60 +5,39 @@
 <title>Scriptorium: Tour Guide Duel</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0b0f14;
-  color: white;
-}
+body { margin:0; font-family:Arial; background:#0b0f14; color:white; }
 
 #topbar {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 20px;
-  background: #111a22;
+  display:flex; justify-content:space-between;
+  padding:12px 20px; background:#111a22;
 }
 
-#hero img {
-  width: 100%;
-}
+#hero img { width:100%; }
 
 #overlay {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  display: flex;
-  gap: 20px;
+  position:absolute; bottom:20px; left:20px;
 }
 
 .card {
-  background: rgba(0,0,0,0.75);
-  padding: 15px;
-  border-radius: 10px;
-  width: 320px;
+  background:rgba(0,0,0,0.75);
+  padding:15px; border-radius:10px;
+  width:320px;
 }
 
 button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 8px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  width:100%; padding:10px;
+  margin-top:8px; border:none;
+  border-radius:5px; cursor:pointer;
 }
 
-.primary { background: #3ba55d; }
-.secondary { background: #2d6cdf; }
+.primary { background:#3ba55d; }
+.secondary { background:#2d6cdf; }
 
 #questionBox, #commentaryBox {
-  display: none;
-  padding: 20px;
+  display:none; padding:20px;
 }
 
-textarea {
-  width: 100%;
-  height: 140px;
-}
+textarea { width:100%; height:140px; }
 </style>
 </head>
 
@@ -76,14 +55,13 @@ textarea {
   <div id="overlay">
     <div class="card" id="mainCard">
       <h3>Leaving Leith Cruise Terminal</h3>
-      <button onclick="driveToShip()">Continue Driving</button>
+      <button onclick="driveToShip()">Start Tour</button>
     </div>
   </div>
 </div>
 
 <div id="questionBox">
   <h2 id="questionText"></h2>
-
   <button onclick="ignore()">Ignore</button>
   <button onclick="brief()">Brief Answer</button>
   <button class="primary" onclick="full()">Full Answer</button>
@@ -100,16 +78,17 @@ textarea {
 let letters = 3000;
 let score = 0;
 let mode = "";
-let keywordsCovered = {};
+let currentType = "";
+let keywords = {
+  monarch:false,
+  leith:false,
+  beach:false,
+  edinburgh:false
+};
 
-// --- STEP 1: DRIVE TO SHIP ---
+// --- STEP 1 ---
 function driveToShip() {
-  document.getElementById("scene").src = "Royal-yacht.png";
-
-  document.getElementById("mainCard").innerHTML = `
-    <h3>Passing the Waterfront</h3>
-    <button onclick="askShip()">Continue</button>
-  `;
+  scene("Royal-yacht.png", "Passing the Waterfront", "Continue", askShip);
 }
 
 // --- PRIMARY QUESTION ---
@@ -117,45 +96,59 @@ function askShip() {
   showQuestion("What is the name of that ship?", "ship");
 }
 
-// --- RED LIGHT SCENE ---
+// --- RED LIGHT ---
 function goToRedLight() {
-  document.getElementById("scene").src = "Ocean-terminal-carpark.png";
-
-  document.getElementById("mainCard").innerHTML = `
-    <h3>Stopped at Red Lights</h3>
-    <button onclick="triggerFollowUp()">Wait</button>
-  `;
+  scene("Ocean-terminal-carpark.png", "Stopped at Red Lights", "Wait", followUp);
 }
 
 // --- FOLLOW-UP LOGIC ---
-function triggerFollowUp() {
+function followUp() {
 
-  // If player did NOT mention monarchy
-  if(!keywordsCovered.monarch) {
+  if(!keywords.monarch) {
     showQuestion("Which Monarchs made landings here?", "monarch");
   }
-
-  // If they DID cover monarchy but not beach
-  else if(!keywordsCovered.beach) {
+  else if(!keywords.beach) {
     showQuestion("Does Leith have a beach?", "beach");
   }
-
   else {
-    document.getElementById("mainCard").innerHTML = `
-      <h3>Passengers are satisfied.</h3>
-      <button onclick="continueJourney()">Continue Driving</button>
-    `;
+    goToJunction();
   }
 }
 
-// --- SHOW QUESTION ---
+// --- JUNCTION ---
+function goToJunction() {
+
+  document.getElementById("scene").src = "junction-choice.png";
+
+  let suggestion = "";
+
+  if(keywords.leith) {
+    suggestion = "<p>Passenger: Could we explore more of Leith?</p>";
+  }
+  else if(keywords.edinburgh) {
+    suggestion = "<p>Passenger: Maybe head into Edinburgh?</p>";
+  }
+
+  document.getElementById("mainCard").innerHTML = `
+    <h3>Choose Your Route</h3>
+    ${suggestion}
+    <button onclick="choose('leith')">⬅ Tour of Leith</button>
+    <button onclick="choose('edinburgh')">➡ Tour of Edinburgh</button>
+  `;
+}
+
+// --- ROUTE CHOICE ---
+function choose(route) {
+  alert("Route chosen: " + route + " (next version builds this)");
+}
+
+// --- QUESTION SYSTEM ---
 function showQuestion(text, type) {
   currentType = type;
   document.getElementById("questionBox").style.display = "block";
   document.getElementById("questionText").innerText = text;
 }
 
-// --- OPTIONS ---
 function ignore() {
   closeQ();
   goToRedLight();
@@ -186,35 +179,33 @@ function submit() {
   if(len === 0) return;
 
   letters -= len;
-
   let gained = 0;
 
-  // SHIP LOGIC
   if(currentType === "ship") {
-    if(text.includes("britannia")) {
-      gained += 5;
-      keywordsCovered.ship = true;
-    }
-    if(text.includes("queen") || text.includes("royal")) {
+    if(text.includes("britannia")) gained += 5;
+    if(text.includes("royal")) {
       gained += 3;
-      keywordsCovered.monarch = true;
+      keywords.monarch = true;
     }
   }
 
-  // MONARCH FOLLOW-UP
   if(currentType === "monarch") {
     if(text.includes("queen") || text.includes("royal")) {
       gained += 6;
-      keywordsCovered.monarch = true;
+      keywords.monarch = true;
     }
   }
 
-  // BEACH QUESTION
   if(currentType === "beach") {
     if(text.includes("leith sands") || text.includes("beach")) {
       gained += 6;
-      keywordsCovered.beach = true;
+      keywords.beach = true;
+      keywords.leith = true;
     }
+  }
+
+  if(text.includes("edinburgh")) {
+    keywords.edinburgh = true;
   }
 
   if(gained === 0) gained = -2;
@@ -223,26 +214,30 @@ function submit() {
 
   alert("Score: " + gained);
 
-  document.getElementById("commentary").value = "";
-  document.getElementById("commentaryBox").style.display = "none";
-
-  closeQ();
-  goToRedLight();
-
+  resetAfterAnswer();
   updateUI();
 }
 
-// --- CLOSE QUESTION ---
+// --- HELPERS ---
+function resetAfterAnswer() {
+  document.getElementById("commentary").value = "";
+  document.getElementById("commentaryBox").style.display = "none";
+  closeQ();
+  goToRedLight();
+}
+
 function closeQ() {
   document.getElementById("questionBox").style.display = "none";
 }
 
-// --- CONTINUE ---
-function continueJourney() {
-  alert("Next section coming next version...");
+function scene(img, title, btnText, fn) {
+  document.getElementById("scene").src = img;
+  document.getElementById("mainCard").innerHTML = `
+    <h3>${title}</h3>
+    <button onclick="${fn.name}()">${btnText}</button>
+  `;
 }
 
-// --- UI ---
 function updateUI() {
   document.getElementById("letters").innerText = letters;
   document.getElementById("score").innerText = score;
