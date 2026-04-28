@@ -3,214 +3,249 @@
 <head>
 <meta charset="UTF-8">
 <title>Scriptorium: Tour Guide Duel</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #0f172a;
+  background: #0b0f14;
   color: white;
 }
 
-.game {
-  max-width: 1200px;
-  margin: auto;
-  padding: 14px;
-}
-
-.topbar {
+/* TOP BAR */
+#topbar {
   display: flex;
   justify-content: space-between;
-  background: #111827;
-  padding: 12px;
-  border-radius: 10px;
-  margin-bottom: 12px;
-  font-weight: bold;
+  padding: 12px 20px;
+  background: #111a22;
+  border-bottom: 1px solid #333;
 }
 
-.scene img {
+/* HERO IMAGE */
+#hero {
+  position: relative;
+}
+
+#hero img {
   width: 100%;
-  border-radius: 12px;
-  border: 3px solid #334155;
+  display: block;
 }
 
-.panel {
-  background: #111827;
-  padding: 16px;
-  margin-top: 12px;
-  border-radius: 12px;
-  border: 1px solid #334155;
-}
-
-.routes {
+/* OVERLAY */
+#overlay {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 20px;
 }
 
-.route {
-  flex: 1;
-  background: #1f2937;
-  padding: 14px;
+.card {
+  background: rgba(0,0,0,0.75);
+  padding: 15px;
   border-radius: 10px;
-  border: 1px solid #334155;
+  width: 320px;
 }
 
 button {
+  width: 100%;
+  padding: 12px;
   margin-top: 10px;
-  padding: 10px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-weight: bold;
 }
 
-button:hover {
-  opacity: 0.9;
-}
+.primary { background: #3ba55d; }
+.secondary { background: #2d6cdf; }
+.warning { background: #aa3333; }
 
-.hidden {
+/* QUESTION PANEL */
+#questionBox {
   display: none;
+  padding: 20px;
+  background: #111;
+}
+
+/* COMMENTARY */
+#commentaryBox {
+  display: none;
+  padding: 20px;
+}
+
+textarea {
+  width: 100%;
+  height: 140px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="game">
-
-<h1>Scriptorium: Tour Guide Duel</h1>
-
-<div class="topbar">
-  <div id="location">📍 Leith Junction</div>
-  <div>✍ Letters Left: <span id="letters">2500</span></div>
-  <div>🏁 Stops: 1/8</div>
-  <div>⭐ Score: 18</div>
+<!-- TOP BAR -->
+<div id="topbar">
+  <div>📍 Edinburgh Tour — Leith Start</div>
+  <div>Letters: <span id="letters">3000</span></div>
+  <div>Stops: <span id="stops">0</span></div>
+  <div>Score: <span id="score">0</span></div>
 </div>
 
-<div class="scene">
-  <img id="sceneImage" src="Leith-jobcentre.png">
+<!-- HERO -->
+<div id="hero">
+  <img id="scene" src="Leith-start.png">
+
+  <div id="overlay">
+
+    <div class="card" id="mainCard">
+      <h3>Leaving Leith Cruise Terminal</h3>
+      <p>
+        Your passengers have just boarded. The tour begins.
+      </p>
+
+      <button class="primary" onclick="continueDriving()">Continue Driving</button>
+    </div>
+
+    <div class="card">
+      <h4>How It Works</h4>
+      <p>
+        • Passengers ask questions<br>
+        • You decide when to answer<br>
+        • Spend letters to earn points
+      </p>
+    </div>
+
+  </div>
 </div>
 
-<div class="panel" id="panel"></div>
+<!-- QUESTION -->
+<div id="questionBox">
+  <h2 id="questionText"></h2>
 
+  <button onclick="ignoreQuestion()">Ignore</button>
+  <button onclick="briefAnswer()">Brief Answer (max 120 letters)</button>
+  <button class="primary" onclick="fullAnswer()">Full Explanation</button>
+</div>
+
+<!-- COMMENTARY -->
+<div id="commentaryBox">
+  <h3>Write Your Answer</h3>
+  <textarea id="commentary"></textarea>
+  <br>
+  <button onclick="submitAnswer()">Submit</button>
 </div>
 
 <script>
 
-let currentScene = 2;
+// STATE
+let letters = 3000;
+let stops = 0;
+let score = 0;
 
-loadScene(currentScene);
+let currentQuestion = null;
+let mode = null;
 
-function loadScene(scene) {
-  const panel = document.getElementById("panel");
-  const image = document.getElementById("sceneImage");
-  const location = document.getElementById("location");
+// CONTINUE DRIVING
+function continueDriving() {
 
-  if (scene === 2) {
-    location.innerText = "📍 Leith Jobcentre Junction";
-    image.src = "Leith-jobcentre.png";
+  document.getElementById("scene").src = "Royal-yacht.png";
 
-    panel.innerHTML = `
-      <h2>🧭 Route Decision</h2>
-      <p>You reach a busy junction in Leith.</p>
-
-      <div class="routes">
-
-        <div class="route">
-          <h3>⬅ Port of Leith</h3>
-          <p>Maritime docks and harbour life.</p>
-          <button onclick="nextScene(99)">Go</button>
-        </div>
-
-        <div class="route">
-          <h3>⬆ Foot of the Walk</h3>
-          <p>Main route into Leith life.</p>
-          <button onclick="nextScene(3)">Go</button>
-        </div>
-
-        <div class="route">
-          <h3>➡ Botanic Route</h3>
-          <p>Quieter inland route.</p>
-          <button onclick="nextScene(99)">Go</button>
-        </div>
-
-      </div>
-    `;
-  }
-
-  if (scene === 3) {
-    location.innerText = "📍 Ferry Road Junction";
-    image.src = "Ferryroad-junction.png";
-
-    panel.innerHTML = `
-      <h2>🧭 Route Decision</h2>
-      <p>You continue toward the Foot of the Walk.</p>
-
-      <div class="routes">
-
-        <div class="route">
-          <h3>⬆ Continue — Foot of the Walk</h3>
-          <p>Stay on the main route.</p>
-          <button onclick="nextScene(4)">Go</button>
-        </div>
-
-        <div class="route">
-          <h3>➡ Inverleith / Botanic Route</h3>
-          <p>Turn toward greener areas.</p>
-          <button onclick="nextScene(99)">Go</button>
-        </div>
-
-      </div>
-    `;
-  }
-
-  if (scene === 4) {
-    location.innerText = "📍 Great Junction Street";
-    image.src = "scene-5.png";
-
-    panel.innerHTML = `
-      <h2>🧭 Route Decision</h2>
-      <p>The route opens toward central Edinburgh.</p>
-
-      <div class="routes">
-
-        <div class="route">
-          <h3>⬆ Foot of the Walk</h3>
-          <p>Local Leith route.</p>
-          <button onclick="nextScene(5)">Go</button>
-        </div>
-
-        <div class="route">
-          <h3>➡ New Town</h3>
-          <p>Elegant Georgian Edinburgh.</p>
-          <button onclick="nextScene(99)">Go</button>
-        </div>
-
-      </div>
-    `;
-  }
-
-  if (scene === 5) {
-    location.innerText = "📍 Foot of the Walk";
-    panel.innerHTML = `
-      <h2>Route Progressed</h2>
-      <p>You have successfully followed the main Leith route.</p>
-      <p>Next step: we add another stop or decision.</p>
-    `;
-  }
-
+  document.getElementById("mainCard").innerHTML = `
+    <h3>Passing the Waterfront</h3>
+    <p>The passengers notice something ahead...</p>
+    <button onclick="triggerBritannia()">Continue</button>
+  `;
 }
 
-function nextScene(scene) {
-  if (scene === 99) {
-    alert("This route will be built next.");
+// TRIGGER QUESTION
+function triggerBritannia() {
+
+  currentQuestion = "britannia";
+
+  document.getElementById("questionBox").style.display = "block";
+  document.getElementById("questionText").innerText =
+    "Passenger: What is the name of that ship?";
+}
+
+// OPTIONS
+function ignoreQuestion() {
+  closeQuestion();
+}
+
+function briefAnswer() {
+  mode = "brief";
+  openCommentary(120);
+}
+
+function fullAnswer() {
+  mode = "full";
+  openCommentary(1000);
+}
+
+// OPEN COMMENTARY
+function openCommentary(limit) {
+  document.getElementById("commentaryBox").style.display = "block";
+  document.getElementById("commentary").setAttribute("maxlength", limit);
+}
+
+// SUBMIT
+function submitAnswer() {
+
+  let text = document.getElementById("commentary").value;
+  let length = text.length;
+
+  if(length === 0) {
+    alert("Write something.");
     return;
   }
 
-  currentScene = scene;
-  loadScene(scene);
+  if(length > letters) {
+    alert("Not enough letters.");
+    return;
+  }
+
+  letters -= length;
+
+  let gained = scoreBritannia(text);
+  score += gained;
+
+  alert("You scored " + gained + " points.");
+
+  // RESET
+  document.getElementById("commentary").value = "";
+  document.getElementById("commentaryBox").style.display = "none";
+
+  closeQuestion();
+  updateUI();
+}
+
+// SCORING
+function scoreBritannia(text) {
+
+  let t = text.toLowerCase();
+  let points = 0;
+
+  if(mode === "brief") points += 2;
+  if(mode === "full") points += 4;
+
+  if(t.includes("britannia")) points += 4;
+  if(t.includes("royal yacht")) points += 3;
+  if(t.includes("queen") || t.includes("royal family")) points += 2;
+  if(t.includes("museum") || t.includes("decommissioned")) points += 2;
+
+  if(points === 0) points = -2; // wrong answer penalty
+
+  return points;
+}
+
+// CLOSE
+function closeQuestion() {
+  document.getElementById("questionBox").style.display = "none";
+}
+
+// UI UPDATE
+function updateUI() {
+  document.getElementById("letters").innerText = letters;
+  document.getElementById("score").innerText = score;
 }
 
 </script>
