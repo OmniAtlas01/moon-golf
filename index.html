@@ -141,7 +141,18 @@ function goCitadel() {
         <button onclick="goToJunction()">Continue Driving</button>
     `;
 }
-// --- PASSENGER QUESTION ---
+// --- BIKE TOUR OFFER SCENE ---
+function goBikeOffer() {
+  document.getElementById("scene").src = "Omniatlas-bikes.png";
+
+  document.getElementById("mainCard").innerHTML = `
+    <h3>Electric Bike Tour Opportunity</h3>
+    <p>A passenger notices the OmniAtlas bike tour sign.</p>
+
+    <button onclick="askBikePrice()">Passenger Question</button>
+    <button onclick="goBikeJunction()">Continue to Junction</button>
+  `;
+}
 
 function askRoad() {
   showQuestion("What's the name of that road with the green bar?","road");
@@ -152,7 +163,9 @@ function askHistory() {
 150     showQuestion("What is the main resource that Leith's economy was built on?", "economy");
 151 }
 // --- LECTURE MODE ---
-
+function askBikePrice() {
+  showQuestion("How much extra is it to go on the bike tour?", "bikeprice");
+}
 function lecture() {
   currentType = "lecture";
   document.getElementById("commentaryBox").style.display = "block";
