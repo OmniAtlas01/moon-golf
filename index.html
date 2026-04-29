@@ -305,6 +305,22 @@ if(currentType==="economy") {
     if(text.includes("docks") || text.includes("trade") || text.includes("ships")) {
         gained += 4;
     }
+// BIKE PRICE
+if(currentType==="bikeprice") {
+
+  if(text.includes("10") || text.includes("15")) {
+    gained += 6;
+  }
+  else if(text.includes("20") || text.includes("25")) {
+    gained += 4;
+  }
+  else if(text.includes("5") || text.includes("cheap")) {
+    gained += 2;
+  }
+  else if(text.includes("30") || text.includes("40")) {
+    gained -= 3;
+  }
+
 }
   // LECTURE (BIG SYSTEM)
   if(currentType==="lecture") {
