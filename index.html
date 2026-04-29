@@ -136,7 +136,7 @@ function goCitadel() {
         <h3>Passing Citadel Court</h3>
         <p>High-rise flats and working streets define this part of Leith.</p>
 
-        <button onclick="askEconomy()">Passenger Question</button>
+        <button onclick="askHistory()">Passenger Question</button>
         <button onclick="lecture()">Pull Over & Lecture</button>
         <button onclick="goToJunction()">Continue Driving</button>
     `;
@@ -145,6 +145,8 @@ function goCitadel() {
 
 function askRoad() {
   showQuestion("What's the name of that road with the green bar?","road");
+function askHistory() {
+    showQuestion("Leith must have been heavily bombed during the wars due to its industry?", "history");
 }
 149 function askEconomy() {
 150     showQuestion("What is the main resource that Leith's economy was built on?", "economy");
@@ -163,14 +165,16 @@ function goToJunction() {
 
   document.getElementById("scene").src = "Leith-jobcentre.png";
 
-  let suggestion = "";
+let suggestion = "";
 
-  if(keywords.docks || keywords.leith) {
+// 👉 ADD HERE (Line 170)
+if(currentType === "history" && keywords.leith) {
+    suggestion = "<p>Passenger: You mentioned bombing… can we go up North Fort Street?</p>";
+}
+
+else if(keywords.docks || keywords.leith) {
     suggestion = "<p>Passenger: Since we have talked about Leith and the docks, could we head toward Newhaven?</p>";
-  }
-  else if(keywords.edinburgh) {
-    suggestion = "<p>Passenger: Could we head into Edinburgh City Centre?</p>";
-  }
+}
 
   document.getElementById("mainCard").innerHTML = `
     <h3>Choose Your Direction</h3>
@@ -268,7 +272,17 @@ function submit() {
       gained+=5;
       keywords.leith=true;
     }
-  }
+  // HISTORY
+if(currentType==="history") {
+    if(text.includes("bomb") || text.includes("war") || text.includes("target")) {
+        gained += 4;
+    }
+
+    if(text.includes("north fort street") || text.includes("fort house")) {
+        gained += 6;
+        keywords.leith = true;
+    }
+}
 // ECONOMY
 if(currentType==="economy") {
     if(text.includes("port of leith")) {
