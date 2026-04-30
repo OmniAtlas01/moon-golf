@@ -136,10 +136,23 @@ function goCitadel() {
         <h3>Passing Citadel Court</h3>
         <p>High-rise flats and working streets define this part of Leith.</p>
 
-            <button onclick="askHistory()">Passenger Question</button>
+        <button onclick="askHistory()">Passenger Question</button>
         <button onclick="lecture()">Pull Over & Lecture</button>
-        <button onclick="goBikeOffer()">Continue Driving</button>
+        <button onclick="goLeithMural()">Continue Driving</button>
     `;
+}
+
+// --- LEITH MURAL SCENE ---
+function goLeithMural() {
+  document.getElementById("scene").src = "Leith-mural.png";
+
+  document.getElementById("mainCard").innerHTML = `
+    <h3>Leith History Mural</h3>
+    <p>You pass the famous Leith mural at Tolbooth Wynd. You could stop and explain its history.</p>
+
+    <button onclick="lecture()">Stop & Lecture</button>
+    <button onclick="goBikeOffer()">Keep Driving</button>
+  `;
 }
 
 // --- BIKE TOUR OFFER SCENE ---
