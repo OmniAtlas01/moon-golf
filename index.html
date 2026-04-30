@@ -136,11 +136,12 @@ function goCitadel() {
         <h3>Passing Citadel Court</h3>
         <p>High-rise flats and working streets define this part of Leith.</p>
 
-        <button onclick="askHistory()">Passenger Question</button>
+            <button onclick="askHistory()">Passenger Question</button>
         <button onclick="lecture()">Pull Over & Lecture</button>
-        <button onclick="goToJunction()">Continue Driving</button>
+        <button onclick="goBikeOffer()">Continue Driving</button>
     `;
 }
+
 // --- BIKE TOUR OFFER SCENE ---
 function goBikeOffer() {
   document.getElementById("scene").src = "Omniatlas-bikes.png";
@@ -154,23 +155,42 @@ function goBikeOffer() {
   `;
 }
 
-function askRoad() {
-  showQuestion("What's the name of that road with the green bar?","road");
-function askHistory() {
-    showQuestion("Leith must have been heavily bombed during the wars due to its industry?", "history");
+// --- BIKE TOUR JUNCTION ---
+function goBikeJunction() {
+  document.getElementById("scene").src = "Ferryroad-junction.png";
+
+  document.getElementById("mainCard").innerHTML = `
+    <h3>Choose Your Direction</h3>
+    <p>The passengers are waiting to see which way you go.</p>
+
+    <button onclick="choose('bike')">⬅ OmniAtlas Abandoned Railway Electric Bike Tours</button>
+    <button onclick="choose('edinburgh')">⬆ Edinburgh City Centre</button>
+    <button onclick="choose('trinity')">➡ Trinity</button>
+  `;
 }
-149 function askEconomy() {
-150     showQuestion("What is the main resource that Leith's economy was built on?", "economy");
-151 }
-// --- LECTURE MODE ---
+
+// --- PASSENGER QUESTION ---
+function askRoad() {
+  showQuestion("What's the name of that road with the green bar?", "road");
+}
+
+function askHistory() {
+  showQuestion("Leith must have been heavily bombed during the wars due to its industry?", "history");
+}
+
+function askEconomy() {
+  showQuestion("What is the main resource that Leith's economy was built on?", "economy");
+}
+
 function askBikePrice() {
   showQuestion("How much extra is it to go on the bike tour?", "bikeprice");
 }
+
+// --- LECTURE MODE ---
 function lecture() {
   currentType = "lecture";
   document.getElementById("commentaryBox").style.display = "block";
 }
-
 // --- JUNCTION ---
 // --- JUNCTION ---
 
