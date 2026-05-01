@@ -122,14 +122,15 @@ function followUp() {
 function goToCommercial() {
   document.getElementById("scene").src = "Commercial-quay.png";
 
-  document.getElementById("mainCard").innerHTML = `
-    <h3>Near Leith Docks</h3>
-    <p>This is a good place to stop and talk about the docks.</p>
-    
-    <button onclick="askRoad()">Passenger Question</button>
-    <button onclick="lecture()">Pull Over & Lecture</button>
-    <button onclick="goCitadel()">Continue Driving</button>
-  `;
+document.getElementById("mainCard").innerHTML = `
+  <h3>Near Leith Docks</h3>
+  <p>This is a good place to stop and talk about the docks.</p>
+  
+  <button onclick="askRoad()">Passenger Question (Road)</button>
+  <button onclick="askEconomy()">Passenger Question (Economy)</button>
+  <button onclick="lecture()">Pull Over & Lecture</button>
+  <button onclick="goCitadel()">Continue Driving</button>
+`;
 }
 
 // --- CITADEL COURT SCENE ---
