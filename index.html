@@ -152,105 +152,79 @@ function goCitadel() {
   `;
 }
 
-// --- LEITH MURAL SCENE ---
-
-function goLeithMural() {
-  document.getElementById("scene").src = "Leith-mural.png";
-
-  document.getElementById("mainCard").innerHTML = `
-    <h3>Leith History Mural</h3>
-    <p>You pass the famous Leith mural at Tolbooth Wynd. You could stop and explain its history.</p>
-
-    <button onclick="askMural()">Passenger Question</button>
-    <button onclick="lecture()">Stop & Lecture</button>
-    <button onclick="goBoatFishing()">Keep Driving</button>
-  `;
-}
-
-// --- BOAT & FISHING TOUR SCENE ---
-
-function goBoatFishing() {
-  document.getElementById("scene").src = "Boat-fishing.png";
-
-  document.getElementById("mainCard").innerHTML = `
-    <h3>Water of Leith Boat & Fishing Tour</h3>
-    <p>A passenger notices the sign on the bridge and asks about the activity.</p>
-
-    <button onclick="askBoatFishingPrice()">Passenger Question</button>
-    <button onclick="goBikeOffer()">Keep Driving</button>
-  `;
-}
-
-// --- BIKE TOUR OFFER SCENE ---
-
-function goBikeOffer() {
-  document.getElementById("scene").src = "Omniatlas-bikes.png";
-
-  document.getElementById("mainCard").innerHTML = `
-    <h3>Electric Bike Tour Opportunity</h3>
-    <p>A passenger notices the OmniAtlas bike tour sign.</p>
-
-    <button onclick="askBikePrice()">Passenger Question</button>
-    <button onclick="goBikeJunction()">Continue to Junction</button>
-  `;
-}
-
-// --- OMNIATLAS OFFICE SCENE ---
-
-function goOmniAtlasOffice() {
-  document.getElementById("scene").src = "OmniAtlas-office.png";
-
-  document.getElementById("mainCard").innerHTML = `
-    <h3>OmniAtlas Leith Tours Booking Office</h3>
-    <p>The passengers can book local attractions and activities here, instead of continuing straight through the streets.</p>
-
-    <button onclick="sellTour('boat')">Sell Boat & Fishing Tour</button>
-    <button onclick="sellTour('bike')">Sell Electric Bike Tour</button>
-    <button onclick="sellTour('leith')">Sell Leith Local Tour</button>
-    <button onclick="leaveOffice()">Return to Road</button>
-  `;
-}
-
 function sellTour(type) {
 
-  if(type === "boat") {
-    alert("Boat & Fishing Tour booked. Strong affiliate opportunity secured.");
-    score += 8;
+  pendingTour = type;
+
+  document.getElementById("mainCard").innerHTML = `
+    <h3>Tour Booked</h3>
+    <p>How would you like to proceed?</p>
+
+    <button onclick="chooseTransfer('guided')">Guided Transfer (Safe, lower score)</button>
+    <button onclick="chooseTransfer('manual')">Drive There Yourself (Higher reward)</button>
+  `;
+}
+
+function chooseTransfer(mode) {
+
+  transferMode = mode;
+
+  if(mode === "guided") {
+    handleGuidedTransfer();
+  }
+
+  if(mode === "manual") {
+    handleManualTransfer();
+  }
+}
+
+function handleGuidedTransfer() {
+
+  if(pendingTour === "boat") {
+    alert("Guided transfer to Boat & Fishing Tour. Time +20 mins.");
+    score += 5;
+    keywords.boat = true;
+    keywords.fishing = true;
+    goBoatFishing();
+  }
+
+  if(pendingTour === "bike") {
+    alert("Guided transfer to Bike Tour. Time +20 mins.");
+    score += 4;
+    goBikeOffer();
+  }
+
+  if(pendingTour === "leith") {
+    alert("Guided transfer to Leith Tour area.");
+    score += 6;
+    keywords.leith = true;
+    goToCommercial();
+  }
+
+  pendingTour = null;
+  updateUI();
+}
+
+function handleManualTransfer() {
+
+  alert("You chose to drive manually. Navigate carefully for higher rewards.");
+
+  if(pendingTour === "boat") {
     keywords.boat = true;
     keywords.fishing = true;
   }
 
-  if(type === "bike") {
-    alert("Electric Bike Tour booked. Good optional activity secured.");
-    score += 7;
+  if(pendingTour === "bike") {
+    keywords.edinburgh = true;
   }
 
-  if(type === "leith") {
-    alert("Leith Local Tour booked. Passengers are now interested in a deeper Leith route.");
-    score += 9;
+  if(pendingTour === "leith") {
     keywords.leith = true;
   }
 
-  updateUI();
-}
-
-function leaveOffice() {
+  pendingTour = null;
   goBikeJunction();
 }
-
-// --- JUNCTION ---
-
-function goBikeJunction() {
-  document.getElementById("scene").src = "Ferryroad-junction.png";
-
-  let suggestion = "";
-
-  if(keywords.boat || keywords.fishing || keywords.banana) {
-    suggestion = `
-      <p><strong>Passenger:</strong> Are we still able to book that Water of Leith Boat & Fishing Tour?</p>
-      <button class="primary" onclick="choose('boatfishing')">Book Boat & Fishing Tour</button>
-    `;
-  }
 
   document.getElementById("mainCard").innerHTML = `
     <h3>Choose Your Direction</h3>
