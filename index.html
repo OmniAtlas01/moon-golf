@@ -85,7 +85,10 @@ let keywords = {
   beach:false,
   leith:false,
   edinburgh:false,
-  docks:false
+  docks:false,
+  boat:false,
+  fishing:false,
+  banana:false
 };
 
 // --- FLOW ---
@@ -114,7 +117,7 @@ function followUp() {
   }
 }
 
-// --- NEW COMMERCIAL QUAY SCENE ---
+// --- COMMERCIAL QUAY SCENE ---
 
 function goToCommercial() {
   document.getElementById("scene").src = "Commercial-quay.png";
@@ -125,24 +128,27 @@ function goToCommercial() {
     
     <button onclick="askRoad()">Passenger Question</button>
     <button onclick="lecture()">Pull Over & Lecture</button>
-   <button onclick="goBikeOffer()">Continue Driving</button>
+    <button onclick="goCitadel()">Continue Driving</button>
   `;
 }
+
 // --- CITADEL COURT SCENE ---
+
 function goCitadel() {
-    document.getElementById("scene").src = "Citadel-court.png";
+  document.getElementById("scene").src = "Citadel-court.png";
 
-    document.getElementById("mainCard").innerHTML = `
-        <h3>Passing Citadel Court</h3>
-        <p>High-rise flats and working streets define this part of Leith.</p>
+  document.getElementById("mainCard").innerHTML = `
+    <h3>Passing Citadel Court</h3>
+    <p>High-rise flats and working streets define this part of Leith.</p>
 
-        <button onclick="askHistory()">Passenger Question</button>
-        <button onclick="lecture()">Pull Over & Lecture</button>
-        <button onclick="goLeithMural()">Continue Driving</button>
-    `;
+    <button onclick="askHistory()">Passenger Question</button>
+    <button onclick="lecture()">Pull Over & Lecture</button>
+    <button onclick="goLeithMural()">Continue Driving</button>
+  `;
 }
 
 // --- LEITH MURAL SCENE ---
+
 function goLeithMural() {
   document.getElementById("scene").src = "Leith-mural.png";
 
@@ -150,12 +156,28 @@ function goLeithMural() {
     <h3>Leith History Mural</h3>
     <p>You pass the famous Leith mural at Tolbooth Wynd. You could stop and explain its history.</p>
 
+    <button onclick="askMural()">Passenger Question</button>
     <button onclick="lecture()">Stop & Lecture</button>
+    <button onclick="goBoatFishing()">Keep Driving</button>
+  `;
+}
+
+// --- BOAT & FISHING TOUR SCENE ---
+
+function goBoatFishing() {
+  document.getElementById("scene").src = "Boat-fishing.png";
+
+  document.getElementById("mainCard").innerHTML = `
+    <h3>Water of Leith Boat & Fishing Tour</h3>
+    <p>A passenger notices the sign on the bridge and asks about the activity.</p>
+
+    <button onclick="askBoatFishingPrice()">Passenger Question</button>
     <button onclick="goBikeOffer()">Keep Driving</button>
   `;
 }
 
 // --- BIKE TOUR OFFER SCENE ---
+
 function goBikeOffer() {
   document.getElementById("scene").src = "Omniatlas-bikes.png";
 
@@ -168,21 +190,34 @@ function goBikeOffer() {
   `;
 }
 
-// --- BIKE TOUR JUNCTION ---
+// --- JUNCTION ---
+
 function goBikeJunction() {
   document.getElementById("scene").src = "Ferryroad-junction.png";
+
+  let suggestion = "";
+
+  if(keywords.boat || keywords.fishing || keywords.banana) {
+    suggestion = `
+      <p><strong>Passenger:</strong> Are we still able to book that Water of Leith Boat & Fishing Tour?</p>
+      <button class="primary" onclick="choose('boatfishing')">Book Boat & Fishing Tour</button>
+    `;
+  }
 
   document.getElementById("mainCard").innerHTML = `
     <h3>Choose Your Direction</h3>
     <p>The passengers are waiting to see which way you go.</p>
 
+    ${suggestion}
+
     <button onclick="choose('bike')">⬅ OmniAtlas Abandoned Railway Electric Bike Tours</button>
-    <button onclick="choose('edinburgh')">⬆ Edinburgh City Centre</button>
-    <button onclick="choose('trinity')">➡ Trinity</button>
+    <button onclick="choose('edinburgh')">⬆ Edinburgh City Centre via Leith</button>
+    <button onclick="choose('newtown')">➡ Edinburgh City Centre via Newtown</button>
   `;
 }
 
-// --- PASSENGER QUESTION ---
+// --- PASSENGER QUESTIONS ---
+
 function askRoad() {
   showQuestion("What's the name of that road with the green bar?", "road");
 }
@@ -195,54 +230,44 @@ function askEconomy() {
   showQuestion("What is the main resource that Leith's economy was built on?", "economy");
 }
 
+function askMural() {
+  showQuestion("What is the Leith History Mural about?", "mural");
+}
+
+function askBoatFishingPrice() {
+  showQuestion("What is the price of the boat and fishing tour?", "boatfishing");
+}
+
 function askBikePrice() {
   showQuestion("How much extra is it to go on the bike tour?", "bikeprice");
 }
 
 // --- LECTURE MODE ---
+
 function lecture() {
   currentType = "lecture";
   document.getElementById("commentaryBox").style.display = "block";
 }
-// --- JUNCTION ---
-// --- JUNCTION ---
 
-function goToJunction() {
-
-  document.getElementById("scene").src = "Leith-jobcentre.png";
-
-let suggestion = "";
-
-// 👉 ADD HERE (Line 170)
-if(currentType === "history" && keywords.leith) {
-    suggestion = "<p>Passenger: You mentioned bombing… can we go up North Fort Street?</p>";
-}
-
-else if(keywords.docks || keywords.leith) {
-    suggestion = "<p>Passenger: Since we have talked about Leith and the docks, could we head toward Newhaven?</p>";
-}
-
-  document.getElementById("mainCard").innerHTML = `
-    <h3>Choose Your Direction</h3>
-    ${suggestion}
-    <button onclick="choose('seafield')">⬅ Seafield</button>
-    <button onclick="choose('edinburgh')">⬆ Edinburgh City Centre</button>
-    <button onclick="choose('newhaven')">➡ Newhaven</button>
-  `;
-}
+// --- CHOICES ---
 
 function choose(route) {
+  if(route === "boatfishing") {
+    alert("Boat & Fishing Tour booked. Strong affiliate opportunity secured.");
+    score += 8;
+    updateUI();
+  }
 
-  if(route === "seafield") {
-    alert("Seafield route chosen. Quieter coastal route coming next build.");
+  if(route === "bike") {
+    alert("OmniAtlas bike tour route chosen. Abandoned railway route coming next build.");
   }
 
   if(route === "edinburgh") {
-    alert("Edinburgh City Centre route chosen. Main city route coming next build.");
+    alert("City Centre via Leith chosen. Historic urban route coming next build.");
   }
 
-  if(route === "newhaven") {
-    alert("Newhaven route chosen. Harbour and fishing route coming next build.");
+  if(route === "newtown") {
+    alert("City Centre via Newtown chosen. Elegant city route coming next build.");
   }
 }
 
@@ -256,7 +281,7 @@ function showQuestion(text,type) {
 
 function ignore() {
   closeQ();
-  goToRedLight();
+  continueAfterQuestion();
 }
 
 function brief() {
@@ -286,7 +311,6 @@ function submit() {
   letters -= len;
   let gained = 0;
 
-  // SHIP
   if(currentType==="ship") {
     if(text.includes("britannia")) gained+=5;
     if(text.includes("royal")) {
@@ -295,7 +319,6 @@ function submit() {
     }
   }
 
-  // MONARCH
   if(currentType==="monarch") {
     if(text.includes("queen") || text.includes("royal")) {
       gained+=6;
@@ -303,7 +326,6 @@ function submit() {
     }
   }
 
-  // BEACH
   if(currentType==="beach") {
     if(text.includes("leith sands") || text.includes("beach")) {
       gained+=6;
@@ -312,52 +334,86 @@ function submit() {
     }
   }
 
-  // ROAD
   if(currentType==="road") {
     if(text.includes("commercial quay")) {
       gained+=5;
       keywords.leith=true;
     }
-  // HISTORY
-if(currentType==="history") {
+  }
+
+  if(currentType==="history") {
     if(text.includes("bomb") || text.includes("war") || text.includes("target")) {
-        gained += 4;
+      gained += 4;
     }
 
     if(text.includes("north fort street") || text.includes("fort house")) {
-        gained += 6;
-        keywords.leith = true;
+      gained += 6;
+      keywords.leith = true;
     }
-}
-// ECONOMY
-if(currentType==="economy") {
+  }
+
+  if(currentType==="economy") {
     if(text.includes("port of leith")) {
-        gained += 6;
-        keywords.leith = true;
+      gained += 6;
+      keywords.leith = true;
     }
+
     if(text.includes("docks") || text.includes("trade") || text.includes("ships")) {
-        gained += 4;
+      gained += 4;
+      keywords.docks = true;
     }
-// BIKE PRICE
-if(currentType==="bikeprice") {
-
-  if(text.includes("10") || text.includes("15")) {
-    gained += 6;
-  }
-  else if(text.includes("20") || text.includes("25")) {
-    gained += 4;
-  }
-  else if(text.includes("5") || text.includes("cheap")) {
-    gained += 2;
-  }
-  else if(text.includes("30") || text.includes("40")) {
-    gained -= 3;
   }
 
-}
-  // LECTURE (BIG SYSTEM)
+  if(currentType==="mural") {
+    if(text.includes("leith history mural")) gained += 6;
+    if(text.includes("tim chalk") || text.includes("paul grime")) gained += 6;
+    if(text.includes("dock") || text.includes("shipyard") || text.includes("henry robb")) gained += 5;
+    if(text.includes("working") || text.includes("community") || text.includes("industrial")) gained += 4;
+    if(text.includes("tolbooth wynd")) gained += 4;
+
+    keywords.leith = true;
+  }
+
+  if(currentType==="boatfishing") {
+    if(text.includes("25") || text.includes("30") || text.includes("35")) gained += 4;
+    if(text.includes("boat")) {
+      gained += 3;
+      keywords.boat = true;
+    }
+    if(text.includes("fish") || text.includes("fishing")) {
+      gained += 4;
+      keywords.fishing = true;
+    }
+    if(text.includes("water of leith")) gained += 4;
+    if(text.includes("gear") || text.includes("rod") || text.includes("equipment")) gained += 4;
+    if(text.includes("banana flats") || text.includes("banana")) {
+      gained += 5;
+      keywords.banana = true;
+    }
+    if(text.includes("deal") || text.includes("discount") || text.includes("affiliate")) gained += 4;
+
+    if(text.includes("expensive") || text.includes("not sure") || text.includes("maybe")) gained -= 3;
+
+    keywords.boat = true;
+    keywords.fishing = true;
+  }
+
+  if(currentType==="bikeprice") {
+    if(text.includes("10") || text.includes("15")) {
+      gained += 6;
+    }
+    else if(text.includes("20") || text.includes("25")) {
+      gained += 4;
+    }
+    else if(text.includes("5") || text.includes("cheap")) {
+      gained += 2;
+    }
+    else if(text.includes("30") || text.includes("40")) {
+      gained -= 3;
+    }
+  }
+
   if(currentType==="lecture") {
-
     if(text.includes("ss explorer")) gained+=6;
     if(text.includes("forth lock")) gained+=5;
     if(text.includes("breakwater")) gained+=7;
@@ -366,6 +422,10 @@ if(currentType==="bikeprice") {
     if(text.includes("victoria quay")) gained+=5;
     if(text.includes("fingal")) gained+=5;
     if(text.includes("oyster")) gained+=8;
+
+    if(text.includes("leith mural")) gained+=6;
+    if(text.includes("tim chalk") || text.includes("paul grime")) gained+=5;
+    if(text.includes("henry robb")) gained+=5;
 
     keywords.docks = true;
     keywords.leith = true;
@@ -390,10 +450,33 @@ function reset() {
   document.getElementById("commentaryBox").style.display="none";
   closeQ();
 
-  if(currentType==="lecture") {
-    goToJunction();
-  } else {
+  continueAfterQuestion();
+}
+
+function continueAfterQuestion() {
+  if(currentType==="ship") {
     goToRedLight();
+  }
+  else if(currentType==="monarch" || currentType==="beach") {
+    followUp();
+  }
+  else if(currentType==="road") {
+    goCitadel();
+  }
+  else if(currentType==="history" || currentType==="economy") {
+    goLeithMural();
+  }
+  else if(currentType==="mural" || currentType==="lecture") {
+    goBoatFishing();
+  }
+  else if(currentType==="boatfishing") {
+    goBikeOffer();
+  }
+  else if(currentType==="bikeprice") {
+    goBikeJunction();
+  }
+  else {
+    goBikeOffer();
   }
 }
 
