@@ -88,7 +88,8 @@ let keywords = {
   docks:false,
   boat:false,
   fishing:false,
-  banana:false
+  banana:false,
+  activities:false
 };
 
 // --- FLOW ---
@@ -106,7 +107,10 @@ function goToRedLight() {
 }
 
 function followUp() {
-  if(!keywords.monarch) {
+  if(!keywords.activities) {
+    showQuestion("What kind of attractions or activities are available on this tour?","activities");
+  }
+  else if(!keywords.monarch) {
     showQuestion("Which Monarchs made landings here?","monarch");
   }
   else if(!keywords.beach) {
@@ -122,15 +126,15 @@ function followUp() {
 function goToCommercial() {
   document.getElementById("scene").src = "Commercial-quay.png";
 
-document.getElementById("mainCard").innerHTML = `
-  <h3>Near Leith Docks</h3>
-  <p>This is a good place to stop and talk about the docks.</p>
-  
-  <button onclick="askRoad()">Passenger Question (Road)</button>
-  <button onclick="askEconomy()">Passenger Question (Economy)</button>
-  <button onclick="lecture()">Pull Over & Lecture</button>
-  <button onclick="goCitadel()">Continue Driving</button>
-`;
+  document.getElementById("mainCard").innerHTML = `
+    <h3>Near Leith Docks</h3>
+    <p>This is a good place to stop and talk about the docks.</p>
+    
+    <button onclick="askRoad()">Passenger Question (Road)</button>
+    <button onclick="askEconomy()">Passenger Question (Economy)</button>
+    <button onclick="lecture()">Pull Over & Lecture</button>
+    <button onclick="goCitadel()">Continue Driving</button>
+  `;
 }
 
 // --- CITADEL COURT SCENE ---
@@ -191,6 +195,49 @@ function goBikeOffer() {
   `;
 }
 
+// --- OMNIATLAS OFFICE SCENE ---
+
+function goOmniAtlasOffice() {
+  document.getElementById("scene").src = "OmniAtlas-office.png";
+
+  document.getElementById("mainCard").innerHTML = `
+    <h3>OmniAtlas Leith Tours Booking Office</h3>
+    <p>The passengers can book local attractions and activities here, instead of continuing straight through the streets.</p>
+
+    <button onclick="sellTour('boat')">Sell Boat & Fishing Tour</button>
+    <button onclick="sellTour('bike')">Sell Electric Bike Tour</button>
+    <button onclick="sellTour('leith')">Sell Leith Local Tour</button>
+    <button onclick="leaveOffice()">Return to Road</button>
+  `;
+}
+
+function sellTour(type) {
+
+  if(type === "boat") {
+    alert("Boat & Fishing Tour booked. Strong affiliate opportunity secured.");
+    score += 8;
+    keywords.boat = true;
+    keywords.fishing = true;
+  }
+
+  if(type === "bike") {
+    alert("Electric Bike Tour booked. Good optional activity secured.");
+    score += 7;
+  }
+
+  if(type === "leith") {
+    alert("Leith Local Tour booked. Passengers are now interested in a deeper Leith route.");
+    score += 9;
+    keywords.leith = true;
+  }
+
+  updateUI();
+}
+
+function leaveOffice() {
+  goBikeJunction();
+}
+
 // --- JUNCTION ---
 
 function goBikeJunction() {
@@ -211,7 +258,7 @@ function goBikeJunction() {
 
     ${suggestion}
 
-    <button onclick="choose('bike')">⬅ OmniAtlas Abandoned Railway Electric Bike Tours</button>
+    <button onclick="goOmniAtlasOffice()">⬅ OmniAtlas Leith Tours Booking Office</button>
     <button onclick="choose('edinburgh')">⬆ Edinburgh City Centre via Leith</button>
     <button onclick="choose('newtown')">➡ Edinburgh City Centre via Newtown</button>
   `;
@@ -229,6 +276,10 @@ function askHistory() {
 
 function askEconomy() {
   showQuestion("What is the main resource that Leith's economy was built on?", "economy");
+}
+
+function askActivities() {
+  showQuestion("What kind of attractions or activities are available on this tour?", "activities");
 }
 
 function askMural() {
@@ -298,6 +349,7 @@ function full() {
 function openBox(limit) {
   document.getElementById("commentaryBox").style.display="block";
   document.getElementById("commentary").maxLength=limit;
+}
 }
 
 // --- SUBMIT ---
