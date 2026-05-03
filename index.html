@@ -12,6 +12,7 @@ body { margin:0; font-family:Arial; background:#0b0f14; color:white; }
   padding:12px 20px; background:#111a22;
 }
 
+#hero { position:relative; }
 #hero img { width:100%; }
 
 #overlay {
@@ -79,6 +80,8 @@ let letters = 3000;
 let score = 0;
 let mode = "";
 let currentType = "";
+let pendingTour = null;
+let transferMode = "";
 
 let keywords = {
   monarch:false,
@@ -152,21 +155,92 @@ function goCitadel() {
   `;
 }
 
-function sellTour(type) {
+// --- LEITH MURAL SCENE ---
 
-  pendingTour = type;
+function goLeithMural() {
+  document.getElementById("scene").src = "Leith-mural.png";
 
   document.getElementById("mainCard").innerHTML = `
-    <h3>Tour Booked</h3>
-    <p>How would you like to proceed?</p>
+    <h3>Leith History Mural</h3>
+    <p>You pass the famous Leith mural at Tolbooth Wynd. You could stop and explain its history.</p>
 
-    <button onclick="chooseTransfer('guided')">Guided Transfer (Safe, lower score)</button>
-    <button onclick="chooseTransfer('manual')">Drive There Yourself (Higher reward)</button>
+    <button onclick="askMural()">Passenger Question</button>
+    <button onclick="lecture()">Stop & Lecture</button>
+    <button onclick="goBoatFishing()">Keep Driving</button>
+  `;
+}
+
+// --- BOAT & FISHING TOUR SCENE ---
+
+function goBoatFishing() {
+  document.getElementById("scene").src = "Boat-fishing.png";
+
+  document.getElementById("mainCard").innerHTML = `
+    <h3>Water of Leith Boat & Fishing Tour</h3>
+    <p>A passenger notices the sign on the bridge and asks about the activity.</p>
+
+    <button onclick="askBoatFishingPrice()">Passenger Question</button>
+    <button onclick="goBikeOffer()">Keep Driving</button>
+  `;
+}
+
+// --- BIKE TOUR OFFER SCENE ---
+
+function goBikeOffer() {
+  document.getElementById("scene").src = "Omniatlas-bikes.png";
+
+  document.getElementById("mainCard").innerHTML = `
+    <h3>Electric Bike Tour Opportunity</h3>
+    <p>A passenger notices the OmniAtlas bike tour sign.</p>
+
+    <button onclick="askBikePrice()">Passenger Question</button>
+    <button onclick="goBikeJunction()">Continue to Junction</button>
+  `;
+}
+
+// --- OMNIATLAS OFFICE SCENE ---
+
+function goOmniAtlasOffice() {
+  document.getElementById("scene").src = "Tourleith-office.png";
+
+  document.getElementById("mainCard").innerHTML = `
+    <h3>OmniAtlas Leith Tours Booking Office</h3>
+    <p>The passengers ask what attractions or activities are available. You may sell an OmniAtlas tour, create your own, or continue the existing route.</p>
+
+    <button onclick="sellTour('docks')">1. Leith Docks Restricted Zone Tour</button>
+    <button onclick="sellTour('stadium')">2. Easter Road Stadium Tour</button>
+    <button onclick="sellTour('britannia')">3. Ocean Terminal & Royal Yacht Britannia</button>
+    <button onclick="sellTour('dronefishing')">4. Firth of Forth Drone Fishing & Fish Supper</button>
+    <button onclick="sellTour('culture')">5. Leith Culture & Heritage Tour</button>
+    <button onclick="sellTour('activitiesroute')">6. Leith Activities Route</button>
+    <button onclick="leaveOffice()">7. Continue Tour As Planned</button>
+    <button class="primary" onclick="createCustomTour()">8. Create & Sell Your Own Tour</button>
+  `;
+}
+
+function sellTour(type) {
+  pendingTour = type;
+
+  let title = "";
+
+  if(type === "docks") title = "Leith Docks Restricted Zone Tour";
+  if(type === "stadium") title = "Easter Road Stadium Tour";
+  if(type === "britannia") title = "Ocean Terminal & Royal Yacht Britannia";
+  if(type === "dronefishing") title = "Firth of Forth Drone Fishing & Fish Supper";
+  if(type === "culture") title = "Leith Culture & Heritage Tour";
+  if(type === "activitiesroute") title = "Leith Activities Route";
+
+  document.getElementById("mainCard").innerHTML = `
+    <h3>${title} Booked</h3>
+    <p>Choose how to proceed.</p>
+
+    <button onclick="chooseTransfer('guided')">Guided Transfer — safe, lower score</button>
+    <button onclick="chooseTransfer('manual')">Drive There Yourself — higher reward</button>
+    <button onclick="goOmniAtlasOffice()">Back to Booking Office</button>
   `;
 }
 
 function chooseTransfer(mode) {
-
   transferMode = mode;
 
   if(mode === "guided") {
@@ -180,25 +254,49 @@ function chooseTransfer(mode) {
 
 function handleGuidedTransfer() {
 
-  if(pendingTour === "boat") {
-    alert("Guided transfer to Boat & Fishing Tour. Time +20 mins.");
-    score += 5;
+  if(pendingTour === "docks") {
+    alert("Guided transfer to Marine Esplanade. Leith Docks Restricted Zone unlocked.");
+    score += 8;
+    keywords.docks = true;
+    keywords.leith = true;
+    goBoatFishing();
+  }
+
+  if(pendingTour === "stadium") {
+    alert("Guided transfer to Easter Road Stadium. Hibernian FC tour unlocked.");
+    score += 7;
+    keywords.leith = true;
+    goBikeJunction();
+  }
+
+  if(pendingTour === "britannia") {
+    alert("Guided transfer to Ocean Terminal and Royal Yacht Britannia.");
+    score += 8;
+    keywords.monarch = true;
+    keywords.leith = true;
+    driveToShip();
+  }
+
+  if(pendingTour === "dronefishing") {
+    alert("Guided transfer to The Shore for Drone Fishing and Fish Supper.");
+    score += 9;
     keywords.boat = true;
     keywords.fishing = true;
     goBoatFishing();
   }
 
-  if(pendingTour === "bike") {
-    alert("Guided transfer to Bike Tour. Time +20 mins.");
-    score += 4;
-    goBikeOffer();
+  if(pendingTour === "culture") {
+    alert("Guided transfer to Leith Culture & Heritage Tour.");
+    score += 8;
+    keywords.leith = true;
+    goLeithMural();
   }
 
-  if(pendingTour === "leith") {
-    alert("Guided transfer to Leith Tour area.");
+  if(pendingTour === "activitiesroute") {
+    alert("Guided transfer to Leith Activities Route.");
     score += 6;
     keywords.leith = true;
-    goToCommercial();
+    goBikeJunction();
   }
 
   pendingTour = null;
@@ -207,24 +305,74 @@ function handleGuidedTransfer() {
 
 function handleManualTransfer() {
 
-  alert("You chose to drive manually. Navigate carefully for higher rewards.");
+  alert("You chose to drive manually. Navigate carefully for a higher potential reward.");
 
-  if(pendingTour === "boat") {
+  if(pendingTour === "docks") {
+    score += 3;
+    keywords.docks = true;
+    keywords.leith = true;
+  }
+
+  if(pendingTour === "stadium") {
+    score += 3;
+    keywords.leith = true;
+  }
+
+  if(pendingTour === "britannia") {
+    score += 3;
+    keywords.monarch = true;
+    keywords.leith = true;
+  }
+
+  if(pendingTour === "dronefishing") {
+    score += 3;
     keywords.boat = true;
     keywords.fishing = true;
   }
 
-  if(pendingTour === "bike") {
-    keywords.edinburgh = true;
+  if(pendingTour === "culture") {
+    score += 3;
+    keywords.leith = true;
   }
 
-  if(pendingTour === "leith") {
+  if(pendingTour === "activitiesroute") {
+    score += 3;
     keywords.leith = true;
   }
 
   pendingTour = null;
+  updateUI();
   goBikeJunction();
 }
+
+function createCustomTour() {
+  currentType = "customtour";
+  document.getElementById("questionBox").style.display = "none";
+  document.getElementById("commentaryBox").style.display = "block";
+  document.getElementById("commentary").maxLength = 1000;
+  document.getElementById("commentary").placeholder = "Pitch your own tour, activity, or attraction idea to the passengers...";
+}
+
+function leaveOffice() {
+  alert("You chose not to sell anything here. The tour continues as planned.");
+  score += 2;
+  updateUI();
+  goBikeJunction();
+}
+
+// --- JUNCTION ---
+
+function goBikeJunction() {
+  document.getElementById("scene").src = "Omniatlas-leith.png";
+
+  let suggestion = "";
+
+  if(keywords.boat || keywords.fishing || keywords.banana) {
+    suggestion = `
+      <p><strong>Passenger:</strong> Are we still able to book that Water of Leith Boat & Fishing Tour?</p>
+      <button class="primary" onclick="choose('boatfishing')">Book Boat & Fishing Tour</button>
+    `;
+  }
 
   document.getElementById("mainCard").innerHTML = `
     <h3>Choose Your Direction</h3>
@@ -324,7 +472,6 @@ function openBox(limit) {
   document.getElementById("commentaryBox").style.display="block";
   document.getElementById("commentary").maxLength=limit;
 }
-}
 
 // --- SUBMIT ---
 
@@ -344,6 +491,28 @@ function submit() {
       gained+=3;
       keywords.monarch=true;
     }
+  }
+
+  if(currentType==="activities") {
+    if(text.includes("tour") || text.includes("activity") || text.includes("visit")) gained += 3;
+    if(text.includes("museum") || text.includes("boat") || text.includes("bike") || text.includes("attraction")) {
+      gained += 5;
+      keywords.activities = true;
+    }
+    if(text.includes("not sure") || text.includes("just driving")) gained -= 3;
+  }
+
+  if(currentType==="customtour") {
+    if(text.length > 150) gained += 4;
+    if(text.includes("leith")) gained += 3;
+    if(text.includes("history") || text.includes("culture")) gained += 4;
+    if(text.includes("food") || text.includes("whisky") || text.includes("fish supper")) gained += 3;
+    if(text.includes("boat") || text.includes("stadium") || text.includes("britannia") || text.includes("docks")) gained += 4;
+    if(text.includes("then") || text.includes("after") || text.includes("finish")) gained += 3;
+    if(text.includes("experience") || text.includes("exclusive")) gained += 3;
+
+    keywords.activities = true;
+    keywords.leith = true;
   }
 
   if(currentType==="monarch") {
@@ -369,10 +538,7 @@ function submit() {
   }
 
   if(currentType==="history") {
-    if(text.includes("bomb") || text.includes("war") || text.includes("target")) {
-      gained += 4;
-    }
-
+    if(text.includes("bomb") || text.includes("war") || text.includes("target")) gained += 4;
     if(text.includes("north fort street") || text.includes("fort house")) {
       gained += 6;
       keywords.leith = true;
@@ -384,7 +550,6 @@ function submit() {
       gained += 6;
       keywords.leith = true;
     }
-
     if(text.includes("docks") || text.includes("trade") || text.includes("ships")) {
       gained += 4;
       keywords.docks = true;
@@ -397,7 +562,6 @@ function submit() {
     if(text.includes("dock") || text.includes("shipyard") || text.includes("henry robb")) gained += 5;
     if(text.includes("working") || text.includes("community") || text.includes("industrial")) gained += 4;
     if(text.includes("tolbooth wynd")) gained += 4;
-
     keywords.leith = true;
   }
 
@@ -418,7 +582,6 @@ function submit() {
       keywords.banana = true;
     }
     if(text.includes("deal") || text.includes("discount") || text.includes("affiliate")) gained += 4;
-
     if(text.includes("expensive") || text.includes("not sure") || text.includes("maybe")) gained -= 3;
 
     keywords.boat = true;
@@ -426,18 +589,10 @@ function submit() {
   }
 
   if(currentType==="bikeprice") {
-    if(text.includes("10") || text.includes("15")) {
-      gained += 6;
-    }
-    else if(text.includes("20") || text.includes("25")) {
-      gained += 4;
-    }
-    else if(text.includes("5") || text.includes("cheap")) {
-      gained += 2;
-    }
-    else if(text.includes("30") || text.includes("40")) {
-      gained -= 3;
-    }
+    if(text.includes("10") || text.includes("15")) gained += 6;
+    else if(text.includes("20") || text.includes("25")) gained += 4;
+    else if(text.includes("5") || text.includes("cheap")) gained += 2;
+    else if(text.includes("30") || text.includes("40")) gained -= 3;
   }
 
   if(currentType==="lecture") {
@@ -474,6 +629,7 @@ function submit() {
 
 function reset() {
   document.getElementById("commentary").value="";
+  document.getElementById("commentary").placeholder="";
   document.getElementById("commentaryBox").style.display="none";
   closeQ();
 
@@ -484,8 +640,11 @@ function continueAfterQuestion() {
   if(currentType==="ship") {
     goToRedLight();
   }
-  else if(currentType==="monarch" || currentType==="beach") {
+  else if(currentType==="activities" || currentType==="monarch" || currentType==="beach") {
     followUp();
+  }
+  else if(currentType==="customtour") {
+    goBikeJunction();
   }
   else if(currentType==="road") {
     goCitadel();
